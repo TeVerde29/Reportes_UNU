@@ -1,6 +1,6 @@
 const db = require('../config/database');
 
-const obtenerEstudiante = async (req, res) => {
+const obtenerEstudiantePorId = async (req, res) => {
     try {
         const { id } = req.params;
         const [estudiante] = await db.query(`
@@ -31,5 +31,5 @@ const obtenerEstudiante = async (req, res) => {
 };
 
 module.exports = {
-    obtenerEstudiante
+    obtenerEstudiantePorId
 };

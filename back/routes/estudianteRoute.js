@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const {
-    obtenerEstudiante
+    obtenerEstudiantePorId
 } = require('../controller/estudianteController');
 
-router.get('/:id', obtenerEstudiante);
+router.get('/:id', obtenerEstudiantePorId);
 
 module.exports = router;

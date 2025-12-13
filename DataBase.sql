@@ -52,7 +52,7 @@ CREATE TABLE `estado` (
   `id_estado` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(45) NOT NULL,
   PRIMARY KEY (`id_estado`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -61,7 +61,7 @@ CREATE TABLE `estado` (
 
 LOCK TABLES `estado` WRITE;
 /*!40000 ALTER TABLE `estado` DISABLE KEYS */;
-INSERT INTO `estado` VALUES (1,'Pendiente'),(2,'Aceptado'),(3,'Resuelto');
+INSERT INTO `estado` VALUES (1,'Pendiente'),(2,'Aceptado'),(3,'Resuelto'),(4,'Rechazado');
 /*!40000 ALTER TABLE `estado` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -81,7 +81,7 @@ CREATE TABLE `estudiante` (
   PRIMARY KEY (`id_estudiante`),
   KEY `fk_estudiante_carrera_idx` (`id_carrera`),
   CONSTRAINT `fk_estudiante_carrera` FOREIGN KEY (`id_carrera`) REFERENCES `carrera` (`id_carrera`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -90,6 +90,7 @@ CREATE TABLE `estudiante` (
 
 LOCK TABLES `estudiante` WRITE;
 /*!40000 ALTER TABLE `estudiante` DISABLE KEYS */;
+INSERT INTO `estudiante` VALUES (1,'Pedro Giovanni','Ricra','Figueroa',11),(2,'Leonardo Franco','Campos','Inuma',11);
 /*!40000 ALTER TABLE `estudiante` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -106,11 +107,12 @@ CREATE TABLE `reporte` (
   `descripcion` varchar(500) DEFAULT NULL,
   `foto_url` varchar(45) NOT NULL,
   `fecha_reporte` datetime NOT NULL,
+  `fecha_edicion` datetime DEFAULT NULL,
   `cantidad_reacciones` int NOT NULL,
   `id_estado` int NOT NULL,
   `id_estudiante` int NOT NULL,
+  `id_tipo_problema` int NOT NULL,
   `id_ubicacion` int DEFAULT NULL,
-  `id_tipo_problema` int DEFAULT NULL,
   PRIMARY KEY (`id_reporte`),
   KEY `fk_reporte_ubicacion_idx` (`id_ubicacion`),
   KEY `fk_reporte_estudiante_idx` (`id_estudiante`),
@@ -246,7 +248,7 @@ CREATE TABLE `usuario` (
   KEY `fk_usuario_estudiante_idx` (`id_estudiante`),
   CONSTRAINT `fk_usuario_estudiante` FOREIGN KEY (`id_estudiante`) REFERENCES `estudiante` (`id_estudiante`),
   CONSTRAINT `fk_usuario_rol` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -255,6 +257,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
+INSERT INTO `usuario` VALUES (1,'admin','1234',1,NULL),(2,'0002221081','1081',2,1),(3,'0002221057','1057',2,2);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -267,4 +270,13 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-13  6:45:29
+-- Dump completed on 2025-12-13 22:21:49
+INSERT INTO tipo_problema (nombre) VALUES
+('Infraestructura'),
+('Mobiliario'),
+('Equipos Electrónicos'),
+('Instalaciones Eléctricas'),
+('Instalaciones Sanitarias'),
+('Áreas Verdes'),
+('Seguridad'),
+('Limpieza');
