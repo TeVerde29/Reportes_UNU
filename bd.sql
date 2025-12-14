@@ -105,9 +105,9 @@ CREATE TABLE `reporte` (
   `id_reporte` int NOT NULL AUTO_INCREMENT,
   `titulo` varchar(30) NOT NULL,
   `descripcion` varchar(500) DEFAULT NULL,
-  `foto_url` varchar(45) NOT NULL,
+  `foto_url` varchar(100) NOT NULL,
   `fecha_reporte` datetime NOT NULL,
-  `fecha_edicion` datetime DEFAULT NULL,
+  `fecha_edicion` datetime NOT NULL,
   `cantidad_reacciones` int NOT NULL,
   `id_estado` int NOT NULL,
   `id_estudiante` int NOT NULL,
@@ -169,7 +169,7 @@ CREATE TABLE `tipo_problema` (
   `id_tipo_problema` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(45) NOT NULL,
   PRIMARY KEY (`id_tipo_problema`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -178,6 +178,7 @@ CREATE TABLE `tipo_problema` (
 
 LOCK TABLES `tipo_problema` WRITE;
 /*!40000 ALTER TABLE `tipo_problema` DISABLE KEYS */;
+INSERT INTO `tipo_problema` VALUES (1,'Infraestructura'),(2,'Mobiliario'),(3,'Equipos Electrónicos'),(4,'Instalaciones Eléctricas'),(5,'Instalaciones Sanitarias'),(6,'Áreas Verdes'),(7,'Seguridad'),(8,'Limpieza');
 /*!40000 ALTER TABLE `tipo_problema` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -240,7 +241,7 @@ DROP TABLE IF EXISTS `usuario`;
 CREATE TABLE `usuario` (
   `id_usuario` int unsigned NOT NULL AUTO_INCREMENT,
   `codigo` varchar(45) NOT NULL,
-  `clave` varchar(45) NOT NULL,
+  `clave` varchar(255) NOT NULL,
   `id_rol` int NOT NULL,
   `id_estudiante` int DEFAULT NULL,
   PRIMARY KEY (`id_usuario`),
@@ -257,7 +258,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'admin','1234',1,NULL),(2,'0002221081','1081',2,1),(3,'0002221057','1057',2,2);
+INSERT INTO `usuario` VALUES (1,'admin','$2b$10$BoKt2B4CAS7FkCglsDaTuu3TYPKjH2yIwjav4m.c.BXZmAvySof/C',1,NULL),(2,'0002221081','$2b$10$UtxUX3KOUT5lSBwQNYwrI.te8IrqJi2OQip9FxntNoqpVoGMmKfKq',2,1),(3,'0002221057','$2b$10$T04eZVMm/SWO43uVuzz24uT7Ep4uKyXXDugZKoei87RTuhnGqlNIq',2,2);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -270,13 +271,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-13 22:21:49
-INSERT INTO tipo_problema (nombre) VALUES
-('Infraestructura'),
-('Mobiliario'),
-('Equipos Electrónicos'),
-('Instalaciones Eléctricas'),
-('Instalaciones Sanitarias'),
-('Áreas Verdes'),
-('Seguridad'),
-('Limpieza');
+-- Dump completed on 2025-12-14  9:52:12

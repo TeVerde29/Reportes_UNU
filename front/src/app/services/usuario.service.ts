@@ -4,6 +4,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UsuarioResponse } from '../models/usuario.interface';
 
+export interface LoginPayload {
+  codigo: string;
+  clave: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -11,7 +16,7 @@ export class UsuarioService {
   private apiUrl = `${environment.apiUrl}/usuario`;
   constructor(private http: HttpClient) { }
 
-  verificarUsuario(): Observable<UsuarioResponse> {
-    return this.http.get<UsuarioResponse>(this.apiUrl);
+  verificarUsuario(payload: LoginPayload): Observable<UsuarioResponse> {
+    return this.http.post<UsuarioResponse>(this.apiUrl, payload);
   }
 }

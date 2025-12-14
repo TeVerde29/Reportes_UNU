@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const {
-    obtenerUbicacionesPorId
+    obtenerTiposUbiacion
 } = require('../controller/tipo_ubicacionController');
 
-router.get('/:id', obtenerUbicacionesPorId);
+router.get('/', obtenerTiposUbiacion);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 export interface Usuario {
     id_usuario: number;
-    id_rol: number;
+    id_rol: number; 
     id_estudiante?: number; // puede ser null si es admin
 }
 

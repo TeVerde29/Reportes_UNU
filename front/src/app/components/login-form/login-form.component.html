@@ -1,0 +1,51 @@
+<div class="container py-5" style="max-width: 460px;">
+  <div class="card shadow-sm">
+    <div class="card-body p-4">
+      <h4 class="fw-bold mb-3">Iniciar sesión</h4>
+      <p class="text-muted mb-4">Ingresa tu código y clave.</p>
+      <div *ngIf="error" class="alert alert-danger py-2 mb-3">
+        {{ error }}
+      </div>
+      <div *ngIf="successMessage" class="alert alert-success py-2 mb-3">
+        {{ successMessage }}
+      </div>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Código</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="codigo"
+            [class.is-invalid]="f['codigo'].touched && f['codigo'].invalid"
+            placeholder="Ej: 2023123456"
+            autocomplete="username"
+          />
+          <div class="invalid-feedback" *ngIf="f['codigo'].touched && f['codigo'].errors?.['required']">
+            El código es obligatorio.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Clave</label>
+          <input
+            type="password"
+            class="form-control"
+            formControlName="clave"
+            [class.is-invalid]="f['clave'].touched && f['clave'].invalid"
+            placeholder="Tu clave"
+            autocomplete="current-password"
+          />
+          <div class="invalid-feedback" *ngIf="f['clave'].touched && f['clave'].errors?.['required']">
+            La clave es obligatoria.
+          </div>
+        </div>
+        <button class="btn btn-primary w-100" type="submit" [disabled]="loading">
+          <span *ngIf="!loading">Ingresar</span>
+          <span *ngIf="loading">Validando...</span>
+        </button>
+        <div class="text-center mt-3">
+          <a routerLink="/recuperar" class="text-decoration-none">¿Olvidaste tu clave?</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

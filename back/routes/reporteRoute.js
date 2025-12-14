@@ -6,14 +6,14 @@ const {
   actualizarReporte,
   obtenerReportePorId,
   obtenerReportesPorIdEstado,
-  obtenerReportesPorMayorReacciones,
+  obtenerReportesPorCantidadReacciones,
   obtenerReportesPendientesPorIdEstudiante
 } = require('../controller/reporteController');
 
 router.post('/', crearReporte);
 router.put('/:id', actualizarReporte);
 router.get('/estado/:id', obtenerReportesPorIdEstado);
-router.get('/top/reacciones', obtenerReportesPorMayorReacciones);
+router.get('/top/reacciones/', obtenerReportesPorCantidadReacciones);
 router.get('/pendientes/estudiante/:id', obtenerReportesPendientesPorIdEstudiante);
 router.get('/:id', obtenerReportePorId);
 
