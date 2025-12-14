@@ -3,7 +3,11 @@ const db = require('../config/database');
 const obtenerUbicacionesPorId = async (req, res) => {
     try {
         const { id } = req.params;
-        const [ubicaciones] = await db.query(`SELECT * FROM ubicacion WHERE id_ubicacion = ?`, [id]);
+        const [ubicaciones] = await db.query(`
+            SELECT u.*, tu.nombre AS tipo_ubicacion FROM ubicacion u WHERE id_ubicacion = ?
+            INNER JOIN tipo_ubicacion tu ON u.id_tipo_ubicacion = tu.id_tipo_ubicacion
+            `, [id]
+        );
         if (ubicaciones.length === 0) {
             return res.status(404).json({
                 success: false,

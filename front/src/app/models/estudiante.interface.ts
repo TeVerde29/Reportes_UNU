@@ -11,5 +11,5 @@ export interface Estudiante {
 export interface EstudianteResponse {
     success: boolean;
     message: string;
-    data?: Estudiante;
+    data?: Estudiante | Estudiante[];
 }
