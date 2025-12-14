@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const {
-    VerificarUsuario
+    verificarUsuario
 } = require('../controller/usuarioController');
 
-router.post('/', VerificarUsuario);
+router.post('/', verificarUsuario);
 
 module.exports = router;

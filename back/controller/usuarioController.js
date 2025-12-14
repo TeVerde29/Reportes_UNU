@@ -1,7 +1,7 @@
 const db = require('../config/database');
 const bcrypt = require('bcrypt');
 
-const VerificarUsuario = async (req, res) => {
+const verificarUsuario = async (req, res) => {
     try {
         const { codigo, clave } = req.body;
         if (!codigo || !clave) {
@@ -49,5 +49,5 @@ const VerificarUsuario = async (req, res) => {
 };
 
 module.exports = {
-    VerificarUsuario
+    verificarUsuario
 };

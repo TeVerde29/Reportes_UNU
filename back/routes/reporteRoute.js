@@ -12,9 +12,9 @@ const {
 
 router.post('/', crearReporte);
 router.put('/:id', actualizarReporte);
-router.get('/:id', obtenerReportePorId);
 router.get('/estado/:id', obtenerReportesPorIdEstado);
 router.get('/top/reacciones', obtenerReportesPorMayorReacciones);
 router.get('/pendientes/estudiante/:id', obtenerReportesPendientesPorIdEstudiante);
+router.get('/:id', obtenerReportePorId);
 
 module.exports = router;

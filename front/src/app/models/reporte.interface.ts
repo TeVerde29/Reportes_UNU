@@ -9,13 +9,13 @@ export interface Reporte {
     id_estudiante: number;
     id_estado: number;
     id_tipo_problema: number;
-    id_ubicacion: number;
+    id_ubicacion?: number;
     estudiante: string;
     carrera: string;
     estado: string;
     tipo_problema: string;
     ubicacion: string;
-    tipo_ubicacion: string;
+    tipo_ubicacion?: string;
 }
 
 export interface ReporteResponse {
