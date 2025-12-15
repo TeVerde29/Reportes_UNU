@@ -1,19 +1,65 @@
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-  <label>Código</label>
-  <input type="text" formControlName="codigo">
-  <br>
-  <label>Clave</label>
-  <input type="password" formControlName="clave">
-  <br>
-  <div *ngIf="f['codigo'].touched && f['codigo'].invalid">
-    El código es obligatorio.
+<!-- HTML COMPONENT (archivo.component.html) -->
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <img src="/img/unu_logo.png" alt="UNU Logo" class="unu-logo">
+      <h2 class="login-title">UNU Reportes</h2>
+      <p class="login-subtitle">Sistema de Gestión de Reportes</p>
+    </div>
+    
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      
+      <!-- Campo Código -->
+      <div class="form-group">
+        <label class="form-label">Código</label>
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            formControlName="codigo" 
+            class="form-input"
+            placeholder="0002220000"
+          />
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+        </div>
+        <div *ngIf="f['codigo'].touched && f['codigo'].invalid" class="error-message">
+          El código es obligatorio.
+        </div>
+      </div>
+
+      <!-- Campo Clave -->
+      <div class="form-group">
+        <label class="form-label">Clave</label>
+        <div class="input-wrapper">
+          <input 
+            type="password" 
+            formControlName="clave" 
+            class="form-input"
+            placeholder="••••"
+          />
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </span>
+        </div>
+        <div *ngIf="f['clave'].touched && f['clave'].invalid" class="error-message">
+          La clave es obligatoria.
+        </div>
+      </div>
+
+      <!-- Mensajes del sistema -->
+      <div *ngIf="error" class="system-message error-msg">{{ error }}</div>
+      <div *ngIf="successMessage" class="system-message success-msg">{{ successMessage }}</div>
+
+      <!-- Botón Submit -->
+      <button type="submit" class="submit-btn">Ingresar</button>
+      
+    </form>
   </div>
-  <div *ngIf="f['clave'].touched && f['clave'].invalid">
-    La clave es obligatoria.
-  </div>
-  <div *ngIf="error">{{ error }}</div>
-  <div *ngIf="successMessage">{{ successMessage }}</div>
-  <button type="submit" [disabled]="loading">
-    {{ loading ? 'Cargando...' : 'Ingresar' }}
-  </button>
-</form>
+</div>
