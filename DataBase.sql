@@ -95,6 +95,31 @@ INSERT INTO `estudiante` VALUES (1,'Pedro Giovanni','Ricra','Figueroa',11),(2,'L
 UNLOCK TABLES;
 
 --
+-- Table structure for table `reaccion`
+--
+
+DROP TABLE IF EXISTS `reaccion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `reaccion` (
+  `id_reaccion` int NOT NULL AUTO_INCREMENT,
+  `id_estudiante` int DEFAULT NULL,
+  `id_reporte` int DEFAULT NULL,
+  `like` tinyint DEFAULT NULL,
+  PRIMARY KEY (`id_reaccion`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reaccion`
+--
+
+LOCK TABLES `reaccion` WRITE;
+/*!40000 ALTER TABLE `reaccion` DISABLE KEYS */;
+/*!40000 ALTER TABLE `reaccion` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `reporte`
 --
 
@@ -131,7 +156,7 @@ CREATE TABLE `reporte` (
 
 LOCK TABLES `reporte` WRITE;
 /*!40000 ALTER TABLE `reporte` DISABLE KEYS */;
-INSERT INTO `reporte` VALUES (1,'Grieta en pared del aula','Se observó una grieta en la pared del aula, cerca de la puerta. La fisura es visible y parece haberse extendido con el tiempo. Se solicita inspección técnica para identificar la causa (humedad o asentamiento), aplicar resane/refuerzo y prevenir desprendimientos o filtraciones que afecten la seguridad del ambiente.','/uploads/reportes/HuH-Oc2Jx5BWnG__.jpg','2025-12-16 01:10:38','2025-12-16 01:10:38',0,1,1,1,1),(2,'Sillas dañadas en salón','Varias sillas del salón tienen patas sueltas y estructura inestable; al sentarse se mueven o se ladean. Esto incrementa el riesgo de caídas y lesiones durante clases. Se recomienda retirar las unidades dañadas, ajustar tornillos y uniones, reforzar o reemplazar las que presenten piezas quebradas.','/uploads/reportes/ArvQF4yVHRI3FrLW.jpg','2025-12-16 01:10:38','2025-12-16 01:10:38',2,2,2,2,2),(3,'Proyector no enciende','El proyector no enciende al conectarlo y no muestra señal, impidiendo presentaciones. Se requiere revisar cable de poder, adaptador, toma eléctrica y estado del botón/indicadores. Solicitar mantenimiento para diagnóstico (fuente, fusible o falla interna) y reparación o sustitución para restablecer el servicio.','/uploads/reportes/osJVkfbBb0nUrbjw.jpg','2025-12-16 01:10:38','2025-12-16 01:10:38',5,2,1,3,3),(4,'Tomacorriente chispea','Al usar el tomacorriente, se producen chispas al conectar un cargador, indicando posible falso contacto o deterioro interno. Es un riesgo eléctrico y puede dañar equipos o causar cortocircuitos. Se pide deshabilitarlo y señalizarlo de inmediato, reemplazar el punto y realizar pruebas de seguridad antes de habilitarlo.','/uploads/reportes/5sZrpCBrPhsdzT2q.jpg','2025-12-16 01:10:38','2025-12-16 01:10:38',1,3,2,4,4),(5,'Falta limpieza en pasillo','En el pasillo hay basura acumulada y mal olor persistente, afectando la higiene y el tránsito. Se solicita limpieza inmediata, retiro de residuos y desinfección si corresponde. Además, reforzar la frecuencia de mantenimiento y verificar la colocación de tachos para evitar que el problema se repita.','/uploads/reportes/2aAt8k4uLXA5FjuT.jpg','2025-12-16 01:10:38','2025-12-16 01:10:38',3,4,1,8,5);
+INSERT INTO `reporte` VALUES (1,'Grieta en pared del aula','Se observó una grieta en la pared del aula, cerca de la puerta. La fisura es visible y parece haberse extendido con el tiempo. Se solicita inspección técnica para identificar la causa (humedad o asentamiento), aplicar resane/refuerzo y prevenir desprendimientos o filtraciones que afecten la seguridad del ambiente.','/uploads/reportes/HuH-Oc2Jx5BWnG__.jpg','2025-12-01 01:10:38','2025-12-19 01:10:38',0,2,1,1,1),(2,'Sillas dañadas en salón','Varias sillas del salón tienen patas sueltas y estructura inestable; al sentarse se mueven o se ladean. Esto incrementa el riesgo de caídas y lesiones durante clases. Se recomienda retirar las unidades dañadas, ajustar tornillos y uniones, reforzar o reemplazar las que presenten piezas quebradas.','/uploads/reportes/ArvQF4yVHRI3FrLW.jpg','2025-12-01 01:10:38','2025-12-23 01:10:38',2,2,2,2,2),(3,'Proyector no enciende','El proyector no enciende al conectarlo y no muestra señal, impidiendo presentaciones. Se requiere revisar cable de poder, adaptador, toma eléctrica y estado del botón/indicadores. Solicitar mantenimiento para diagnóstico (fuente, fusible o falla interna) y reparación o sustitución para restablecer el servicio.','/uploads/reportes/osJVkfbBb0nUrbjw.jpg','2025-12-01 01:10:38','2025-12-15 01:10:38',5,2,2,3,3),(4,'Tomacorriente chispea','Al usar el tomacorriente, se producen chispas al conectar un cargador, indicando posible falso contacto o deterioro interno. Es un riesgo eléctrico y puede dañar equipos o causar cortocircuitos. Se pide deshabilitarlo y señalizarlo de inmediato, reemplazar el punto y realizar pruebas de seguridad antes de habilitarlo.','/uploads/reportes/5sZrpCBrPhsdzT2q.jpg','2025-12-01 01:10:38','2025-12-09 01:10:38',1,2,1,4,4),(5,'Falta limpieza en pasillo','En el pasillo hay basura acumulada y mal olor persistente, afectando la higiene y el tránsito. Se solicita limpieza inmediata, retiro de residuos y desinfección si corresponde. Además, reforzar la frecuencia de mantenimiento y verificar la colocación de tachos para evitar que el problema se repita.','/uploads/reportes/2aAt8k4uLXA5FjuT.jpg','2025-12-01 01:10:38','2025-12-02 01:10:38',3,2,1,8,5);
 /*!40000 ALTER TABLE `reporte` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -247,4 +272,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-16  7:42:38
+-- Dump completed on 2025-12-16  8:29:51
