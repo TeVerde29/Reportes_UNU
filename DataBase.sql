@@ -114,15 +114,15 @@ CREATE TABLE `reporte` (
   `id_tipo_problema` int NOT NULL,
   `id_ubicacion` int DEFAULT NULL,
   PRIMARY KEY (`id_reporte`),
-  KEY `fk_reporte_ubicacion_idx` (`id_ubicacion`),
   KEY `fk_reporte_estudiante_idx` (`id_estudiante`),
   KEY `fk_reporte_tipo_problema_idx` (`id_tipo_problema`),
   KEY `fk_reporte_estado_idx` (`id_estado`),
+  KEY `fk_reporte_ubicacion_idx` (`id_ubicacion`),
   CONSTRAINT `fk_reporte_estado` FOREIGN KEY (`id_estado`) REFERENCES `estado` (`id_estado`),
   CONSTRAINT `fk_reporte_estudiante` FOREIGN KEY (`id_estudiante`) REFERENCES `estudiante` (`id_estudiante`),
   CONSTRAINT `fk_reporte_tipo_problema` FOREIGN KEY (`id_tipo_problema`) REFERENCES `tipo_problema` (`id_tipo_problema`),
   CONSTRAINT `fk_reporte_ubicacion` FOREIGN KEY (`id_ubicacion`) REFERENCES `ubicacion` (`id_ubicacion`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -131,6 +131,7 @@ CREATE TABLE `reporte` (
 
 LOCK TABLES `reporte` WRITE;
 /*!40000 ALTER TABLE `reporte` DISABLE KEYS */;
+INSERT INTO `reporte` VALUES (1,'Grieta en pared del aula','Se observó una grieta cerca de la puerta; requiere revisión.','/uploads/reportes/grieta-en-pared-del-aula.jpg','2025-12-16 01:10:38','2025-12-16 01:10:38',0,1,1,1,1),(2,'Sillas dañadas en salón','Varias sillas con patas sueltas, riesgo de caída.','/uploads/reportes/sillas-danadas-en-salon.jpg','2025-12-16 01:10:38','2025-12-16 01:10:38',2,2,2,2,2),(3,'Proyector no enciende','El proyector del aula no enciende al conectarlo.','/uploads/reportes/proyector.jpg','2025-12-16 01:10:38','2025-12-16 01:10:38',5,2,1,3,3),(4,'Tomacorriente chispea','Al conectar un cargador el tomacorriente hace chispas.','/uploads/reportes/tomacorriente-chispea.jpg','2025-12-16 01:10:38','2025-12-16 01:10:38',1,3,2,4,4),(5,'Falta limpieza en pasillo','Hay basura acumulada y mal olor en el pasillo.','/uploads/reportes/falta-limpieza-en-pasillo.jpg','2025-12-16 01:10:38','2025-12-16 01:10:38',3,4,1,8,5);
 /*!40000 ALTER TABLE `reporte` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -183,29 +184,6 @@ INSERT INTO `tipo_problema` VALUES (1,'Infraestructura'),(2,'Mobiliario'),(3,'Eq
 UNLOCK TABLES;
 
 --
--- Table structure for table `tipo_ubicacion`
---
-
-DROP TABLE IF EXISTS `tipo_ubicacion`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tipo_ubicacion` (
-  `id_tipo_ubicacion` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(45) NOT NULL,
-  PRIMARY KEY (`id_tipo_ubicacion`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tipo_ubicacion`
---
-
-LOCK TABLES `tipo_ubicacion` WRITE;
-/*!40000 ALTER TABLE `tipo_ubicacion` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tipo_ubicacion` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `ubicacion`
 --
 
@@ -214,12 +192,9 @@ DROP TABLE IF EXISTS `ubicacion`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ubicacion` (
   `id_ubicacion` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(45) NOT NULL,
-  `id_tipo_ubicacion` int NOT NULL,
-  PRIMARY KEY (`id_ubicacion`),
-  KEY `fk_ubicacion_tipo_ubicacion_idx` (`id_tipo_ubicacion`),
-  CONSTRAINT `fk_ubicacion_tipo_ubicacion` FOREIGN KEY (`id_tipo_ubicacion`) REFERENCES `tipo_ubicacion` (`id_tipo_ubicacion`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  `nombre` varchar(100) NOT NULL,
+  PRIMARY KEY (`id_ubicacion`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -228,6 +203,7 @@ CREATE TABLE `ubicacion` (
 
 LOCK TABLES `ubicacion` WRITE;
 /*!40000 ALTER TABLE `ubicacion` DISABLE KEYS */;
+INSERT INTO `ubicacion` VALUES (1,'Pabellón 1'),(2,'Pabellón 2'),(3,'Pabellón 3'),(4,'Pabellón 4'),(5,'Pabellón 5'),(6,'Pabellón 6'),(7,'Pabellón 7'),(8,'FACULTAD DE INGENIERÍA DE SISTEMAS Y DE INGENIERÍA CIVIL'),(9,'FACULTAD DE CIENCIAS DE LA SALUD Y MEDICINA HUMANA'),(10,'FACULTAD DE DERECHO Y CIENCIAS POLITICAS'),(11,'FACULTAD DE CIENCIAS ECONOMICAS, ADMINISTRATIVAS Y CONTABLES'),(12,'FACULTAD DE CIENCIAS AGROPECUARIAS'),(13,'FACULTAD DE CIENCIAS FORESTALES Y AMBIENTALES'),(14,'FACULTAD DE EDUCACIÓN Y CIENCIAS SOCIALES'),(15,'FACULTAD DE CIENCIAS DE LA SALUD'),(16,'Estacionamiento 1'),(17,'Estacionamiento 2'),(18,'Estacionamiento 3'),(19,'Estacionamiento 4'),(20,'Estacionamiento 5'),(21,'Estacionamiento 6'),(22,'Estacionamiento 7'),(23,'Estacionamiento 8'),(24,'Estacionamiento 9'),(25,'AUDITORIO GENERAL'),(26,'Motelito'),(27,'Campo Deportivo');
 /*!40000 ALTER TABLE `ubicacion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -271,4 +247,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-14  9:52:12
+-- Dump completed on 2025-12-16  1:11:24
