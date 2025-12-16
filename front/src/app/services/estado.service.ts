@@ -15,4 +15,8 @@ export class EstadoService {
     return this.http.get<EstadoResponse>(this.apiUrl);
   }
 
+  obtenerEstadoPorNombre(nombre: string): Observable<EstadoResponse> {
+    return this.http.get<EstadoResponse>(`${this.apiUrl}/${encodeURIComponent(nombre)}`);
+  }
+
 }

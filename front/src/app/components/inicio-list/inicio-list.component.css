@@ -1,0 +1,404 @@
+.feed-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f5f7fa;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+/* Header */
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.feed-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: #00643f;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #00733f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 100, 63, 0.3);
+}
+
+.btn-secondary {
+  background: #f7fafc;
+  color: #4a5568;
+  border: 2px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+/* Alertas */
+.alert {
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert-error {
+  background: #fff5f5;
+  color: #c53030;
+  border: 2px solid #feb2b2;
+}
+
+/* Estado vacío */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 16px;
+  color: #718096;
+}
+
+.empty-state svg {
+  margin-bottom: 20px;
+  color: #cbd5e0;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: #2d3748;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Feed de reportes */
+.reports-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Tarjeta de reporte */
+.report-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.report-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Header del reporte */
+.report-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  align-items: flex-start;
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #00643f 0%, #00733f 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.report-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.meta-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.student-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.career-tag {
+  font-size: 14px;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.meta-secondary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #718096;
+  flex-wrap: wrap;
+}
+
+.meta-separator {
+  color: #cbd5e0;
+}
+
+.problem-type {
+  font-weight: 500;
+  color: #00643f;
+}
+
+.location {
+  color: #4a5568;
+}
+
+.location-type {
+  color: #718096;
+  font-style: italic;
+}
+
+.report-status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-pendiente {
+  background: #fef5e7;
+  color: #d68910;
+}
+
+.status-en-proceso {
+  background: #ebf8ff;
+  color: #2c5282;
+}
+
+.status-resuelto {
+  background: #f0fff4;
+  color: #276749;
+}
+
+.status-rechazado {
+  background: #fff5f5;
+  color: #c53030;
+}
+
+/* Contenido del reporte */
+.report-content {
+  margin-bottom: 16px;
+}
+
+.report-title {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a202c;
+  line-height: 1.4;
+}
+
+.report-description {
+  margin: 0 0 16px;
+  font-size: 15px;
+  color: #4a5568;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.report-image {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-top: 12px;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.report-image:hover {
+  transform: scale(1.02);
+}
+
+/* Footer del reporte */
+.report-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.like-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f7fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.like-button:hover {
+  background: #00643f;
+  color: white;
+  border-color: #00643f;
+  transform: scale(1.05);
+}
+
+.like-button svg {
+  transition: transform 0.3s;
+}
+
+.like-button:hover svg {
+  transform: scale(1.1);
+}
+
+.like-count {
+  font-weight: 700;
+}
+
+.report-date {
+  font-size: 13px;
+  color: #718096;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+}
+
+.report-id {
+  font-size: 13px;
+  font-weight: 600;
+  color: #a0aec0;
+  font-family: 'Courier New', monospace;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .feed-container {
+    padding: 12px;
+  }
+
+  .feed-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .feed-title {
+    font-size: 20px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .report-card {
+    padding: 16px;
+  }
+
+  .report-header {
+    flex-wrap: wrap;
+  }
+
+  .report-status {
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .report-footer {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+}

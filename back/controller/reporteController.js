@@ -99,14 +99,18 @@ const obtenerReportePorId = async (req, res) => {
         const { id } = req.params;
         const [reportes] = await db.query(`
             SELECT
-            r.*, CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante, c.nombre AS carrera, es.nombre AS estado tp.nombre AS tipo_problema, u.nombre AS ubicacion, tu.nombre AS tipo_ubicacion
+            r.*,
+            CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante,
+            c.nombre AS carrera,
+            es.nombre AS estado,
+            tp.nombre AS tipo_problema,
+            u.nombre AS ubicacion
             FROM reporte r
             INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
             INNER JOIN carrera c ON e.id_carrera = c.id_carrera
             INNER JOIN estado es ON r.id_estado = es.id_estado
             INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
             INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
-            INNER JOIN tipo_ubicacion tu ON u.id_tipo_ubicacion = tu.id_tipo_ubicacion
             WHERE r.id_reporte = ?
             `, [id]
         );
@@ -135,15 +139,21 @@ const obtenerReportesPorIdEstado = async (req, res) => {
         const { id } = req.params;
         const [reporte] = await db.query(`
             SELECT
-            r.*, CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante, c.nombre AS carrera, es.nombre AS estado, tp.nombre AS tipo_problema, u.nombre AS ubicacion, tu.nombre AS tipo_ubicacion
+            r.*,
+            CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante,
+            c.nombre AS carrera,
+            es.nombre AS estado,
+            tp.nombre AS tipo_problema,
+            u.nombre AS ubicacion
             FROM reporte r
             INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
             INNER JOIN carrera c ON e.id_carrera = c.id_carrera
             INNER JOIN estado es ON r.id_estado = es.id_estado
             INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
             INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
-            INNER JOIN tipo_ubicacion tu ON u.id_tipo_ubicacion = tu.id_tipo_ubicacion
-            WHERE r.id_estado = ? ORDER BY r.fecha_edicion DESC`, [id]
+            WHERE r.id_estado = ?
+            ORDER BY r.fecha_edicion DESC
+            `, [id]
         );
         if (reporte.length === 0) {
             return res.status(404).json({
@@ -171,14 +181,18 @@ const obtenerReportesPorCantidadReacciones = async (req, res) => {
         const estado = 'Aceptado';
         const [reportes] = await db.query(`
             SELECT
-            r.*, CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante, c.nombre AS carrera, es.nombre AS estado, tp.nombre AS tipo_problema, u.nombre AS ubicacion, tu.nombre AS tipo_ubicacion
+            r.*,
+            CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante,
+            c.nombre AS carrera,
+            es.nombre AS estado,
+            tp.nombre AS tipo_problema,
+            u.nombre AS ubicacion
             FROM reporte r
             INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
             INNER JOIN carrera c ON e.id_carrera = c.id_carrera
             INNER JOIN estado es ON r.id_estado = es.id_estado
             INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
             INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
-            INNER JOIN tipo_ubicacion tu ON u.id_tipo_ubicacion = tu.id_tipo_ubicacion
             WHERE es.nombre = ?
             ORDER BY r.cantidad_reacciones DESC
             `, [estado]
@@ -210,14 +224,17 @@ const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
         const estado = 'Pendiente';
         const [reportes] = await db.query(`
             SELECT
-            r.*, CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante, c.nombre AS carrera, tp.nombre AS tipo_problema, u.nombre AS ubicacion, tu.nombre AS tipo_ubicacion
+            r.*,
+            CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante,
+            c.nombre AS carrera,
+            tp.nombre AS tipo_problema,
+            u.nombre AS ubicacion
             FROM reporte r
             INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
             INNER JOIN carrera c ON e.id_carrera = c.id_carrera
             INNER JOIN estado es ON r.id_estado = es.id_estado
             INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
             INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
-            INNER JOIN tipo_ubicacion tu ON u.id_tipo_ubicacion = tu.id_tipo_ubicacion
             WHERE es.nombre = ? AND r.id_estudiante = ?
             ORDER BY r.fecha_reporte DESC
             `, [estado, id]

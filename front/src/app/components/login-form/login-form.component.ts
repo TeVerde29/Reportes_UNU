@@ -36,24 +36,22 @@ export class LoginFormComponent implements OnInit {
   onSubmit(): void {
     this.error = '';
     this.successMessage = '';
-
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
-
     this.usuarioService.verificarUsuario(this.loginForm.value).subscribe({
       next: (resp: UsuarioResponse) => {
         if (!resp.success || !resp.data) {
           this.error = resp.message || 'No se pudo iniciar sesión';
           return;
         }
-
         this.successMessage = resp.message;
         localStorage.setItem('usuario', JSON.stringify(resp.data));
-
         const route = resp.data.id_rol === 1 ? '/admin' : '/inicio';
-        this.router.navigate([route]);
+        this.router.navigateByUrl(route).catch(() => {
+          this.router.navigateByUrl('/inicio');
+        });
       },
       error: (err) => {
         this.error = err?.error?.message || 'Error al conectar con el servidor';
