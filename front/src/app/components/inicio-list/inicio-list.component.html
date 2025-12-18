@@ -24,16 +24,6 @@
     </div>
   </div>
 
-  <!-- Mensaje de error -->
-  <div *ngIf="error" class="alert alert-error">
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="10"/>
-      <line x1="15" y1="9" x2="9" y2="15"/>
-      <line x1="9" y1="9" x2="15" y2="15"/>
-    </svg>
-    {{ error }}
-  </div>
-
   <!-- Sin reportes -->
   <div *ngIf="!error && reportes.length === 0" class="empty-state">
     <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -61,20 +51,15 @@
           <div class="meta-primary">
             <strong class="student-name">{{ r.estudiante }}</strong>
             <span class="meta-separator">•</span>
-            <span class="career-tag">{{ r.carrera }}</span>
+            <span class="career-tag">Estudiante de {{ r.carrera }}</span>
           </div>
           <div class="meta-secondary">
             <span class="problem-type">{{ r.tipo_problema }}</span>
             <span class="meta-separator">•</span>
             <span class="location">
               {{ r.ubicacion }}
-              <span *ngIf="r.tipo_ubicacion" class="location-type">({{ r.tipo_ubicacion }})</span>
             </span>
           </div>
-        </div>
-
-        <div class="report-status" [class]="'status-' + r.estado.toLowerCase()">
-          {{ r.estado }}
         </div>
       </div>
 
@@ -82,14 +67,7 @@
       <div class="report-content">
         <h3 class="report-title">{{ r.titulo }}</h3>
         <p *ngIf="r.descripcion" class="report-description">{{ r.descripcion }}</p>
-        
-        <img
-          *ngIf="r.foto_url"
-          [src]="'http://localhost:3000' + r.foto_url"
-          [alt]="r.titulo"
-          loading="lazy"
-          class="report-image"
-        />
+        <img *ngIf="r.foto_url" [src]="'http://localhost:3000' + r.foto_url" [alt]="r.titulo" loading="lazy" class="report-image"/>
       </div>
 
       <!-- Footer del reporte -->
