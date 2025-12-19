@@ -14,10 +14,8 @@ import { UsuarioResponse } from '../../models/usuario.interface';
 })
 export class LoginFormComponent implements OnInit {
   loginForm: FormGroup;
-  estudianteId: number | null = null;
   error: string = '';
   successMessage: string = '';
-  loading = false;
   
   constructor(
     private fb: FormBuilder,
@@ -33,31 +31,39 @@ export class LoginFormComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onSubmit(): void {
-    this.error = '';
-    this.successMessage = '';
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
-    this.usuarioService.verificarUsuario(this.loginForm.value).subscribe({
-      next: (resp: UsuarioResponse) => {
-        if (!resp.success || !resp.data) {
-          this.error = resp.message || 'No se pudo iniciar sesión';
-          return;
-        }
+onSubmit(): void {
+  this.error = '';
+  this.successMessage = '';
+  if (this.loginForm.invalid) {
+    this.loginForm.markAllAsTouched();
+    return;
+  }
+  this.usuarioService.verificarUsuario(this.loginForm.value).subscribe({
+    next: (resp: UsuarioResponse) => {
+      if (!resp.success || !resp.data) {
+        this.error = resp.message || 'No se pudo iniciar sesión';
+        return;
+      } 
+      else {
         this.successMessage = resp.message;
         localStorage.setItem('usuario', JSON.stringify(resp.data));
-        const route = resp.data.id_rol === 1 ? '/admin' : '/inicio';
+        let route: string;
+        if (resp.data.id_rol === 1) {
+          route = '/admin';
+        } 
+        else {
+          route = '/inicio';
+        }
         this.router.navigateByUrl(route).catch(() => {
-          this.router.navigateByUrl('/inicio');
+          this.router.navigateByUrl('/inicio/' + resp.data?.id_usuario);
         });
-      },
-      error: (err) => {
-        this.error = err?.error?.message || 'Error al conectar con el servidor';
       }
-    });
-  }
+    },
+    error: (err) => {
+      this.error = err?.error?.message || 'Error al conectar con el servidor';
+    }
+  });
+}
 
   get f() {
     return this.loginForm.controls;

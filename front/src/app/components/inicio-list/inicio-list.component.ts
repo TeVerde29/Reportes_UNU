@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-//import { RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ReporteService } from '../../services/reporte.service';
 import { Reporte } from '../../models/reporte.interface';
 import { EstadoService } from '../../services/estado.service';
+import { EstudianteService } from '../../services/estudiante.service';
+import { Estudiante } from '../../models/estudiante.interface';
 
 @Component({
   selector: 'app-inicio-list',
@@ -17,14 +19,44 @@ import { EstadoService } from '../../services/estado.service';
 export class InicioListComponent implements OnInit{
   reportes: Reporte[] = [];
   error: string = '';
+  idUsuario: number = 0;
+  estudiante: Estudiante | null = null;
   
   constructor(
     private reporteService: ReporteService,
-    private estadoServide: EstadoService
+    private estadoServide: EstadoService,
+    private estudianteService: EstudianteService,
+    private route: ActivatedRoute
   ) {}
   
   ngOnInit(): void {
     this.cargarReportes();
+    this.route.params.subscribe(params => {
+      if(params['id']){
+        this.idUsuario = +params['id'];
+        this.cargarAlumno();
+      }
+    });
+  }
+
+  cargarAlumno(): void {
+    this.estudianteService.obtenerEstudiantePorIdUsuario(this.idUsuario).subscribe({
+      next: (response) => {
+      if (response.success && response.data) {
+        if (Array.isArray(response.data)) {
+          this.estudiante = response.data.length > 0 ? response.data[0] : null;
+        } else {
+          this.estudiante = response.data;
+        }
+        if (this.estudiante) {
+          console.log('ID ESTUDIANTE:', this.estudiante.id_estudiante);
+        }
+      }
+    },
+      error: (err) => {
+        console.log('Error al obtener el id Estudiante: ', err);
+      }
+    });
   }
 
   cargarReportes(): void {

@@ -6,6 +6,6 @@ import { AdminListComponent } from './components/admin-list/admin-list.component
 export const routes: Routes = [
   { path: "", redirectTo: "login", pathMatch: "full" },
   { path: 'login', component: LoginFormComponent },
-  { path: 'inicio', component: InicioListComponent},
-  { path: 'admin', component: AdminListComponent}
+  { path: 'inicio/:id', component: InicioListComponent},
+  { path: 'admin/:id', component: AdminListComponent}
 ];
