@@ -1,6 +1,5 @@
 <!-- HTML COMPONENT (reportes.component.html) -->
 <div class="feed-container">
-  
   <!-- Usuario logueado (alumno actual) -->
   <div *ngIf="estudiante" class="current-user">
     <div class="current-user-avatar">
@@ -9,65 +8,41 @@
         <circle cx="12" cy="7" r="4"/>
       </svg>
     </div>
+
     <div class="current-user-info">
-      <strong>{{ estudiante.nombres }} {{ estudiante.apellido_paterno }}</strong>
+      <strong>
+        {{ estudiante.nombres }} {{ estudiante.apellido_paterno }}
+      </strong>
       <small>Este eres tú</small>
     </div>
   </div>
 
-  <!-- Header principal con título -->
+  <!-- Header con botones de acción -->
   <div class="feed-header">
-    <div class="header-title-section">
-      <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" class="title-icon">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-        <line x1="12" y1="18" x2="12" y2="12"/>
-        <line x1="9" y1="15" x2="15" y2="15"/>
-      </svg>
-      <h1 class="feed-title">Reportes de Incidencias</h1>
+    <h1 class="feed-title">Reportes de Incidencias</h1>
+    <div class="action-buttons">
+      <button type="button" class="btn-secondary">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+          <line x1="9" y1="9" x2="9.01" y2="9"/>
+          <line x1="15" y1="9" x2="15.01" y2="9"/>
+        </svg>
+        Más reacciones
+      </button>
+      <button type="button" class="btn-primary">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Nuevo reporte
+      </button>
     </div>
-    
-    <!-- Botón de crear reporte (destacado) -->
-    <button type="button" class="btn-create">
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
-        <line x1="12" y1="5" x2="12" y2="19"/>
-        <line x1="5" y1="12" x2="19" y2="12"/>
-      </svg>
-      Nuevo reporte
-    </button>
-  </div>
-
-  <!-- Sección de filtros (centrada) -->
-  <div class="filter-section">
-    <button 
-      type="button" 
-      class="filter-btn"
-      [class.active]="vistaActual === 'recientes'"
-      (click)="cambiarVista('recientes')">
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"/>
-        <polyline points="12 6 12 12 16 14"/>
-      </svg>
-      Más recientes
-      <span class="badge-count">{{ reportes.length }}</span>
-    </button>
-    
-    <button 
-      type="button" 
-      class="filter-btn"
-      [class.active]="vistaActual === 'populares'"
-      (click)="cambiarVista('populares')">
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-      </svg>
-      Más reacciones
-      <span class="badge-count">{{ reportes.length }}</span>
-    </button>
   </div>
 
   <!-- Sin reportes -->
   <div *ngIf="!error && reportes.length === 0" class="empty-state">
-    <svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.5">
+    <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5">
       <path d="M9 11l3 3L22 4"/>
       <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
     </svg>
@@ -92,16 +67,12 @@
           <div class="meta-primary">
             <strong class="student-name">{{ r.estudiante }}</strong>
             <span class="meta-separator">•</span>
-            <span class="career-tag">{{ r.carrera }}</span>
+            <span class="career-tag">Estudiante de {{ r.carrera }}</span>
           </div>
           <div class="meta-secondary">
-            <span class="problem-badge">{{ r.tipo_problema }}</span>
+            <span class="problem-type">{{ r.tipo_problema }}</span>
             <span class="meta-separator">•</span>
             <span class="location">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
               {{ r.ubicacion }}
             </span>
           </div>
@@ -112,32 +83,23 @@
       <div class="report-content">
         <h3 class="report-title">{{ r.titulo }}</h3>
         <p *ngIf="r.descripcion" class="report-description">{{ r.descripcion }}</p>
-        <img 
-          *ngIf="r.foto_url" 
-          [src]="'http://localhost:3000' + r.foto_url" 
-          [alt]="r.titulo" 
-          loading="lazy" 
-          class="report-image"/>
+        <img *ngIf="r.foto_url" [src]="'http://localhost:3000' + r.foto_url" [alt]="r.titulo" loading="lazy" class="report-image"/>
       </div>
 
       <!-- Footer del reporte -->
       <div class="report-footer">
-        <div class="footer-actions">
-          <button type="button" (click)="darLike(r)" class="action-btn like-btn">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+        <div class="footer-left">
+          <button type="button" (click)="darLike(r)" class="like-button">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
             </svg>
-            <span>{{ r.cantidad_reacciones }}</span>
+            <span class="like-count">{{ r.cantidad_reacciones }}</span>
           </button>
-          <span class="report-date">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
-            {{ r.fecha_edicion }}
-          </span>
+          <span class="report-date">{{ r.fecha_edicion }}</span>
         </div>
-        <span class="report-id">#{{ r.id_reporte }}</span>
+        <div class="footer-right">
+          <span class="report-id">#{{ r.id_reporte }}</span>
+        </div>
       </div>
 
     </div>
