@@ -3,7 +3,7 @@ const router = express.Router();
 
 const {
     obtenerUbicacionesPorId
-} = require('../controller/ubicacionController');
+} = require('../controllers/ubicacionController');
 
 router.get('/:id', obtenerUbicacionesPorId);
 

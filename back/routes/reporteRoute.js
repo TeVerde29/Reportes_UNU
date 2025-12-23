@@ -8,7 +8,7 @@ const {
   obtenerReportesPorIdEstado,
   obtenerReportesPorCantidadReacciones,
   obtenerReportesPendientesPorIdEstudiante
-} = require('../controller/reporteController');
+} = require('../controllers/reporteController');
 
 router.post('/', crearReporte);
 router.put('/:id', actualizarReporte);

@@ -4,7 +4,7 @@ const router = express.Router();
 const {
     obtenerEstados,
     obtenerEstadoPorNombre
-} = require('../controller/estadoController');
+} = require('../controllers/estadoController');
 
 router.get('/', obtenerEstados);
 router.get('/:nombre', obtenerEstadoPorNombre);

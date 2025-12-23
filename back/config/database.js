@@ -21,5 +21,4 @@ pool.getConnection((err, connection) => {
     }
 });
 
-
 module.exports = promisePool;

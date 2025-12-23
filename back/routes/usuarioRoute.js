@@ -3,7 +3,7 @@ const router = express.Router();
 
 const {
     verificarUsuario
-} = require('../controller/usuarioController');
+} = require('../controllers/usuarioController');
 
 router.post('/', verificarUsuario);
 

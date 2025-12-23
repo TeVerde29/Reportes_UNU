@@ -4,7 +4,7 @@ const router = express.Router();
 const {
     obtenerEstudiantePorId,
     obtenerEstudiantePorIdUsuario
-} = require('../controller/estudianteController');
+} = require('../controllers/estudianteController');
 
 router.get('/:id', obtenerEstudiantePorId);
 router.get('/usuario/:id', obtenerEstudiantePorIdUsuario);

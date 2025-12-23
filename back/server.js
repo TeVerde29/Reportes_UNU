@@ -11,6 +11,39 @@ const tipoProblema  = require('./routes/tipo_problemaRoute');
 const ubicacion     = require('./routes/ubicacionRoute');
 const usuario       = require('./routes/usuarioRoute');
 
+app.get('/', (req, res) => {
+    res.json({
+        mensaje: "API SISTEMA DE REPORTE DE INCIDENCIAS - Backend",
+        version: "1.0.0",
+        endpoints: { // Falta poner las rutas usadas en cada controlador
+            estado: {
+            },
+            estudiante: {
+            },
+            reaccion: {
+            },
+            reporte: {
+                crear: "POST /api/reporte",
+                actualizar: "PUT /api/reporte/:id",
+                obtenerPorId: "GET /api/reporte/:id",
+                porEstado: "GET /api/reporte/estado/:id",
+                topPorReacciones: "GET /api/reporte/top/reacciones",
+                pendientesPorEstudiante: "GET /api/reporte/pendientes/estudiante/:id"
+            },
+            tipoProblema: {
+            },
+            ubicacion: {
+            },
+            usuario: {
+            }
+        },
+        autenticacion: {
+            tipo: "Bearer Token (JWT)",
+            header: "Authorization: Bearer <token>"
+        }
+    });
+});
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -27,12 +60,18 @@ app.use('/api/tipoProblema', tipoProblema);
 app.use('/api/ubicacion', ubicacion);
 app.use('/api/usuario', usuario);
 
-app.get('/', (req, res) => {
-    res.json({
-        mensaje: 'API PARCIAL'
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        mensaje: "Ruta no encontrada"
     });
 });
 
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`)
+    console.log('═══════════════════════════════════════════');
+    console.log('Servidor con JWT inicializado correctamente');
+    console.log(`URL: http://localhost:${PORT}`);
+    console.log(`Base de datos: ${process.env.DB_NAME || 'proyecto_swlibre'}`);
+    console.log(`JWT configurado - Expiración: ${process.env.JWT_EXPIRES_IN || '24h'}`);
+    console.log('═══════════════════════════════════════════');
 });

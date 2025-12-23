@@ -3,7 +3,7 @@ const router = express.Router();
 
 const {
     obtenerTiposProblema
-} = require('../controller/tipo_problemaController');
+} = require('../controllers/tipo_problemaController');
 
 router.get('/', obtenerTiposProblema);
 
