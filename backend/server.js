@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 const estado        = require('./routes/estadoRoute');
 const estudiante    = require('./routes/estudianteRoute');
@@ -10,6 +12,11 @@ const reporte       = require('./routes/reporteRoute');
 const tipoProblema  = require('./routes/tipo_problemaRoute');
 const ubicacion     = require('./routes/ubicacionRoute');
 const usuario       = require('./routes/usuarioRoute');
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/', (req, res) => {
     res.json({
@@ -43,14 +50,6 @@ app.get('/', (req, res) => {
         }
     });
 });
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/estado', estado);
 app.use('/api/estudiante', estudiante);
