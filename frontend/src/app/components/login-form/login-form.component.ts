@@ -43,21 +43,11 @@ onSubmit(): void {
       if (!resp.success || !resp.data) {
         this.error = resp.message || 'No se pudo iniciar sesión';
         return;
-      } 
-      else {
-        this.successMessage = resp.message;
-        localStorage.setItem('usuario', JSON.stringify(resp.data));
-        let route: string;
-        if (resp.data.id_rol === 1) {
-          route = '/admin';
-        } 
-        else {
-          route = '/inicio';
-        }
-        this.router.navigateByUrl(route).catch(() => {
-          this.router.navigateByUrl('/inicio/' + resp.data?.id_usuario);
-        });
       }
+      this.successMessage = resp.message || 'Inicio de sesión exitoso';
+      localStorage.setItem('usuario', JSON.stringify(resp.data));
+      const route = (resp.data.id_rol === 1) ? '/admin' : '/inicio';
+      this.router.navigateByUrl(route);
     },
     error: (err) => {
       this.error = err?.error?.message || 'Error al conectar con el servidor';
