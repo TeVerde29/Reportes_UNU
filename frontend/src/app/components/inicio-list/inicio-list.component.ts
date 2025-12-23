@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ReporteService } from '../../services/reporte.service';
 import { Reporte } from '../../models/reporte.interface';
@@ -11,8 +10,8 @@ import { Estudiante } from '../../models/estudiante.interface';
 
 @Component({
   selector: 'app-inicio-list',
-  standalone: true, // <- Colocar
-  imports: [CommonModule, FormsModule], // <- Colocar
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './inicio-list.component.html',
   styleUrl: './inicio-list.component.css'
 })
@@ -26,17 +25,28 @@ export class InicioListComponent implements OnInit{
     private reporteService: ReporteService,
     private estadoServide: EstadoService,
     private estudianteService: EstudianteService,
-    private route: ActivatedRoute
+    private router: Router
   ) {}
   
   ngOnInit(): void {
     this.cargarReportes();
-    this.route.params.subscribe(params => {
-      if(params['id']){
-        this.idUsuario = +params['id'];
-        this.cargarAlumno();
+    const raw = localStorage.getItem('usuario');
+    if (!raw) {
+      this.router.navigateByUrl('/login');
+      return;
+    }
+    try {
+      const usuario = JSON.parse(raw);
+      this.idUsuario = Number(usuario?.id_usuario || 0);
+      if (!this.idUsuario) {
+        this.router.navigateByUrl('/login');
+        return;
       }
-    });
+      this.cargarAlumno();
+    } catch {
+      localStorage.removeItem('usuario');
+      this.router.navigateByUrl('/login');
+    }
   }
 
   cargarAlumno(): void {

@@ -186,11 +186,6 @@
   color: #888;
 }
 
-.report-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  transform: translateY(-2px);
-}
-
 /* Header del reporte */
 .report-header {
   display: flex;
@@ -321,10 +316,6 @@
   margin-top: 12px;
   cursor: pointer;
   transition: transform 0.3s;
-}
-
-.report-image:hover {
-  transform: scale(1.02);
 }
 
 /* Footer del reporte */
