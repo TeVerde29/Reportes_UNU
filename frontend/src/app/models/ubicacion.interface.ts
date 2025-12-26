@@ -1,5 +1,5 @@
 export interface Ubicacion {
-    id_estado: number;
+    id_ubicacion: number;
     nombre: string;
 }
 

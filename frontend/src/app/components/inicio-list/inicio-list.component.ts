@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { ReporteService } from '../../services/reporte.service';
 import { Reporte } from '../../models/reporte.interface';
 import { EstadoService } from '../../services/estado.service';
-import { EstudianteService } from '../../services/estudiante.service';
 import { Estudiante } from '../../models/estudiante.interface';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-inicio-list',
@@ -15,58 +17,42 @@ import { Estudiante } from '../../models/estudiante.interface';
   templateUrl: './inicio-list.component.html',
   styleUrl: './inicio-list.component.css'
 })
-export class InicioListComponent implements OnInit{
+export class InicioListComponent implements OnInit, OnDestroy {
+
   reportes: Reporte[] = [];
   error: string = '';
-  idUsuario: number = 0;
   estudiante: Estudiante | null = null;
-  
+
+  private estudianteSubscription?: Subscription;
+
   constructor(
     private reporteService: ReporteService,
     private estadoServide: EstadoService,
-    private estudianteService: EstudianteService,
+    private usuarioService: UsuarioService,
     private router: Router
   ) {}
-  
+
   ngOnInit(): void {
-    this.cargarReportes();
-    const raw = localStorage.getItem('usuario');
-    if (!raw) {
+    if (!this.usuarioService.isAuthenticated()) {
       this.router.navigateByUrl('/login');
       return;
     }
-    try {
-      const usuario = JSON.parse(raw);
-      this.idUsuario = Number(usuario?.id_usuario || 0);
-      if (!this.idUsuario) {
-        this.router.navigateByUrl('/login');
-        return;
-      }
-      this.cargarAlumno();
-    } catch {
-      localStorage.removeItem('usuario');
+    if (this.usuarioService.isAdmin()) {
+      this.usuarioService.logout();
       this.router.navigateByUrl('/login');
+      return;
     }
-  }
-
-  cargarAlumno(): void {
-    this.estudianteService.obtenerEstudiantePorIdUsuario(this.idUsuario).subscribe({
-      next: (response) => {
-      if (response.success && response.data) {
-        if (Array.isArray(response.data)) {
-          this.estudiante = response.data.length > 0 ? response.data[0] : null;
-        } else {
-          this.estudiante = response.data;
+    this.estudianteSubscription = this.usuarioService.estudiante$
+      .pipe(filter((e): e is Estudiante => e !== null))
+      .subscribe({
+        next: (e) => {
+          this.estudiante = e;
+        },
+        error: (err) => {
+          console.error('Error en estudiante$:', err);
         }
-        if (this.estudiante) {
-          console.log('ID ESTUDIANTE:', this.estudiante.id_estudiante);
-        }
-      }
-    },
-      error: (err) => {
-        console.log('Error al obtener el id Estudiante: ', err);
-      }
-    });
+      });
+    this.cargarReportes();
   }
 
   cargarReportes(): void {
@@ -79,20 +65,27 @@ export class InicioListComponent implements OnInit{
         }
         this.reporteService.obtenerReportesPorIdEstado(estadoAceptado.id_estado).subscribe({
           next: (resp) => {
-            if(resp.success && Array.isArray(resp.data)){
+            if (resp.success && Array.isArray(resp.data)) {
               this.reportes = resp.data;
-              console.log('Todos los reportes:', this.reportes);
+            } else {
+              this.error = 'No se pudieron cargar los reportes';
             }
           },
           error: (er) => {
             console.error('Error al obtener los reportes:', er);
+            this.error = 'Error al cargar los reportes';
           }
         });
       },
       error: (err) => {
         this.error = err?.error?.message || 'Error al obtener estado';
+        console.error('Error al obtener estado:', err);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.estudianteSubscription?.unsubscribe();
   }
 
   trackByIdReporte(index: number, item: Reporte): number {
@@ -102,5 +95,4 @@ export class InicioListComponent implements OnInit{
   darLike(r: Reporte): void {
     r.cantidad_reacciones = (r.cantidad_reacciones || 0) + 1;
   }
-
 }

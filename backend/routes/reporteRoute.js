@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const {
+  upload,
   crearReporte,
   actualizarReporte,
   obtenerReportePorId,
@@ -10,8 +11,8 @@ const {
   obtenerReportesPendientesPorIdEstudiante
 } = require('../controllers/reporteController');
 
-router.post('/', crearReporte);
-router.put('/:id', actualizarReporte);
+router.post('/', upload.single('foto'), crearReporte);
+router.put('/:id', upload.single('foto'), actualizarReporte);
 router.get('/estado/:id', obtenerReportesPorIdEstado);
 router.get('/top/reacciones/', obtenerReportesPorCantidadReacciones);
 router.get('/pendientes/estudiante/:id', obtenerReportesPendientesPorIdEstudiante);

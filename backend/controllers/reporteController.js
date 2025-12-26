@@ -1,40 +1,125 @@
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const db = require('../config/database');
 
+// ==============================
+// FUNCIÓN PARA GENERAR CÓDIGO SEGURO
+// ==============================
+function generarCodigoSeguro() {
+  const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const L = "abcdefghijklmnopqrstuvwxyz";
+  const D = "0123456789";
+  const S = "-_";
+  const all = U + L + D + S;
+
+  let codigo = '';
+  for (let i = 0; i < 16; i++) {
+    codigo += all.charAt(Math.floor(Math.random() * all.length));
+  }
+  return codigo;
+}
+
+// ==============================
+// CONFIGURACIÓN DE MULTER
+// ==============================
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadPath = path.join(__dirname, '../../uploads/reportes');
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+    if (!allowedExtensions.includes(ext)) {
+      return cb(new Error('Tipo de archivo no permitido'), '');
+    }
+    const nombreSeguro = generarCodigoSeguro();
+    const nombreFinal = `${nombreSeguro}${ext}`;
+    cb(null, nombreFinal);
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB
+  },
+  fileFilter: function (req, file, cb) {
+    const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Solo se permiten imágenes (JPEG, PNG, GIF, WEBP)'));
+    }
+  }
+});
+
+// ==============================
+// CREAR REPORTE (CON ARCHIVO)
+// ==============================
 const crearReporte = async (req, res) => {
     try {
-        const { titulo, descripcion, foto_url, fecha_reporte, fecha_edicion, id_estado, id_estudiante, id_tipo_problema, id_ubicacion } = req.body;
-        if (!titulo || !foto_url || !fecha_reporte || !fecha_edicion || id_estado == null || id_estudiante == null || id_tipo_problema == null || id_ubicacion == null ) {
+        const { titulo, descripcion, id_estado, id_estudiante, id_tipo_problema, id_ubicacion } = req.body;
+        
+        // Validar que llegue el archivo
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'No se recibió ninguna imagen'
+            });
+        }
+
+        // Validar campos requeridos
+        if (!titulo || id_estado == null || id_estudiante == null || id_tipo_problema == null || id_ubicacion == null) {
+            // Eliminar archivo si faltan datos
+            if (req.file && req.file.path) {
+                fs.unlinkSync(req.file.path);
+            }
             return res.status(400).json({
                 success: false,
                 message: 'Faltan datos obligatorios'
             });
         }
-        const cantidad_reacciones = 0;
+
+        // Construir URL de la foto
+        const fotoUrl = `/uploads/reportes/${req.file.filename}`;
         const descripcionFinal = descripcion ?? null;
+
+        // Insertar en BD
         const [reporte] = await db.query(`
             INSERT INTO reporte(titulo, descripcion, foto_url, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, id_estudiante, id_tipo_problema, id_ubicacion) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
-            [titulo, descripcionFinal, foto_url, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, id_estudiante, id_tipo_problema, id_ubicacion]
+            VALUES (?, ?, ?, NOW(), NOW(), 0, ?, ?, ?, ?)`, 
+            [titulo, descripcionFinal, fotoUrl, id_estado, id_estudiante, id_tipo_problema, id_ubicacion]
         );
+
+        // Obtener el reporte creado
+        const [rows] = await db.query(
+            `SELECT * FROM reporte WHERE id_reporte = ?`,
+            [reporte.insertId]
+        );
+
         res.status(201).json({
             success: true,
             message: 'Reporte creado exitosamente',
-            data: { 
-                id: reporte.insertId, 
-                titulo, 
-                descripcion: descripcionFinal, 
-                foto_url, 
-                fecha_reporte, 
-                fecha_edicion,
-                cantidad_reacciones, 
-                id_estado, 
-                id_estudiante, 
-                id_tipo_problema,
-                id_ubicacion 
-            }
+            data: rows[0]
         });
+
     } catch (error) {
         console.error('Error al crear reporte:', error);
+        
+        // Eliminar archivo si hay error
+        if (req.file && req.file.path) {
+            try {
+                fs.unlinkSync(req.file.path);
+            } catch (unlinkError) {
+                console.error('Error al eliminar archivo:', unlinkError);
+            }
+        }
+        
         res.status(500).json({
             success: false,
             message: 'Error al crear reporte'
@@ -42,32 +127,69 @@ const crearReporte = async (req, res) => {
     }
 };
 
+// ==============================
+// ACTUALIZAR REPORTE (CON ARCHIVO OPCIONAL)
+// ==============================
 const actualizarReporte = async (req, res) => {
     try {
         const { id } = req.params;
-        const { titulo, descripcion, foto_url, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, id_estudiante, id_tipo_problema, id_ubicacion } = req.body;
-        const [existe] = await db.query(`
-            SELECT 1 FROM reporte WHERE id_reporte = ?`, [id]
-        );
+        const { titulo, descripcion, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, id_estudiante, id_tipo_problema, id_ubicacion } = req.body;
+        
+        // Verificar si existe
+        const [existe] = await db.query(`SELECT foto_url FROM reporte WHERE id_reporte = ?`, [id]);
         if (existe.length === 0) {
+            // Si hay archivo nuevo y no existe el reporte, eliminarlo
+            if (req.file && req.file.path) {
+                fs.unlinkSync(req.file.path);
+            }
             return res.status(404).json({
                 success: false,
                 message: 'Reporte no encontrado'
             });
         }
-        if (!titulo || !foto_url || !fecha_reporte || !fecha_edicion || cantidad_reacciones == null || id_estado == null || id_estudiante == null || id_tipo_problema == null || id_ubicacion == null ) {
+
+        // Validar campos requeridos
+        if (!titulo || !fecha_reporte || !fecha_edicion || cantidad_reacciones == null || id_estado == null || id_estudiante == null || id_tipo_problema == null || id_ubicacion == null) {
+            if (req.file && req.file.path) {
+                fs.unlinkSync(req.file.path);
+            }
             return res.status(400).json({
                 success: false,
                 message: 'Faltan datos obligatorios'
             });
         }
+
         const descripcionFinal = descripcion ?? null;
+        
+        // Determinar foto_url
+        let fotoUrl;
+        if (req.file) {
+            // Si hay nueva foto, usar la nueva y eliminar la anterior
+            fotoUrl = `/uploads/reportes/${req.file.filename}`;
+            const fotoAnterior = existe[0].foto_url;
+            if (fotoAnterior) {
+                const rutaAnterior = path.join(__dirname, '../../', fotoAnterior);
+                if (fs.existsSync(rutaAnterior)) {
+                    try {
+                        fs.unlinkSync(rutaAnterior);
+                    } catch (err) {
+                        console.error('Error al eliminar foto anterior:', err);
+                    }
+                }
+            }
+        } else {
+            // Si no hay nueva foto, mantener la anterior
+            fotoUrl = existe[0].foto_url;
+        }
+
+        // Actualizar en BD
         await db.query(`
             UPDATE reporte 
             SET titulo = ?, descripcion = ?, foto_url = ?, fecha_reporte = ?, fecha_edicion = ?, cantidad_reacciones = ?, id_estado = ?, id_estudiante = ?, id_tipo_problema = ?, id_ubicacion = ?
             WHERE id_reporte = ?
-            `, [titulo, descripcionFinal, foto_url, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, id_estudiante, id_tipo_problema, id_ubicacion, id]
+            `, [titulo, descripcionFinal, fotoUrl, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, id_estudiante, id_tipo_problema, id_ubicacion, id]
         );
+
         res.status(200).json({
             success: true,
             message: 'Reporte actualizado correctamente',
@@ -75,7 +197,7 @@ const actualizarReporte = async (req, res) => {
                 id,
                 titulo,
                 descripcion: descripcionFinal,
-                foto_url,
+                foto_url: fotoUrl,
                 fecha_reporte,
                 fecha_edicion,
                 cantidad_reacciones,
@@ -87,6 +209,13 @@ const actualizarReporte = async (req, res) => {
         });
     } catch (error) {
         console.error('Error al actualizar reporte:', error);
+        if (req.file && req.file.path) {
+            try {
+                fs.unlinkSync(req.file.path);
+            } catch (unlinkError) {
+                console.error('Error al eliminar archivo:', unlinkError);
+            }
+        }
         res.status(500).json({
             success: false,
             message: 'Error al actualizar reporte'
@@ -94,6 +223,9 @@ const actualizarReporte = async (req, res) => {
     }
 };
 
+// ==============================
+// OBTENER REPORTE POR ID
+// ==============================
 const obtenerReportePorId = async (req, res) => {
     try {
         const { id } = req.params;
@@ -134,6 +266,9 @@ const obtenerReportePorId = async (req, res) => {
     }
 };
 
+// ==============================
+// OBTENER REPORTES POR ID ESTADO
+// ==============================
 const obtenerReportesPorIdEstado = async (req, res) => {
     try {
         const { id } = req.params;
@@ -176,6 +311,9 @@ const obtenerReportesPorIdEstado = async (req, res) => {
     }
 };
 
+// ==============================
+// OBTENER REPORTES POR CANTIDAD REACCIONES
+// ==============================
 const obtenerReportesPorCantidadReacciones = async (req, res) => {
     try {
         const estado = 'Aceptado';
@@ -218,6 +356,9 @@ const obtenerReportesPorCantidadReacciones = async (req, res) => {
     }
 };
 
+// ==============================
+// OBTENER REPORTES PENDIENTES POR ID ESTUDIANTE
+// ==============================
 const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
     try {
         const { id } = req.params;
@@ -260,7 +401,11 @@ const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
     }
 };
 
+// ==============================
+// EXPORTAR
+// ==============================
 module.exports = {
+    upload,
     crearReporte,
     actualizarReporte,
     obtenerReportePorId,

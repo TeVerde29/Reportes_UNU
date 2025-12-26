@@ -15,7 +15,6 @@ export interface Reporte {
     estado: string;
     tipo_problema: string;
     ubicacion: string;
-    tipo_ubicacion?: string;
 }
 
 export interface ReporteResponse {
@@ -23,4 +22,20 @@ export interface ReporteResponse {
     message: string;
     count?: number;
     data?: Reporte | Reporte [];
+}
+
+export interface ReporteCrear {
+  titulo: string;
+  descripcion?: string | null;
+  foto_url: string;
+  id_estudiante: number;
+  id_estado: number;
+  id_tipo_problema: number;
+  id_ubicacion: number;
+}
+
+export interface ReporteCrearResponse {
+  success: boolean;
+  message: string;
+  data?: Reporte;
 }
