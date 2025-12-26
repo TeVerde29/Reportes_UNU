@@ -1,8 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `proyecto_swlibre` /*!40100 DEFAULT CHARACTER SET utf8mb3 */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `proyecto_swlibre`;
+CREATE DATABASE  IF NOT EXISTS `bd_reportes` /*!40100 DEFAULT CHARACTER SET utf8mb3 */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `bd_reportes`;
 -- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: proyecto_swlibre
+-- Host: 127.0.0.1    Database: bd_reportes
 -- ------------------------------------------------------
 -- Server version	9.1.0
 
@@ -273,4 +273,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-20  4:59:04
+-- Dump completed on 2025-12-26 11:21:25
