@@ -11,7 +11,7 @@ export class UbicacionService {
   private apiUrl = `${environment.apiUrl}/ubicacion`;
   constructor(private http: HttpClient) { }
 
-  obtenerEstados(): Observable<UbicacionResponse> {
+  obtenerUbicaciones(): Observable<UbicacionResponse> {
     return this.http.get<UbicacionResponse>(this.apiUrl);
   }
 }
