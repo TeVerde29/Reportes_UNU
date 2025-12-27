@@ -25,7 +25,8 @@ function generarCodigoSeguro() {
 // ==============================
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadPath = path.join(__dirname, '../../uploads/reportes');
+    const uploadPath = path.resolve(__dirname, '..', 'uploads', 'reportes');
+    console.log('UPLOAD PATH =>', uploadPath);
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
@@ -58,22 +59,15 @@ const upload = multer({
   }
 });
 
-// ==============================
-// CREAR REPORTE (CON ARCHIVO)
-// ==============================
 const crearReporte = async (req, res) => {
     try {
         const { titulo, descripcion, id_estado, id_estudiante, id_tipo_problema, id_ubicacion } = req.body;
-        
-        // Validar que llegue el archivo
         if (!req.file) {
             return res.status(400).json({
                 success: false,
                 message: 'No se recibió ninguna imagen'
             });
         }
-
-        // Validar campos requeridos
         if (!titulo || id_estado == null || id_estudiante == null || id_tipo_problema == null || id_ubicacion == null) {
             // Eliminar archivo si faltan datos
             if (req.file && req.file.path) {
@@ -84,34 +78,24 @@ const crearReporte = async (req, res) => {
                 message: 'Faltan datos obligatorios'
             });
         }
-
-        // Construir URL de la foto
         const fotoUrl = `/uploads/reportes/${req.file.filename}`;
         const descripcionFinal = descripcion ?? null;
-
-        // Insertar en BD
         const [reporte] = await db.query(`
             INSERT INTO reporte(titulo, descripcion, foto_url, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, id_estudiante, id_tipo_problema, id_ubicacion) 
             VALUES (?, ?, ?, NOW(), NOW(), 0, ?, ?, ?, ?)`, 
             [titulo, descripcionFinal, fotoUrl, id_estado, id_estudiante, id_tipo_problema, id_ubicacion]
         );
-
-        // Obtener el reporte creado
         const [rows] = await db.query(
             `SELECT * FROM reporte WHERE id_reporte = ?`,
             [reporte.insertId]
         );
-
         res.status(201).json({
             success: true,
             message: 'Reporte creado exitosamente',
             data: rows[0]
         });
-
     } catch (error) {
         console.error('Error al crear reporte:', error);
-        
-        // Eliminar archivo si hay error
         if (req.file && req.file.path) {
             try {
                 fs.unlinkSync(req.file.path);
@@ -119,7 +103,6 @@ const crearReporte = async (req, res) => {
                 console.error('Error al eliminar archivo:', unlinkError);
             }
         }
-        
         res.status(500).json({
             success: false,
             message: 'Error al crear reporte'
@@ -401,9 +384,6 @@ const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
     }
 };
 
-// ==============================
-// EXPORTAR
-// ==============================
 module.exports = {
     upload,
     crearReporte,
