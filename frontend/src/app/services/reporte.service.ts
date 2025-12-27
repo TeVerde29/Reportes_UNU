@@ -12,20 +12,14 @@ export class ReporteService {
   
   constructor(private http: HttpClient) { }
 
-  /**
-   * Crear reporte con archivo (FormData)
-   * IMPORTANTE: Acepta FormData en lugar de ReporteCrear
-   * NO enviar headers de Content-Type - Angular lo maneja automáticamente
-   */
+  // 🔥 IMPORTANTE: Cambiar ReporteCrear por FormData
   crearReporte(formData: FormData): Observable<ReporteCrearResponse> {
     return this.http.post<ReporteCrearResponse>(this.apiUrl, formData);
   }
 
-  /**
-   * Actualizar reporte (puede recibir FormData si incluye archivo nuevo)
-   */
-  actualizarReporte(id: number, data: Reporte | FormData): Observable<ReporteResponse> {
-    return this.http.put<ReporteResponse>(`${this.apiUrl}/${id}`, data);
+  // Para actualizar también acepta FormData
+  actualizarReporte(id: number, formData: FormData): Observable<ReporteResponse> {
+    return this.http.put<ReporteResponse>(`${this.apiUrl}/${id}`, formData);
   }
 
   obtenerReportePorId(id: number): Observable<ReporteResponse> {
