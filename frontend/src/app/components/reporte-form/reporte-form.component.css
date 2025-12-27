@@ -1,0 +1,335 @@
+:host {
+  --unu-green: #006400;
+  --unu-bg: #e8f5e9;
+  --error-color: #d32f2f;
+  --success-color: #388e3c;
+
+  --campus-bg: #eef2f3;
+  --street: #cfd4d8;
+  --grass: #b2f2bb;
+  --bld-blue: #a5d8ff;
+  --bld-yellow: #ffec99;
+  --bld-pink: #ffd6d6;
+
+  --stroke: #111;
+  --active: #626D22;
+  --active-stroke: #3B5F2D;
+  --active-font-color: #ffffff;
+}
+
+/* ======================================
+   CONTENEDOR PRINCIPAL
+   ====================================== */
+.form-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.form-container h2 {
+  color: var(--unu-green);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* ======================================
+   ALERTAS
+   ====================================== */
+.alert {
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.alert-error {
+  background-color: #ffebee;
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
+}
+
+.alert-success {
+  background-color: #e8f5e9;
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
+}
+
+/* ======================================
+   FORMULARIO
+   ====================================== */
+form {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-group input[type="text"],
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--unu-green);
+}
+
+.form-group input[type="text"].invalid,
+.form-group select.invalid {
+  border-color: var(--error-color);
+}
+
+.form-group textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* Input de archivo */
+.form-group input[type="file"] {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: 2px dashed #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.form-group input[type="file"]:hover {
+  border-color: var(--unu-green);
+}
+
+.help-text {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #666;
+}
+
+.error-text {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--error-color);
+  font-weight: 500;
+}
+
+/* Preview de imagen (estilo post/feed) */
+.image-preview{
+  margin-top: 12px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f2f4f7;
+  border: 1px solid #e2e8f0;
+  padding: 0;                 /* 👈 quita el padding que achica */
+  max-height: 500px;          /* 👈 igual que el feed */
+  aspect-ratio: 16 / 9;       /* 👈 para que llene ancho como “post” */
+}
+
+.image-preview img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;          /* 👈 llena y recorta como en el feed */
+  display: block;
+  margin: 0;                  /* 👈 quita el centrado */
+  border-radius: 0;
+}
+
+/* ======================================
+   UBICACIÓN
+   ====================================== */
+.selected-box {
+  background: var(--unu-bg);
+  border: 2px solid var(--unu-green);
+  color: var(--unu-green);
+  padding: 14px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 700;
+  margin: 8px 0 16px;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selected-box.empty {
+  border-style: dashed;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Contenedor del mapa */
+.map-area {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 800px;
+  max-height: 600px;
+  overflow: auto;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fafafa;
+}
+
+/* SVG responsive */
+svg {
+  width: 100%;
+  max-width: 980px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Estilos del croquis */
+.barra-calle {
+  fill: var(--street);
+  stroke: var(--stroke);
+  stroke-width: 3;
+}
+
+.campus {
+  fill: var(--campus-bg);
+  stroke: var(--stroke);
+  stroke-width: 4;
+}
+
+.area-verde {
+  fill: var(--grass);
+  stroke: var(--stroke);
+  stroke-width: 3;
+}
+
+.edificio {
+  cursor: pointer;
+  stroke: var(--stroke);
+  stroke-width: 3;
+  transition: all 0.2s ease;
+}
+
+.edificio[data-cat="blue"] { fill: var(--bld-blue); }
+.edificio[data-cat="yellow"] { fill: var(--bld-yellow); }
+.edificio[data-cat="pink"] { fill: var(--bld-pink); }
+.edificio[data-cat="grass"] { fill: var(--grass); }
+
+.edificio:hover {
+  stroke-width: 4;
+  filter: brightness(0.95);
+  /*transform: scale(1.02);*/
+}
+
+.edificio.active {
+  fill: var(--active) !important;
+  stroke: var(--active-stroke);
+  stroke-width: 5;
+}
+
+.txt {
+  font-family: "Segoe UI", sans-serif;
+  fill: #1f1f1f;
+  text-anchor: middle;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.txt.calle { font-size: 18px; }
+.txt.big { font-size: 18px; }
+.txt.mid { font-size: 13px; }
+
+/* Si el rect está activo, el texto cambia a blanco */
+.edificio.active + text {
+  fill: var(--active-font-color) !important;
+}
+
+/* ======================================
+   BOTONES
+   ====================================== */
+.form-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid #eee;
+}
+
+button {
+  padding: 12px 32px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: var(--unu-green);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #004d00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,100,0,0.3);
+}
+
+.btn-secondary {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 2px solid #ddd;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #e0e0e0;
+  border-color: #999;
+}
+
+/* ======================================
+   RESPONSIVE
+   ====================================== */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 12px;
+  }
+
+  form {
+    padding: 20px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+
+  .map-area {
+    width: 100%;
+    max-height: 400px;
+  }
+}

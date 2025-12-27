@@ -14,4 +14,8 @@ export class UbicacionService {
   obtenerUbicaciones(): Observable<UbicacionResponse> {
     return this.http.get<UbicacionResponse>(this.apiUrl);
   }
+
+  obtenerUbicacionesPorId(id: number): Observable<UbicacionResponse> {
+    return this.http.get<UbicacionResponse>(`${this.apiUrl}/${id}`);
+  }
 }

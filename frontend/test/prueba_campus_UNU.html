@@ -4,14 +4,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UNU - Reporte</title>
+  <title>UNU - Reporte de Incidencia</title>
 
   <style>
     :root {
       --unu-green: #006400;
       --unu-bg: #e8f5e9;
 
-      /* Croquis (colores del nuevo diseño) */
       --campus-bg: #eef2f3;
       --street: #cfd4d8;
       --grass: #b2f2bb;
@@ -36,12 +35,12 @@
       background: #f0f0f0;
     }
 
-    /* --- COLUMNA IZQUIERDA (FORMULARIO) --- */
+    /* ===== FORMULARIO ===== */
     .sidebar {
-      width: 350px;
-      background: white;
+      width: 360px;
+      background: #fff;
       padding: 20px;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 2px 0 10px rgba(0,0,0,.15);
       overflow-y: auto;
       z-index: 10;
     }
@@ -57,20 +56,22 @@
     }
 
     label {
-      display: block;
-      margin-bottom: 5px;
       font-weight: 600;
-      font-size: 0.9rem;
+      display: block;
+      margin-bottom: 6px;
+      font-size: .9rem;
     }
 
-    input,
-    select,
-    textarea {
+    input, select, textarea {
       width: 100%;
       padding: 8px;
-      border: 1px solid #ccc;
       border-radius: 4px;
+      border: 1px solid #ccc;
       box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
     }
 
     .selected-box {
@@ -98,25 +99,20 @@
       background: #004d00;
     }
 
-    /* --- COLUMNA DERECHA (MAPA SVG) --- */
+    /* ===== MAPA ===== */
     .map-area {
       flex-grow: 1;
-      position: relative;
-      overflow: auto; /* IMPORTANTE: el croquis es vertical (alto), se ve con scroll */
+      overflow: auto;
       padding: 18px;
-      display: block;
     }
 
     svg {
       width: 100%;
       max-width: 980px;
-      height: auto;
       display: block;
-      margin: 0 auto;
-      background: transparent;
+      margin: auto;
     }
 
-    /* --- ESTILOS DEL CROQUIS --- */
     .barra-calle {
       fill: var(--street);
       stroke: var(--stroke);
@@ -135,43 +131,29 @@
       stroke-width: 3;
     }
 
-    /* Interactivos */
     .edificio {
       cursor: pointer;
       stroke: var(--stroke);
       stroke-width: 3;
-      transition: filter 0.15s ease, stroke-width 0.15s ease;
+      transition: .15s;
     }
 
-    .edificio[data-cat="blue"] {
-      fill: var(--bld-blue);
-    }
-
-    .edificio[data-cat="yellow"] {
-      fill: var(--bld-yellow);
-    }
-
-    .edificio[data-cat="pink"] {
-      fill: var(--bld-pink);
-    }
-
-    .edificio[data-cat="grass"] {
-      fill: var(--grass);
-    }
+    .edificio[data-cat="blue"] { fill: var(--bld-blue); }
+    .edificio[data-cat="yellow"] { fill: var(--bld-yellow); }
+    .edificio[data-cat="pink"] { fill: var(--bld-pink); }
+    .edificio[data-cat="grass"] { fill: var(--grass); }
 
     .edificio:hover {
-      filter: brightness(0.97) drop-shadow(0 2px 6px var(--stroke-soft));
       stroke-width: 4;
+      filter: brightness(.97);
     }
 
     .edificio.active {
       fill: var(--active) !important;
       stroke: var(--active-stroke);
       stroke-width: 5;
-      filter: none;
     }
 
-    /* Texto */
     .txt {
       font-family: "Segoe UI", sans-serif;
       fill: #1f1f1f;
@@ -180,80 +162,66 @@
       pointer-events: none;
     }
 
-    .txt.calle {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .txt.big {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .txt.mid {
-      font-size: 13px;
-      font-weight: 700;
-    }
+    .txt.calle { font-size: 18px; }
+    .txt.big { font-size: 18px; }
+    .txt.mid { font-size: 13px; }
 
     .edificio.active + text {
-    fill: var(--active-font-color) !important;
+      fill: var(--active-font-color) !important;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="sidebar">
-    <h2>Nuevo Reporte UNU</h2>
+<!-- ===== FORMULARIO ===== -->
+<div class="sidebar">
+  <h2>Nuevo Reporte UNU</h2>
 
-    <form id="reportForm">
-      <div class="form-group">
-        <label>Título del incidente</label>
-        <input type="text" placeholder="Ej: Pizarra rota" required />
-      </div>
+  <form id="reportForm">
 
-      <div class="form-group">
-        <label>Tipo de Problema</label>
-        <select required>
-          <option value="">Seleccione...</option>
-          <option value="1">Infraestructura</option>
-          <option value="2">Mobiliario</option>
-          <option value="3">Electricidad</option>
-          <option value="4">Sanitario</option>
-        </select>
-      </div>
+    <div class="form-group">
+      <label for="titulo">Título del incidente *</label>
+      <input type="text" id="titulo" name="titulo" required>
+    </div>
 
-      <div class="form-group">
-        <label>Ubicación (Click en el mapa)</label>
+    <div class="form-group">
+      <label for="id_tipo_problema">Tipo de Problema *</label>
+      <select id="id_tipo_problema" name="id_tipo_problema" required>
+        <option value="">Seleccione...</option>
+        <option value="1">Infraestructura</option>
+        <option value="2">Mobiliario</option>
+        <option value="3">Equipos Electrónicos</option>
+        <option value="4">Instalaciones Eléctricas</option>
+        <option value="5">Instalaciones Sanitarias</option>
+        <option value="6">Áreas Verdes</option>
+        <option value="7">Seguridad</option>
+        <option value="8">Limpieza</option>
+      </select>
+    </div>
 
-        <!--
-          IMPORTANTE:
-          Aquí se guarda lo que el backend espera como id_ubicacion.
-          Si ya tienes IDs reales en tu tabla ubicacion, ponlos en data-id (número) en cada rect.
-          Si no, por defecto se enviará el "data-key" (string).
-        -->
-        <input type="hidden" id="id_ubicacion" required />
+    <div class="form-group">
+      <label>Ubicación (click en el mapa) *</label>
+      <input type="hidden" id="id_ubicacion" name="id_ubicacion" required>
+      <div id="ubicacion-display" class="selected-box">Ninguna</div>
+    </div>
 
-        <div id="ubicacion-display" class="selected-box">Ninguna</div>
-      </div>
+    <div class="form-group">
+      <label for="descripcion">Descripción (opcional)</label>
+      <textarea id="descripcion" name="descripcion" rows="3"></textarea>
+    </div>
 
-      <div class="form-group">
-        <label>Foto Evidencia</label>
-        <input
-          type="file"
-          id="foto"
-          name="foto"
-          accept="image/*"
-          capture="environment"
-          required
-        />
-        <img id="preview" alt="Vista previa" style="display:none; width:100%; margin-top:10px; border-radius:8px;" />
-      </div>
-      <button type="submit">Enviar Reporte</button>
-    </form>
-  </div>
+    <div class="form-group">
+      <label for="foto">Foto Evidencia *</label>
+      <input type="file" id="foto" name="foto" accept="image/*" capture="environment" required>
+    </div>
 
-  <div class="map-area">
+    <button type="submit">Enviar Reporte</button>
+  </form>
+</div>
+
+<!-- ===== MAPA SVG (SIN MODIFICAR) ===== -->
+<div class="map-area">
     <!-- Nuevo croquis (vector) -->
     <svg viewBox="0 0 618 2040" id="mapaSvg" aria-label="Croquis UNU">
       <!-- Barras de avenidas -->
@@ -572,121 +540,38 @@
     </svg>
   </div>
 
-    <script>
-    // ====== MAPA / SVG: selección compatible con celulares ======
-    const ubicaciones = document.querySelectorAll(".edificio");
-    const inputId = document.getElementById("id_ubicacion");
-    const display = document.getElementById("ubicacion-display");
+<script>
+  const ubicaciones = document.querySelectorAll(".edificio");
+  const inputId = document.getElementById("id_ubicacion");
+  const display = document.getElementById("ubicacion-display");
 
-    // (Opcional) input file de foto: <input id="foto" type="file" accept="image/*" capture="environment" />
-    const fotoInput = document.getElementById("foto"); // si no existe, no pasa nada
+  function seleccionarUbicacion(el) {
+    ubicaciones.forEach(x => x.classList.remove("active"));
+    el.classList.add("active");
+    inputId.value = el.dataset.key || el.id;
+    display.textContent = el.dataset.name || el.id;
+  }
 
-    function getUbicacionValue(el) {
-      return el.dataset.id || el.dataset.key || el.id;
-    }
+  const EVT = window.PointerEvent ? "pointerdown" : "click";
 
-    function getUbicacionName(el) {
-      return el.dataset.name || el.dataset.key || el.id;
-    }
-
-    function seleccionarUbicacion(el) {
-      // 1) limpiar selección
-      ubicaciones.forEach((x) => x.classList.remove("active"));
-
-      // 2) activar actual
-      el.classList.add("active");
-
-      // 3) setear formulario
-      const valor = getUbicacionValue(el);
-      const nombre = getUbicacionName(el);
-
-      inputId.value = valor;
-      display.textContent = nombre;
-      display.style.backgroundColor = "#c8e6c9";
-    }
-
-    // Evento “universal” para móvil + desktop
-    const EVT_SELECT = window.PointerEvent ? "pointerdown" : "click";
-
-    ubicaciones.forEach((u) => {
-      // Mejora de accesibilidad (también sirve en algunos móviles con teclado)
-      u.setAttribute("tabindex", "0");
-
-      // En SVG a veces el tap no “pega” si no hay fill; esto ayuda si tu CSS no lo cubre:
-      // u.style.pointerEvents = "all";
-
-      u.addEventListener(
-        EVT_SELECT,
-        (e) => {
-          // En pantallas táctiles, evitamos doble-tap/zoom y clicks fantasmas
-          // (ojo: dependiendo del navegador, puede variar)
-          if (e.pointerType === "touch" || e.pointerType === "pen") {
-            e.preventDefault();
-          }
-          seleccionarUbicacion(u);
-        },
-        { passive: false } // necesario para que preventDefault funcione en algunos casos
-      );
-
-      // Soporte teclado: Enter o Space
-      u.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          seleccionarUbicacion(u);
-        }
-      });
-    });
-
-    // ====== ENVÍO (con foto si existe) ======
-    document.getElementById("reportForm").addEventListener("submit", async (e) => {
+  ubicaciones.forEach(u => {
+    u.addEventListener(EVT, e => {
       e.preventDefault();
+      seleccionarUbicacion(u);
+    }, { passive: false });
+  });
 
-      if (!inputId.value) {
-        alert("⚠️ Selecciona una ubicación en el mapa");
-        return;
-      }
+  document.getElementById("reportForm").addEventListener("submit", e => {
+    e.preventDefault();
 
-      // Si tu formulario NO envía al backend todavía, deja el alert.
-      // Si SÍ quieres enviar, usa FormData (soporta imagen).
-      const fd = new FormData(e.target);
-      // Asegurar id_ubicacion (por si es input hidden)
-      fd.set("id_ubicacion", inputId.value);
+    if (!inputId.value) {
+      alert("Selecciona una ubicación en el mapa");
+      return;
+    }
 
-      // Validar foto solo si existe el input
-      if (fotoInput) {
-        const file = fotoInput.files && fotoInput.files[0];
-        if (!file) {
-          alert("⚠️ Adjunta una foto (evidencia)");
-          return;
-        }
-        if (!file.type.startsWith("image/")) {
-          alert("⚠️ Solo se permiten imágenes");
-          return;
-        }
-        // si tu name no es "foto", ajústalo:
-        // fd.set("foto", file);
-      }
-
-      try {
-        // Cambia esta URL a tu endpoint real
-        const res = await fetch("/api/reportes", {
-          method: "POST",
-          body: fd,
-        });
-
-        if (!res.ok) {
-          alert("❌ Error al enviar el reporte");
-          return;
-        }
-
-        alert("✅ Reporte enviado para: " + display.textContent + " (id_ubicacion=" + inputId.value + ")");
-      } catch (err) {
-        alert("❌ No se pudo enviar. Revisa tu conexión o el endpoint.");
-      }
-    });
-  </script>
-
+    alert("Reporte listo para enviarse");
+  });
+</script>
 
 </body>
-
 </html>
