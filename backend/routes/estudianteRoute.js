@@ -3,10 +3,10 @@ const router = express.Router();
 
 const {
     obtenerEstudiantePorId,
-    obtenerEstudiantePorIdUsuario
+    //obtenerEstudiantePorIdUsuario
 } = require('../controllers/estudianteController');
 
 router.get('/:id', obtenerEstudiantePorId);
-router.get('/usuario/:id', obtenerEstudiantePorIdUsuario);
+//router.get('/usuario/:id', obtenerEstudiantePorIdUsuario);
 
 module.exports = router;
