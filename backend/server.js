@@ -8,6 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ====== RUTAS EXISTENTES ======
+const auth = require('./routes/authRoute');
 const estado        = require('./routes/estadoRoute');
 const estudiante    = require('./routes/estudianteRoute');
 const reaccion      = require('./routes/reaccionRoute');
@@ -16,6 +17,8 @@ const tipoProblema  = require('./routes/tipo_problemaRoute');
 const trabajador    = require('./routes/trabajadorRoute');
 const ubicacion     = require('./routes/ubicacionRoute');
 const usuario       = require('./routes/usuarioRoute');
+
+
 
 // ====== 1) CORS PARA SESIONES (COOKIES) ======
 // Cambia el origin según tu Angular (normalmente 4200)
@@ -89,6 +92,7 @@ app.get('/', (req, res) => {
 });
 
 // ====== 6) MONTAR RUTAS ======
+app.use('/api/auth', auth);
 app.use('/api/estado', estado);
 app.use('/api/estudiante', estudiante);
 app.use('/api/reaccion', reaccion);
