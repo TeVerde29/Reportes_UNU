@@ -26,10 +26,16 @@ app.get('/', (req, res) => {
         version: "1.0.0",
         endpoints: { // Falta poner las rutas usadas en cada controlador
             estado: {
+                // obtenerEstados                   -> 
+                // obtenerEstadoPorNombre           -> 
             },
             estudiante: {
+                // obtenerEstudiantePorId           -> 
             },
             reaccion: {
+                // LikesActivosPorIdEstudiante      -> USADO
+                // darLike                          -> USADO
+                // quitarLike                       -> USADO
             },
             reporte: {
             },

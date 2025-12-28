@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 
 const {
-    listarLikesActivosPorEstudiante,
+    LikesActivosPorIdEstudiante,
     darLike,
     quitarLike
 } = require('../controllers/reaccionController');
 
-router.get('/:id_estudiante', listarLikesActivosPorEstudiante);
+router.get('/:id', LikesActivosPorIdEstudiante);
 router.post('/', darLike);
 router.put('/', quitarLike);
 

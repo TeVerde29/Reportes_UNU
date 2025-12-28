@@ -51,7 +51,6 @@ const obtenerEstadoPorNombre = async (req, res) => {
   }
 };
 
-
 module.exports = {
     obtenerEstados,
     obtenerEstadoPorNombre

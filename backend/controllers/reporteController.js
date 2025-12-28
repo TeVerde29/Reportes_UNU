@@ -186,29 +186,22 @@ const revisarReporte = async (req, res) => {
     try {
         const { id } = req.params;
         const { titulo, descripcion, id_tipo_problema, id_estado } = req.body;
-
-    // 1️⃣ Verificar existencia
     const [existe] = await db.query(
         `SELECT id_reporte FROM reporte WHERE id_reporte = ?`,
         [id]
     );
-
     if (existe.length === 0) {
       return res.status(404).json({
         success: false,
         message: 'Reporte no encontrado'
       });
     }
-
-    // 2️⃣ Validaciones mínimas
     if (!titulo || !id_tipo_problema || !id_estado) {
       return res.status(400).json({
         success: false,
         message: 'Datos obligatorios incompletos'
       });
     }
-
-    // 3️⃣ Update simple y seguro
     await db.query(
       `
       UPDATE reporte
@@ -228,12 +221,10 @@ const revisarReporte = async (req, res) => {
         id
       ]
     );
-
     res.status(200).json({
       success: true,
       message: 'Reporte revisado correctamente'
     });
-
   } catch (error) {
     console.error('Error al revisar reporte:', error);
     res.status(500).json({
@@ -243,10 +234,6 @@ const revisarReporte = async (req, res) => {
   }
 };
 
-
-// ==============================
-// OBTENER REPORTE POR ID
-// ==============================
 const obtenerReportePorId = async (req, res) => {
     try {
         const { id } = req.params;
@@ -412,10 +399,6 @@ const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
         });
     }
 };
-
-
-
-
 
 module.exports = {
     upload,
