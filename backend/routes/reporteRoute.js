@@ -8,7 +8,8 @@ const {
   obtenerReportePorId,
   obtenerReportesPorIdEstado,
   obtenerReportesPorCantidadReacciones,
-  obtenerReportesPendientesPorIdEstudiante
+  obtenerReportesPendientesPorIdEstudiante,
+  revisarReporte
 } = require('../controllers/reporteController');
 
 router.post('/', upload.single('foto'), crearReporte);
@@ -17,5 +18,7 @@ router.get('/estado/:id', obtenerReportesPorIdEstado);
 router.get('/top/reacciones/', obtenerReportesPorCantidadReacciones);
 router.get('/pendientes/estudiante/:id', obtenerReportesPendientesPorIdEstudiante);
 router.get('/:id', obtenerReportePorId);
+router.put('/revisar/:id', revisarReporte);
+
 
 module.exports = router;

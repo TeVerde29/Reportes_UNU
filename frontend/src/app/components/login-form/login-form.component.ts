@@ -15,7 +15,7 @@ import { filter, take } from 'rxjs/operators';
   styleUrl: './login-form.component.css'
 })
 export class LoginFormComponent implements OnInit {
-  
+
   loginForm: FormGroup;
   error: string = '';
   successMessage: string = '';
@@ -49,7 +49,7 @@ export class LoginFormComponent implements OnInit {
         }
         this.successMessage = resp.message || 'Inicio de sesión exitoso';
         if (resp.data.id_rol === 1) {
-          this.router.navigateByUrl('/admin');
+          this.router.navigateByUrl('/reportes-pendientes');
           return;
         }
         this.usuarioService.estudiante$

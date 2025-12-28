@@ -1,0 +1,89 @@
+<div class="container">
+
+  <h2 class="title">Reportes Pendientes</h2>
+
+  <!-- Tabla -->
+  <div class="table-container" *ngIf="!error && reportes.length > 0">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Título</th>
+          <th>Estudiante</th>
+          <th>Carrera</th>
+          <th>Tipo</th>
+          <th>Ubicación</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let r of reportes">
+          <td class="col-id" data-label="ID">
+            #{{ r.id_reporte }}
+          </td>
+
+          <td data-label="Título">
+            {{ r.titulo }}
+          </td>
+
+          <td data-label="Estudiante">
+            {{ r.estudiante }}
+          </td>
+
+          <td data-label="Carrera">
+            {{ r.carrera }}
+          </td>
+
+          <td data-label="Tipo">
+            <span class="table-tag green">
+              {{ r.tipo_problema }}
+            </span>
+          </td>
+
+          <td data-label="Ubicación">
+            <span class="table-tag">
+              {{ r.ubicacion }}
+            </span>
+          </td>
+
+          <td data-label="Fecha">
+            {{ r.fecha_edicion }}
+          </td>
+
+          <td data-label="Acciones">
+            <span class="table-action">
+              <button
+                type="button"
+                class="btn-action view"
+                (click)="abrirModal(r)"
+                title="Ver reporte"
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <span>Ver</span>
+              </button>
+            </span>
+          </td>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Sin datos -->
+  <div *ngIf="!error && reportes.length === 0" class="table-empty">
+    No hay reportes pendientes
+  </div>
+</div>
+
+<app-pendientes-form
+  *ngIf="mostrarModal && reporteSeleccionado"
+  [reporte]="reporteSeleccionado"
+  (cerrar)="cerrarModal()">
+</app-pendientes-form>
+
+

@@ -1,0 +1,60 @@
+<div class="modal-backdrop"></div>
+
+<div class="modal" *ngIf="reporte">
+  <div class="modal-card">
+
+    <div class="modal-header">
+      <h3 class="modal-title">Revisión de Reporte</h3>
+      <button class="modal-close" (click)="cancelar()">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="form-group">
+        <label>Título</label>
+        <input type="text" [(ngModel)]="form.titulo">
+      </div>
+
+      <div class="form-group">
+        <label>Descripción</label>
+        <textarea rows="3" [(ngModel)]="form.descripcion"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Tipo de problema</label>
+        <select [(ngModel)]="form.id_tipo_problema">
+          <option *ngFor="let t of tiposProblema" [ngValue]="t.id_tipo_problema">
+            {{ t.nombre }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Estudiante</label>
+          <input type="text" [value]="reporte.estudiante" disabled>
+        </div>
+
+        <div class="form-group">
+          <label>Ubicación</label>
+          <input type="text" [value]="reporte.ubicacion" disabled>
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="reporte.foto_url">
+        <label>Foto evidencia</label>
+        <div class="image-preview-modal">
+          <img [src]="'http://localhost:3000' + reporte.foto_url">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="cancelar()">Cancelar</button>
+      <button class="btn btn-danger" (click)="rechazar()">Rechazar</button>
+      <button class="btn btn-primary" (click)="aceptar()">Aceptar</button>
+    </div>
+
+  </div>
+</div>

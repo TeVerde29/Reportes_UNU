@@ -1,0 +1,142 @@
+/* ===== Modal ===== */
+.modal-backdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, .45);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+}
+
+.modal{
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 1001;
+}
+
+.modal-card{
+  width: 100%;
+  max-width: 680px;
+  max-height: 85vh;              /* 👈 CLAVE */
+  background: var(--card);
+  border-radius: 20px;
+  border: 1px solid rgba(226, 232, 240, .95);
+  box-shadow: var(--shadow-hard);
+  overflow: hidden;              /* 👈 evita desbordes */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.modal-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(226, 232, 240, .9);
+}
+
+.modal-title{
+  margin: 0;
+  font-size: 18px;
+  font-weight: 1000;
+}
+
+.modal-close{
+  background: #f1f5f9;
+  border: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 1000;
+  color: #475569;
+}
+
+.modal-close:hover{
+  background: var(--green);
+  color: #fff;
+}
+
+.modal-body{
+  padding: 18px;
+  overflow-y: auto; 
+  flex: 1;
+}
+
+.form-group{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label{
+  font-size: 12px;
+  font-weight: 900;
+  color: #334155;
+}
+
+input,
+textarea{
+  border-radius: 14px;
+  padding: 10px 12px;
+  border: 1px solid rgba(226, 232, 240, .95);
+  background: #f8fafc;
+  font-size: 13px;
+  font-weight: 800;
+  color: #475569;
+  resize: none;
+}
+
+/* Rows */
+.form-row{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Imagen */
+.image-preview-modal{
+  margin-top: 6px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, .95);
+  background: #f1f5f9;
+}
+
+.image-preview-modal img{
+  width: 100%;
+  display: block;
+}
+
+/* Footer */
+.modal-footer{
+  padding: 14px 18px;
+  border-top: 1px solid rgba(226, 232, 240, .9);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Animación */
+@keyframes modalIn{
+  from{
+    transform: translateY(10px) scale(.98);
+    opacity: 0;
+  }
+  to{
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px){
+  .modal-card{
+    margin: 12px;
+  }
+
+  .form-row{
+    grid-template-columns: 1fr;
+  }
+}

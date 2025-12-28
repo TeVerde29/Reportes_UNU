@@ -1,0 +1,135 @@
+/* ===== Tabla de Reportes (ADMIN) ===== */
+
+.table-container{
+  background: var(--card);
+  border: 1px solid rgba(226, 232, 240, .95);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: var(--shadow-soft);
+  overflow-x: auto;
+}
+
+.table{
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+
+.table thead th{
+  background: rgba(241, 245, 249, .9);
+  color: #334155;
+  font-weight: 1000;
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(226, 232, 240, .95);
+  white-space: nowrap;
+}
+
+.table thead th:first-child{
+  border-top-left-radius: 12px;
+}
+
+.table thead th:last-child{
+  border-top-right-radius: 12px;
+}
+
+.table tbody td{
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(226, 232, 240, .7);
+  color: #475569;
+  font-weight: 800;
+  vertical-align: middle;
+}
+
+.table tbody tr{
+  transition: .18s ease;
+}
+
+.table tbody tr:hover{
+  background: rgba(0, 100, 63, .06);
+}
+
+/* ID */
+.table .col-id{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 1000;
+  color: #94a3b8;
+}
+
+/* Tags dentro de tabla */
+.table-tag{
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 1000;
+  border: 1px solid rgba(226, 232, 240, .95);
+  background: #f8fafc;
+  color: #334155;
+  white-space: nowrap;
+}
+
+.table-tag.green{
+  background: var(--green-soft);
+  border-color: rgba(0, 100, 63, .18);
+  color: var(--green);
+}
+
+/* Reacciones */
+.table-reactions{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 1000;
+}
+
+/* Empty */
+.table-empty{
+  background: var(--card);
+  border: 1px solid rgba(226, 232, 240, .95);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+/* ===== Responsive tabla ===== */
+@media (max-width: 768px){
+  .table{
+    font-size: 12px;
+  }
+
+  .table thead{
+    display: none;
+  }
+
+  .table tbody tr{
+    display: block;
+    border: 1px solid rgba(226, 232, 240, .95);
+    border-radius: 16px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .table tbody td{
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(226, 232, 240, .6);
+  }
+
+  .table tbody td::before{
+    content: attr(data-label);
+    font-weight: 1000;
+    color: #334155;
+  }
+
+  .table tbody td:last-child{
+    border-bottom: 0;
+  }
+}
