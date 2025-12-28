@@ -16,6 +16,11 @@ const usuario       = require('./routes/usuarioRoute');
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// 1. Mapeamos la URL "/uploads/reportes" a la carpeta FÍSICA en el Disco C:
+app.use('/uploads/reportes', express.static(path.join('C:', 'Reportes_UNU_IMG', 'uploads', 'reportes')));
+
+// 2. Mantenemos tu configuración original por si tienes otros archivos locales
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/', (req, res) => {

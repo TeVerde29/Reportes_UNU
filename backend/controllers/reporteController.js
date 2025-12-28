@@ -25,8 +25,8 @@ function generarCodigoSeguro() {
 // ==============================
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadPath = path.resolve(__dirname, '..', 'uploads', 'reportes');
-    console.log('UPLOAD PATH =>', uploadPath);
+    const uploadPath = path.join('C:', 'Reportes_UNU_IMG', 'uploads', 'reportes');
+    console.log('GUARDANDO EN =>', uploadPath);
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
