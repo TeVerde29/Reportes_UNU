@@ -4,10 +4,7 @@ const obtenerEstudiantePorId = async (req, res) => {
     try {
         const { id } = req.params;
         const [estudiante] = await db.query(`
-            SELECT e.*, c.nombre AS carrera
-            FROM estudiante e
-            INNER JOIN carrera c ON e.id_carrera = c.id_carrera
-            WHERE e.id_estudiante = ?
+            SELECT * FROM estudiante WHERE id_estudiante = ?
             `, [id]
         );
         if (estudiante.length === 0) {
@@ -29,7 +26,7 @@ const obtenerEstudiantePorId = async (req, res) => {
         });
     }
 };
-
+/*
 const obtenerEstudiantePorIdUsuario = async (req, res) => {
     try {
         const { id } = req.params;
@@ -59,8 +56,8 @@ const obtenerEstudiantePorIdUsuario = async (req, res) => {
         });
     }
 };
-
+*/
 module.exports = {
     obtenerEstudiantePorId,
-    obtenerEstudiantePorIdUsuario
+    // obtenerEstudiantePorIdUsuario
 };
