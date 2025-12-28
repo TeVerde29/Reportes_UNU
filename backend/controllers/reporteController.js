@@ -3,16 +3,12 @@ const path = require('path');
 const fs = require('fs');
 const db = require('../config/database');
 
-// ==============================
-// FUNCIÓN PARA GENERAR CÓDIGO SEGURO
-// ==============================
 function generarCodigoSeguro() {
   const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const L = "abcdefghijklmnopqrstuvwxyz";
   const D = "0123456789";
   const S = "-_";
   const all = U + L + D + S;
-
   let codigo = '';
   for (let i = 0; i < 16; i++) {
     codigo += all.charAt(Math.floor(Math.random() * all.length));
@@ -20,9 +16,6 @@ function generarCodigoSeguro() {
   return codigo;
 }
 
-// ==============================
-// CONFIGURACIÓN DE MULTER
-// ==============================
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadPath = path.join('C:', 'Reportes_UNU_IMG', 'uploads', 'reportes');
@@ -69,7 +62,6 @@ const crearReporte = async (req, res) => {
             });
         }
         if (!titulo || id_estado == null || id_estudiante == null || id_tipo_problema == null || id_ubicacion == null) {
-            // Eliminar archivo si faltan datos
             if (req.file && req.file.path) {
                 fs.unlinkSync(req.file.path);
             }
@@ -110,18 +102,12 @@ const crearReporte = async (req, res) => {
     }
 };
 
-// ==============================
-// ACTUALIZAR REPORTE (CON ARCHIVO OPCIONAL)
-// ==============================
 const actualizarReporte = async (req, res) => {
     try {
         const { id } = req.params;
         const { titulo, descripcion, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, id_estudiante, id_tipo_problema, id_ubicacion } = req.body;
-        
-        // Verificar si existe
         const [existe] = await db.query(`SELECT foto_url FROM reporte WHERE id_reporte = ?`, [id]);
         if (existe.length === 0) {
-            // Si hay archivo nuevo y no existe el reporte, eliminarlo
             if (req.file && req.file.path) {
                 fs.unlinkSync(req.file.path);
             }
@@ -130,8 +116,6 @@ const actualizarReporte = async (req, res) => {
                 message: 'Reporte no encontrado'
             });
         }
-
-        // Validar campos requeridos
         if (!titulo || !fecha_reporte || !fecha_edicion || cantidad_reacciones == null || id_estado == null || id_estudiante == null || id_tipo_problema == null || id_ubicacion == null) {
             if (req.file && req.file.path) {
                 fs.unlinkSync(req.file.path);
@@ -141,13 +125,9 @@ const actualizarReporte = async (req, res) => {
                 message: 'Faltan datos obligatorios'
             });
         }
-
         const descripcionFinal = descripcion ?? null;
-        
-        // Determinar foto_url
         let fotoUrl;
         if (req.file) {
-            // Si hay nueva foto, usar la nueva y eliminar la anterior
             fotoUrl = `/uploads/reportes/${req.file.filename}`;
             const fotoAnterior = existe[0].foto_url;
             if (fotoAnterior) {
@@ -161,18 +141,14 @@ const actualizarReporte = async (req, res) => {
                 }
             }
         } else {
-            // Si no hay nueva foto, mantener la anterior
             fotoUrl = existe[0].foto_url;
         }
-
-        // Actualizar en BD
         await db.query(`
             UPDATE reporte 
             SET titulo = ?, descripcion = ?, foto_url = ?, fecha_reporte = ?, fecha_edicion = ?, cantidad_reacciones = ?, id_estado = ?, id_estudiante = ?, id_tipo_problema = ?, id_ubicacion = ?
             WHERE id_reporte = ?
             `, [titulo, descripcionFinal, fotoUrl, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, id_estudiante, id_tipo_problema, id_ubicacion, id]
         );
-
         res.status(200).json({
             success: true,
             message: 'Reporte actualizado correctamente',
@@ -311,9 +287,6 @@ const obtenerReportePorId = async (req, res) => {
     }
 };
 
-// ==============================
-// OBTENER REPORTES POR ID ESTADO
-// ==============================
 const obtenerReportesPorIdEstado = async (req, res) => {
     try {
         const { id } = req.params;
@@ -356,9 +329,6 @@ const obtenerReportesPorIdEstado = async (req, res) => {
     }
 };
 
-// ==============================
-// OBTENER REPORTES POR CANTIDAD REACCIONES
-// ==============================
 const obtenerReportesPorCantidadReacciones = async (req, res) => {
     try {
         const estado = 'Aceptado';
@@ -401,9 +371,6 @@ const obtenerReportesPorCantidadReacciones = async (req, res) => {
     }
 };
 
-// ==============================
-// OBTENER REPORTES PENDIENTES POR ID ESTUDIANTE
-// ==============================
 const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
     try {
         const { id } = req.params;
