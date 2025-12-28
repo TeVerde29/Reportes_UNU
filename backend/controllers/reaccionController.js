@@ -1,16 +1,16 @@
 const db = require('../config/database');
 
-const listarLikesActivosPorEstudiante = async (req, res) => {
+const LikesActivosPorIdEstudiante = async (req, res) => {
   try {
-    const { id_estudiante } = req.params;
-    if (!id_estudiante) {
+    const { id } = req.params;
+    if (!id) {
       return res.status(400).json({ success: false, message: 'id_estudiante requerido' });
     }
     const [rows] = await db.query(
       `SELECT id_reporte
        FROM reaccion
        WHERE id_estudiante = ? AND \`like\` = 1`,
-      [id_estudiante]
+      [id]
     );
     return res.status(200).json({
       success: true,
@@ -181,7 +181,7 @@ const quitarLike = async (req, res) => {
 };
 
 module.exports = {
-  listarLikesActivosPorEstudiante,
+  LikesActivosPorIdEstudiante,
   darLike,
   quitarLike
 };

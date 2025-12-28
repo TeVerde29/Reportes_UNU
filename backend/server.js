@@ -52,15 +52,29 @@ app.get('/', (req, res) => {
     res.json({
         mensaje: "API SISTEMA DE REPORTE DE INCIDENCIAS - Backend",
         version: "1.0.0",
-        endpoints: {
-            estado: "/api/estado",
-            estudiante: "/api/estudiante",
-            reaccion: "/api/reaccion",
-            reporte: "/api/reporte",
-            tipoProblema: "/api/tipoProblema",
-            trabajador: "/api/trabajador",
-            ubicacion: "/api/ubicacion",
-            usuario: "/api/usuario"
+        endpoints: { // Falta poner las rutas usadas en cada controlador
+            estado: {
+                // obtenerEstados                   -> 
+                // obtenerEstadoPorNombre           -> 
+            },
+            estudiante: {
+                // obtenerEstudiantePorId           -> 
+            },
+            reaccion: {
+                // LikesActivosPorIdEstudiante      -> USADO
+                // darLike                          -> USADO
+                // quitarLike                       -> USADO
+            },
+            reporte: {
+            },
+            tipoProblema: {
+            },
+            trabajador: {
+            },
+            ubicacion: {
+            },
+            usuario: {
+            }
         },
         autenticacion: {
             tipo: "Sesión con Cookies",
