@@ -58,6 +58,6 @@ const obtenerEstudiantePorIdUsuario = async (req, res) => {
 };
 */
 module.exports = {
-    obtenerEstudiantePorId,
+    obtenerEstudiantePorId
     // obtenerEstudiantePorIdUsuario
 };

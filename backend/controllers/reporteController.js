@@ -54,14 +54,15 @@ const upload = multer({
 
 const crearReporte = async (req, res) => {
     try {
-        const { titulo, descripcion, id_estado, id_estudiante, id_tipo_problema, id_ubicacion } = req.body;
+        const estado = 'Pendiente';
+        const { titulo, descripcion, id_estudiante, id_tipo_problema, id_ubicacion } = req.body;
         if (!req.file) {
             return res.status(400).json({
                 success: false,
                 message: 'No se recibió ninguna imagen'
             });
         }
-        if (!titulo || id_estado == null || id_estudiante == null || id_tipo_problema == null || id_ubicacion == null) {
+        if (!titulo || !descripcion || id_estudiante == null || id_tipo_problema == null || id_ubicacion == null) {
             if (req.file && req.file.path) {
                 fs.unlinkSync(req.file.path);
             }
@@ -70,12 +71,23 @@ const crearReporte = async (req, res) => {
                 message: 'Faltan datos obligatorios'
             });
         }
+        const [estadoRows] = await db.query(
+            'SELECT id_estado FROM estado WHERE nombre = ? LIMIT 1',
+                [estado]
+            );
+        if (!estadoRows || estadoRows.length === 0) {
+        if (req.file && req.file.path) fs.unlinkSync(req.file.path);
+        return res.status(500).json({
+            success: false,
+            message: `No existe el estado "${estado}" en la tabla estado`
+        });
+        }
+        const id_estado = estadoRows[0].id_estado;
         const fotoUrl = `/uploads/reportes/${req.file.filename}`;
-        const descripcionFinal = descripcion ?? null;
         const [reporte] = await db.query(`
             INSERT INTO reporte(titulo, descripcion, foto_url, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, id_estudiante, id_tipo_problema, id_ubicacion) 
             VALUES (?, ?, ?, NOW(), NOW(), 0, ?, ?, ?, ?)`, 
-            [titulo, descripcionFinal, fotoUrl, id_estado, id_estudiante, id_tipo_problema, id_ubicacion]
+            [titulo, descripcion, fotoUrl, id_estado, id_estudiante, id_tipo_problema, id_ubicacion]
         );
         const [rows] = await db.query(
             `SELECT * FROM reporte WHERE id_reporte = ?`,
@@ -105,76 +117,30 @@ const crearReporte = async (req, res) => {
 const actualizarReporte = async (req, res) => {
     try {
         const { id } = req.params;
-        const { titulo, descripcion, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, id_estudiante, id_tipo_problema, id_ubicacion } = req.body;
-        const [existe] = await db.query(`SELECT foto_url FROM reporte WHERE id_reporte = ?`, [id]);
-        if (existe.length === 0) {
-            if (req.file && req.file.path) {
-                fs.unlinkSync(req.file.path);
-            }
-            return res.status(404).json({
-                success: false,
-                message: 'Reporte no encontrado'
-            });
-        }
-        if (!titulo || !fecha_reporte || !fecha_edicion || cantidad_reacciones == null || id_estado == null || id_estudiante == null || id_tipo_problema == null || id_ubicacion == null) {
-            if (req.file && req.file.path) {
-                fs.unlinkSync(req.file.path);
-            }
+        const { titulo, descripcion, fecha_edicion, id_estado, id_tipo_problema, id_ubicacion, id_usuario} = req.body;
+        if (!titulo || !descripcion || !fecha_edicion || id_estado == null || id_tipo_problema == null || id_ubicacion == null || id_usuario == null) {
             return res.status(400).json({
                 success: false,
                 message: 'Faltan datos obligatorios'
             });
         }
-        const descripcionFinal = descripcion ?? null;
-        let fotoUrl;
-        if (req.file) {
-            fotoUrl = `/uploads/reportes/${req.file.filename}`;
-            const fotoAnterior = existe[0].foto_url;
-            if (fotoAnterior) {
-                const rutaAnterior = path.join(__dirname, '../../', fotoAnterior);
-                if (fs.existsSync(rutaAnterior)) {
-                    try {
-                        fs.unlinkSync(rutaAnterior);
-                    } catch (err) {
-                        console.error('Error al eliminar foto anterior:', err);
-                    }
-                }
-            }
-        } else {
-            fotoUrl = existe[0].foto_url;
-        }
         await db.query(`
             UPDATE reporte 
-            SET titulo = ?, descripcion = ?, foto_url = ?, fecha_reporte = ?, fecha_edicion = ?, cantidad_reacciones = ?, id_estado = ?, id_estudiante = ?, id_tipo_problema = ?, id_ubicacion = ?
+            SET titulo = ?, descripcion = ?, fecha_edicion = ?, id_estado = ?, id_tipo_problema = ?, id_ubicacion = ?, id_usuario = ?
             WHERE id_reporte = ?
-            `, [titulo, descripcionFinal, fotoUrl, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, id_estudiante, id_tipo_problema, id_ubicacion, id]
+            `, [titulo, descripcion, fecha_edicion, id_estado, id_tipo_problema, id_ubicacion, id_usuario, id]
+        );
+        const [reporte] = await db.query(
+            `SELECT * FROM reporte WHERE id_reporte = ?`,
+            [id]
         );
         res.status(200).json({
             success: true,
             message: 'Reporte actualizado correctamente',
-            data: {
-                id,
-                titulo,
-                descripcion: descripcionFinal,
-                foto_url: fotoUrl,
-                fecha_reporte,
-                fecha_edicion,
-                cantidad_reacciones,
-                id_estado,
-                id_estudiante,
-                id_tipo_problema,
-                id_ubicacion
-            }
+            data: reporte[0]
         });
     } catch (error) {
         console.error('Error al actualizar reporte:', error);
-        if (req.file && req.file.path) {
-            try {
-                fs.unlinkSync(req.file.path);
-            } catch (unlinkError) {
-                console.error('Error al eliminar archivo:', unlinkError);
-            }
-        }
         res.status(500).json({
             success: false,
             message: 'Error al actualizar reporte'
@@ -182,222 +148,147 @@ const actualizarReporte = async (req, res) => {
     }
 };
 
-const revisarReporte = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { titulo, descripcion, id_tipo_problema, id_estado } = req.body;
-    const [existe] = await db.query(
-        `SELECT id_reporte FROM reporte WHERE id_reporte = ?`,
-        [id]
-    );
-    if (existe.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Reporte no encontrado'
-      });
+const obtenerReportePorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [reportes] = await db.query(`
+      SELECT
+        r.*,
+        CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante,
+        e.escuela AS carrera,
+        es.nombre AS estado,
+        tp.nombre AS tipo_problema,
+        u.nombre AS ubicacion
+      FROM reporte r
+      INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
+      INNER JOIN estado es ON r.id_estado = es.id_estado
+      INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
+      INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
+      WHERE r.id_reporte = ?
+      LIMIT 1
+    `, [id]);
+    if (reportes.length === 0) {
+      return res.status(404).json({ success: false, message: 'Reporte no encontrado' });
     }
-    if (!titulo || !id_tipo_problema || !id_estado) {
-      return res.status(400).json({
-        success: false,
-        message: 'Datos obligatorios incompletos'
-      });
-    }
-    await db.query(
-      `
-      UPDATE reporte
-      SET
-        titulo = ?,
-        descripcion = ?,
-        id_tipo_problema = ?,
-        id_estado = ?,
-        fecha_edicion = NOW()
-      WHERE id_reporte = ?
-      `,
-      [
-        titulo.trim(),
-        descripcion?.trim() || null,
-        id_tipo_problema,
-        id_estado,
-        id
-      ]
-    );
     res.status(200).json({
       success: true,
-      message: 'Reporte revisado correctamente'
+      message: 'Reporte obtenido correctamente',
+      data: reportes[0]
     });
   } catch (error) {
-    console.error('Error al revisar reporte:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error al revisar reporte'
-    });
+    console.error('Error al obtener reporte por id:', error);
+    return res.status(500).json({ success: false, message: 'Error al obtener reporte por id' });
   }
 };
 
-const obtenerReportePorId = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const [reportes] = await db.query(`
-            SELECT
-            r.*,
-            CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante,
-            c.nombre AS carrera,
-            es.nombre AS estado,
-            tp.nombre AS tipo_problema,
-            u.nombre AS ubicacion
-            FROM reporte r
-            INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
-            INNER JOIN carrera c ON e.id_carrera = c.id_carrera
-            INNER JOIN estado es ON r.id_estado = es.id_estado
-            INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
-            INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
-            WHERE r.id_reporte = ?
-            `, [id]
-        );
-        if (reportes.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Reporte no encontrado'
-            });
-        }
-        res.status(200).json({
-            success: true,
-            message: 'Reporte obtenido correctamente',
-            data: reportes[0]
-        });
-    } catch (error) {
-        console.error('Error al obtener reporte por id:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error al obtener reporte por id'
-        });
-    }
-};
-
 const obtenerReportesPorIdEstado = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const [reporte] = await db.query(`
-            SELECT
-            r.*,
-            CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante,
-            c.nombre AS carrera,
-            es.nombre AS estado,
-            tp.nombre AS tipo_problema,
-            u.nombre AS ubicacion
-            FROM reporte r
-            INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
-            INNER JOIN carrera c ON e.id_carrera = c.id_carrera
-            INNER JOIN estado es ON r.id_estado = es.id_estado
-            INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
-            INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
-            WHERE r.id_estado = ?
-            ORDER BY r.fecha_edicion DESC
-            `, [id]
-        );
-        if (reporte.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'No se encontraron reportes para el estado indicado'
-            });
-        }
-        res.status(200).json({
-            success: true,
-            message: 'Reportes obtenidos correctamente',
-            count: reporte.length,
-            data: reporte
-        });
-    } catch (error) {
-        console.error('Error al obtener reportes por id_estado:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error al obtener reportes por id_estado'
-        });
+  try {
+    const { id } = req.params;
+    const [reporte] = await db.query(`
+      SELECT
+        r.*,
+        CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante,
+        e.escuela AS carrera,
+        es.nombre AS estado,
+        tp.nombre AS tipo_problema,
+        u.nombre AS ubicacion
+      FROM reporte r
+      INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
+      INNER JOIN estado es ON r.id_estado = es.id_estado
+      INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
+      INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
+      WHERE r.id_estado = ?
+      ORDER BY r.fecha_edicion DESC
+    `, [id]);
+    if (reporte.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No se encontraron reportes para el estado indicado'
+      });
     }
+    res.status(200).json({
+      success: true,
+      message: 'Reportes obtenidos correctamente',
+      count: reporte.length,
+      data: reporte
+    });
+  } catch (error) {
+    console.error('Error al obtener reportes por id_estado:', error);
+    return res.status(500).json({ success: false, message: 'Error al obtener reportes por id_estado' });
+  }
 };
 
 const obtenerReportesPorCantidadReacciones = async (req, res) => {
-    try {
-        const estado = 'Aceptado';
-        const [reportes] = await db.query(`
-            SELECT
-            r.*,
-            CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante,
-            c.nombre AS carrera,
-            es.nombre AS estado,
-            tp.nombre AS tipo_problema,
-            u.nombre AS ubicacion
-            FROM reporte r
-            INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
-            INNER JOIN carrera c ON e.id_carrera = c.id_carrera
-            INNER JOIN estado es ON r.id_estado = es.id_estado
-            INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
-            INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
-            WHERE es.nombre = ?
-            ORDER BY r.cantidad_reacciones DESC
-            `, [estado]
-        );
-        if (reportes.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'No se encontraron reportes'
-            });
-        }
-        res.status(200).json({
-            success: true,
-            message: 'Reporte con mayor cantidad de reacciones obtenido correctamente',
-            count: reportes.length,
-            data: reportes
-        });
-    } catch (error) {
-        console.error('Error al obtener el reporte con mayor reacciones:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error al obtener el reporte con mayor reacciones'
-        });
+  try {
+    const estado = 'Aceptado';
+    const [reportes] = await db.query(`
+      SELECT
+        r.*,
+        CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante,
+        e.escuela AS carrera,
+        es.nombre AS estado,
+        tp.nombre AS tipo_problema,
+        u.nombre AS ubicacion
+      FROM reporte r
+      INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
+      INNER JOIN estado es ON r.id_estado = es.id_estado
+      INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
+      INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
+      WHERE es.nombre = ?
+      ORDER BY r.cantidad_reacciones DESC, r.fecha_edicion DESC
+    `, [estado]);
+    if (reportes.length === 0) {
+      return res.status(404).json({ success: false, message: 'No se encontraron reportes' });
     }
+    res.status(200).json({
+      success: true,
+      message: 'Ranking de reportes por reacciones obtenido correctamente',
+      count: reportes.length,
+      data: reportes
+    });
+  } catch (error) {
+    console.error('Error al obtener reportes por reacciones:', error);
+    return res.status(500).json({ success: false, message: 'Error al obtener reportes por reacciones' });
+  }
 };
 
 const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const estado = 'Pendiente';
-        const [reportes] = await db.query(`
-            SELECT
-            r.*,
-            CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante,
-            c.nombre AS carrera,
-            tp.nombre AS tipo_problema,
-            u.nombre AS ubicacion
-            FROM reporte r
-            INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
-            INNER JOIN carrera c ON e.id_carrera = c.id_carrera
-            INNER JOIN estado es ON r.id_estado = es.id_estado
-            INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
-            INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
-            WHERE es.nombre = ? AND r.id_estudiante = ?
-            ORDER BY r.fecha_reporte DESC
-            `, [estado, id]
-        );
-        if (reportes.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'No se encontraron reportes pendientes para el estudiante'
-            });
-        }
-        res.status(200).json({
-            success: true,
-            message: 'Reportes pendientes obtenidos correctamente',
-            count: reportes.length,
-            data: reportes
-        });
-    } catch (error) {
-        console.error('Error al obtener reportes pendientes:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error al obtener los reportes pendientes'
-        });
+  try {
+    const { id } = req.params;
+    const estado = 'Pendiente';
+    const [reportes] = await db.query(`
+      SELECT
+        r.*,
+        CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante,
+        e.escuela AS carrera,
+        e.facultad AS facultad,
+        es.nombre AS estado,
+        tp.nombre AS tipo_problema,
+        u.nombre AS ubicacion
+      FROM reporte r
+      INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
+      INNER JOIN estado es ON r.id_estado = es.id_estado
+      INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
+      INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
+      WHERE es.nombre = ? AND r.id_estudiante = ?
+      ORDER BY r.fecha_reporte DESC
+    `, [estado, id]);
+    if (reportes.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No se encontraron reportes pendientes para el estudiante'
+      });
     }
+    res.status(200).json({
+      success: true,
+      message: 'Reportes pendientes obtenidos correctamente',
+      count: reportes.length,
+      data: reportes
+    });
+  } catch (error) {
+    console.error('Error al obtener reportes pendientes:', error);
+    return res.status(500).json({ success: false, message: 'Error al obtener los reportes pendientes' });
+  }
 };
 
 module.exports = {
@@ -408,5 +299,4 @@ module.exports = {
     obtenerReportesPorIdEstado,
     obtenerReportesPorCantidadReacciones,
     obtenerReportesPendientesPorIdEstudiante,
-    revisarReporte
 };
