@@ -142,7 +142,7 @@ form {
   border: 1px solid #e2e8f0;
   padding: 0;                 /* 👈 quita el padding que achica */
   max-height: 500px;          /* 👈 igual que el feed */
-  aspect-ratio: 16 / 9;       /* 👈 para que llene ancho como “post” */
+  aspect-ratio: 16 / 10;       /* 👈 para que llene ancho como “post” */
 }
 
 .image-preview img{
