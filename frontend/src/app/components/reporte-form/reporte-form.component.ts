@@ -67,11 +67,9 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
       this.router.navigateByUrl('/login');
       return;
     }
-    
     this.cargarTipoProblemas();
     this.cargarUbicaciones();
     this.cargarEstadoPendiente('Pendiente');
-    
     this.usuarioService.estudiante$
       .pipe(
         filter((e): e is Estudiante => e !== null),
@@ -95,22 +93,15 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.cleanupFns = [];
   }
 
-  // ========================================
-  // MANEJO DE ARCHIVO DE FOTO
-  // ========================================
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    
     if (!input.files || input.files.length === 0) {
       this.fotoFile = null;
       this.previewUrl = null;
       this.fotoError = '';
       return;
     }
-
     const file = input.files[0];
-    
-    // Validar tipo de archivo
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       this.fotoError = 'Solo se permiten imágenes (JPEG, PNG, GIF, WEBP)';
@@ -119,8 +110,6 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
       input.value = '';
       return;
     }
-
-    // Validar tamaño (5MB)
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
       this.fotoError = 'La imagen no debe superar 5MB';
@@ -129,12 +118,8 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
       input.value = '';
       return;
     }
-
-    // Todo OK
     this.fotoError = '';
     this.fotoFile = file;
-
-    // Crear preview
     const reader = new FileReader();
     reader.onload = (e: ProgressEvent<FileReader>) => {
       this.previewUrl = e.target?.result as string;
@@ -142,41 +127,27 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     reader.readAsDataURL(file);
   }
 
-  // ========================================
-  // SUBMIT DEL FORMULARIO
-  // ========================================
   onSubmit(): void {
     if (this.enviando) return;
-
     this.error = '';
     this.successMessage = '';
-
-    // Validar formulario
     if (this.reporteForm.invalid) {
       this.reporteForm.markAllAsTouched();
       this.error = 'Por favor completa todos los campos requeridos.';
       return;
     }
-
-    // Validar estudiante
     if (!this.estudiante?.id_estudiante) {
       this.error = 'No se encontró el estudiante para registrar el reporte.';
       return;
     }
-
-    // Validar estado
     if (!this.estado?.id_estado) {
       this.error = 'No se pudo cargar el estado Pendiente.';
       return;
     }
-
-    // Validar foto
     if (!this.fotoFile) {
       this.error = 'Debes seleccionar una imagen.';
       return;
     }
-
-    // Crear FormData
     const formData = new FormData();
     formData.append('titulo', this.reporteForm.value.titulo);
     formData.append('descripcion', this.reporteForm.value.descripcion || '');
@@ -185,7 +156,6 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     formData.append('id_tipo_problema', String(this.reporteForm.value.id_tipo_problema));
     formData.append('id_ubicacion', String(this.reporteForm.value.id_ubicacion));
     formData.append('foto', this.fotoFile, this.fotoFile.name);
-
     console.log('Enviando FormData:');
     console.log('- titulo:', this.reporteForm.value.titulo);
     console.log('- descripcion:', this.reporteForm.value.descripcion);
@@ -194,13 +164,10 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log('- id_tipo_problema:', this.reporteForm.value.id_tipo_problema);
     console.log('- id_ubicacion:', this.reporteForm.value.id_ubicacion);
     console.log('- foto:', this.fotoFile.name);
-
     this.enviando = true;
-
     this.reporteService.crearReporte(formData).subscribe({
       next: (response: ReporteCrearResponse) => {
         console.log('Respuesta del servidor:', response);
-        
         if (response.success) {
           this.successMessage = 'Reporte creado correctamente';
           setTimeout(() => {
@@ -278,37 +245,25 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // ========================================
-  // INICIALIZAR MAPA SVG
-  // ========================================
   private intentarInicializarMapa(): void {
     if (this.mapaInicializado) return;
     if (!this.mapaSvg?.nativeElement) return;
     if (!this.ubicaciones || this.ubicaciones.length === 0) return;
-
     console.log('Inicializando mapa con', this.ubicaciones.length, 'ubicaciones');
-
-    // Crear índice por nombre normalizado
     this.ubicacionesPorNombre.clear();
     for (const u of this.ubicaciones) {
       const nombreNorm = this.normalize(u.nombre);
       this.ubicacionesPorNombre.set(nombreNorm, u);
       console.log(`Mapeando: "${u.nombre}" -> "${nombreNorm}" (ID: ${u.id_ubicacion})`);
     }
-
     const svg = this.mapaSvg.nativeElement;
     const edificios = Array.from(svg.querySelectorAll<SVGElement>('.edificio'));
-    
     console.log('Edificios encontrados en SVG:', edificios.length);
-
-    // Asignar data-id a cada edificio según coincidencia con BD
     for (const el of edificios) {
       const nombreSvg = (el.getAttribute('data-name') ?? '').trim();
       if (!nombreSvg) continue;
-
       const nombreNorm = this.normalize(nombreSvg);
       const match = this.ubicacionesPorNombre.get(nombreNorm);
-      
       if (match) {
         el.setAttribute('data-id', String(match.id_ubicacion));
         console.log(`✓ Vinculado: "${nombreSvg}" -> ID ${match.id_ubicacion}`);
@@ -316,45 +271,30 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
         console.warn(`✗ No se encontró ubicación para: "${nombreSvg}" (normalizado: "${nombreNorm}")`);
       }
     }
-
-    // Agregar event listeners
     const evtName = 'click';
-    
     const handler = (el: SVGElement, e: Event) => {
       e.preventDefault();
-      
       const idStr = el.getAttribute('data-id');
       const nombreSvg = (el.getAttribute('data-name') ?? '').trim();
-
       if (!idStr) {
         console.warn('Este elemento no tiene ID asignado:', nombreSvg);
         return;
       }
-
       const id = Number(idStr);
       if (!Number.isFinite(id)) return;
-
-      // Activar visualmente
       edificios.forEach(x => x.classList.remove('active'));
       el.classList.add('active');
-
-      // Setear en el formulario
       this.reporteForm.get('id_ubicacion')?.setValue(id);
       this.reporteForm.get('id_ubicacion')?.markAsTouched();
-
-      // Mostrar nombre
       const match = this.ubicaciones.find(u => u.id_ubicacion === id);
       this.ubicacionSeleccionadaNombre = match?.nombre ?? nombreSvg;
-      
       console.log('Ubicación seleccionada:', this.ubicacionSeleccionadaNombre, '(ID:', id, ')');
     };
-
     for (const el of edificios) {
       const fn = (e: Event) => handler(el, e);
       el.addEventListener(evtName, fn);
       this.cleanupFns.push(() => el.removeEventListener(evtName, fn));
     }
-
     this.mapaInicializado = true;
     console.log('Mapa inicializado correctamente');
   }
