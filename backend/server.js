@@ -10,17 +10,14 @@ const estudiante    = require('./routes/estudianteRoute');
 const reaccion      = require('./routes/reaccionRoute');
 const reporte       = require('./routes/reporteRoute');
 const tipoProblema  = require('./routes/tipo_problemaRoute');
+const trabajador    = require('./routes/trabajador');
 const ubicacion     = require('./routes/ubicacionRoute');
 const usuario       = require('./routes/usuarioRoute');
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// 1. Mapeamos la URL "/uploads/reportes" a la carpeta FÍSICA en el Disco C:
 app.use('/uploads/reportes', express.static(path.join('C:', 'Reportes_UNU_IMG', 'uploads', 'reportes')));
-
-// 2. Mantenemos tu configuración original por si tienes otros archivos locales
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/', (req, res) => {
@@ -35,14 +32,10 @@ app.get('/', (req, res) => {
             reaccion: {
             },
             reporte: {
-                crear: "POST /api/reporte",
-                actualizar: "PUT /api/reporte/:id",
-                obtenerPorId: "GET /api/reporte/:id",
-                porEstado: "GET /api/reporte/estado/:id",
-                topPorReacciones: "GET /api/reporte/top/reacciones",
-                pendientesPorEstudiante: "GET /api/reporte/pendientes/estudiante/:id"
             },
             tipoProblema: {
+            },
+            trabajador: {
             },
             ubicacion: {
             },
@@ -61,6 +54,7 @@ app.use('/api/estudiante', estudiante);
 app.use('/api/reaccion', reaccion);
 app.use('/api/reporte', reporte);
 app.use('/api/tipoProblema', tipoProblema);
+app.use('/api/trabajador', trabajador)
 app.use('/api/ubicacion', ubicacion);
 app.use('/api/usuario', usuario);
 
@@ -75,7 +69,7 @@ app.listen(PORT, () => {
     console.log('═══════════════════════════════════════════');
     console.log('Servidor con JWT inicializado correctamente');
     console.log(`URL: http://localhost:${PORT}`);
-    console.log(`Base de datos: ${process.env.DB_NAME || 'proyecto_swlibre'}`);
+    console.log(`Base de datos: ${process.env.DB_NAME || 'reporte_incidencias'}`);
     console.log(`JWT configurado - Expiración: ${process.env.JWT_EXPIRES_IN || '24h'}`);
     console.log('═══════════════════════════════════════════');
 });
