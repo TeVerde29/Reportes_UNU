@@ -10,7 +10,7 @@ const estudiante    = require('./routes/estudianteRoute');
 const reaccion      = require('./routes/reaccionRoute');
 const reporte       = require('./routes/reporteRoute');
 const tipoProblema  = require('./routes/tipo_problemaRoute');
-const trabajador    = require('./routes/trabajador');
+const trabajador    = require('./routes/trabajadorRoute');
 const ubicacion     = require('./routes/ubicacionRoute');
 const usuario       = require('./routes/usuarioRoute');
 
