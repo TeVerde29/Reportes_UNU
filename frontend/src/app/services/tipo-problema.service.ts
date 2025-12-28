@@ -8,7 +8,7 @@ import { TipoProbelmaResponse } from '../models/tipo_problema.interface';
   providedIn: 'root'
 })
 export class TipoProblemaService {
-  private apiUrl = `${environment.apiUrl}/tipo-problema`;
+  private apiUrl = `${environment.apiUrl}/tipoProblema`;
   constructor(private http: HttpClient) { }
 
   obtenerTiposProblema(): Observable<TipoProbelmaResponse> {
