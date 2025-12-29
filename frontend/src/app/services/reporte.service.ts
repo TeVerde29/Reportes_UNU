@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   Reporte,
-  ReporteCrearResponse,
   ReporteResponse,
 } from '../models/reporte.interface';
 
@@ -17,8 +16,8 @@ export class ReporteService {
   constructor(private http: HttpClient) {}
 
   // IMPORTANTE: Cambiar ReporteCrear por FormData
-  crearReporte(formData: FormData): Observable<ReporteCrearResponse> {
-    return this.http.post<ReporteCrearResponse>(this.apiUrl, formData);
+  crearReporte(formData: FormData): Observable<ReporteResponse> {
+    return this.http.post<ReporteResponse>(this.apiUrl, formData);
   }
 
   // Para actualizar también acepta FormData

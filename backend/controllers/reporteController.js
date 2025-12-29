@@ -27,7 +27,7 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname).toLowerCase();
-    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
     if (!allowedExtensions.includes(ext)) {
       return cb(new Error('Tipo de archivo no permitido'), '');
     }
@@ -43,11 +43,11 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024 // 5MB
   },
   fileFilter: function (req, file, cb) {
-    const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Solo se permiten imágenes (JPEG, PNG, GIF, WEBP)'));
+      cb(new Error('Solo se permiten imágenes (JPEG, PNG, WEBP)'));
     }
   }
 });
@@ -261,7 +261,6 @@ const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
         r.*,
         CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante,
         e.escuela AS carrera,
-        e.facultad AS facultad,
         es.nombre AS estado,
         tp.nombre AS tipo_problema,
         u.nombre AS ubicacion

@@ -7,7 +7,7 @@ import { Reporte } from '../../models/reporte.interface';
 import { ReporteService } from '../../services/reporte.service';
 import { EstadoService } from '../../services/estado.service';
 import { TipoProblemaService } from '../../services/tipo-problema.service';
-import { TipoProbelma, TipoProbelmaResponse } from '../../models/tipo_problema.interface';
+import { TipoProbelma, TipoProbelmaResponse } from '../../models/tipoProblema.interface';
 
 @Component({
   selector: 'app-pendientes-form',
