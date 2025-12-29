@@ -94,7 +94,7 @@ export class InicioListComponent implements OnInit, OnDestroy {
     this.estudianteSubscription?.unsubscribe();
   }
 
-  trackByIdReporte(index: number, item: Reporte): number {
+  /*trackByIdReporte(index: number, item: Reporte): number {
     return item.id_reporte;
   }
 
@@ -112,7 +112,7 @@ export class InicioListComponent implements OnInit, OnDestroy {
     (r as any).cantidad_reacciones = nuevo;
   }
 
-  darLike(r: Reporte): void {
+  /*darLike(r: Reporte): void {
     const idReporte = r.id_reporte;
     if (!this.estudiante) return;
     const idEstudiante =
@@ -169,7 +169,7 @@ export class InicioListComponent implements OnInit, OnDestroy {
         this.setLikeLoading(idReporte, false);
       }
     });
-  }
+  }*/
 
   private intentarCargarMisLikes(): void {
     if (!this.estudiante) return;
