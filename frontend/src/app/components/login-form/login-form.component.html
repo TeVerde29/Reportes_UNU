@@ -6,9 +6,9 @@
       <h2 class="login-title">UNU Incidencias</h2>
       <p class="login-subtitle">Sistema de Reportes de Averías e Incidencias</p>
     </div>
-
+    
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-
+      
       <!-- Campo Código -->
       <div class="form-group">
         <label class="form-label">Código</label>
@@ -45,10 +45,11 @@
 
       <!-- Mensajes del sistema -->
       <div *ngIf="error" class="system-message error-msg">{{ error }}</div>
+      <div *ngIf="successMessage" class="system-message success-msg">{{ successMessage }}</div>
 
       <!-- Botón Submit -->
       <button type="submit" class="submit-btn">Ingresar</button>
-
+      
     </form>
   </div>
 </div>
