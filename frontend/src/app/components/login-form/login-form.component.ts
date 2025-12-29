@@ -2,10 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UsuarioService } from '../../services/usuario.service';
-import { UsuarioResponse } from '../../models/usuario.interface';
-import { Estudiante } from '../../models/estudiante.interface';
-import { filter, take } from 'rxjs/operators';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login-form',
@@ -18,53 +15,88 @@ export class LoginFormComponent implements OnInit {
 
   loginForm: FormGroup;
   error: string = '';
-  successMessage: string = '';
+  loading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
-    private usuarioService: UsuarioService,
+    private authService: AuthService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      codigo: ['', [Validators.required]],
-      clave: ['', [Validators.required]],
+      codigo: ['', Validators.required],
+      clave: ['', Validators.required]
     });
   }
 
+  // 🔁 Si ya hay sesión activa, redirigir automáticamente
   ngOnInit(): void {
+    this.authService.me().subscribe({
+      next: (resp) => {
+        if (resp?.data?.id_rol) {
+          this.redirigirPorRol(resp.data.id_rol);
+        }
+      },
+      error: () => {
+        // No hay sesión → quedarse en login sin mostrar error
+      }
+    });
   }
 
   onSubmit(): void {
     this.error = '';
-    this.successMessage = '';
-    if (this.loginForm.invalid) {
+
+    if (this.loginForm.invalid || this.loading) {
       this.loginForm.markAllAsTouched();
       return;
     }
-    this.usuarioService.verificarUsuario(this.loginForm.value).subscribe({
-      next: (resp: UsuarioResponse) => {
-        if (!resp.success || !resp.data) {
-          this.error = resp.message || 'No se pudo iniciar sesión';
-          return;
-        }
-        this.successMessage = resp.message || 'Inicio de sesión exitoso';
-        if (resp.data.id_rol === 1) {
-          this.router.navigateByUrl('/reportes-pendientes');
-          return;
-        }
-        this.usuarioService.estudiante$
-          .pipe(
-            filter((e): e is Estudiante => !!e),
-            take(1)
-          )
-          .subscribe(() => {
-            this.router.navigateByUrl('/inicio');
-          });
+
+    this.loading = true;
+
+    // 🔐 LOGIN
+    this.authService.login(this.loginForm.value).subscribe({
+      next: () => {
+        // 🔍 Luego del login, obtener la sesión real
+        this.authService.me().subscribe({
+          next: (resp) => {
+            this.loading = false;
+
+            if (!resp?.data?.id_rol) {
+              this.error = 'No se pudo determinar el rol';
+              return;
+            }
+
+            this.redirigirPorRol(resp.data.id_rol);
+          },
+          error: () => {
+            this.loading = false;
+            this.error = 'No se pudo obtener la sesión';
+          }
+        });
       },
       error: (err) => {
-        this.error = err?.error?.message || 'Error al conectar con el servidor';
+        this.loading = false;
+        this.error = err?.error?.message || 'Credenciales inválidas';
       }
     });
+  }
+
+  // 🔀 REDIRECCIÓN CENTRAL POR ROL (VERSIÓN CORRECTA)
+  private redirigirPorRol(rol: number): void {
+
+    // 🧑‍🎓 ESTUDIANTE
+    if (rol === 3) {
+      this.router.navigateByUrl('/estudiante/inicio');
+      return;
+    }
+
+    // 👷 TRABAJADOR (SUPERVISOR O ADMINISTRADOR)
+    if (rol === 1 || rol === 2) {
+      this.router.navigateByUrl('/trabajador/reportes-pendientes');
+      return;
+    }
+
+    // ❌ SOLO SI ES UN ROL DESCONOCIDO
+    this.error = 'Rol no autorizado';
   }
 
   get f() {
