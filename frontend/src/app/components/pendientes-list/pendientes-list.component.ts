@@ -1,11 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { EstadoService } from '../../services/estado.service';
 import { ReporteService } from '../../services/reporte.service';
-import { Estudiante } from '../../models/estudiante.interface';
 import { Reporte } from '../../models/reporte.interface';
 import { Subscription } from 'rxjs';
-import { UsuarioService } from '../../services/usuario.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PendientesFormComponent } from '../pendientes-form/pendientes-form.component';
@@ -14,56 +12,46 @@ import { PendientesFormComponent } from '../pendientes-form/pendientes-form.comp
   selector: 'app-pendientes-list',
   standalone: true,
   imports: [
-  CommonModule,
-  FormsModule,
-  RouterLink,
-  PendientesFormComponent   // 👈 CLAVE
-],
-
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    PendientesFormComponent
+  ],
   templateUrl: './pendientes-list.component.html',
   styleUrl: './pendientes-list.component.css',
 })
-export class PendientesListComponent implements OnInit {
+export class PendientesListComponent implements OnInit, OnDestroy {
+
   reportes: Reporte[] = [];
-  error: string = '';
-  estudiante: Estudiante | null = null;
+  error = '';
   reporteSeleccionado: Reporte | null = null;
   mostrarModal = false;
 
-  private estudianteSubscription?: Subscription;
+  private sub?: Subscription;
+
   constructor(
     private reporteService: ReporteService,
-    private estadoServide: EstadoService,
-    private usuarioService: UsuarioService,
-    private router: Router
+    private estadoService: EstadoService
   ) {}
 
   ngOnInit(): void {
-    if (!this.usuarioService.isAuthenticated()) {
-      this.router.navigateByUrl('/login');
-      return;
-    }
-    if (!this.usuarioService.isAdmin()) {
-      this.usuarioService.logout();
-      this.router.navigateByUrl('/login');
-      return;
-    }
     this.reportesPendientes();
-
   }
 
   reportesPendientes(): void {
-    this.estadoServide.obtenerEstadoPorNombre('Pendiente').subscribe({
+    this.estadoService.obtenerEstadoPorNombre('Pendiente').subscribe({
       next: (response) => {
-        const estadoAceptado = Array.isArray(response.data)
+        const estadoPendiente = Array.isArray(response.data)
           ? response.data[0]
           : response.data;
-        if (!estadoAceptado) {
-          this.error = 'No se encontró el estado Aceptado';
+
+        if (!estadoPendiente) {
+          this.error = 'No se encontró el estado Pendiente';
           return;
         }
+
         this.reporteService
-          .obtenerReportesPorIdEstado(estadoAceptado.id_estado)
+          .obtenerReportesPorIdEstado(estadoPendiente.id_estado)
           .subscribe({
             next: (resp) => {
               if (resp.success && Array.isArray(resp.data)) {
@@ -72,15 +60,13 @@ export class PendientesListComponent implements OnInit {
                 this.error = 'No se pudieron cargar los reportes';
               }
             },
-            error: (er) => {
-              console.error('Error al obtener los reportes:', er);
+            error: () => {
               this.error = 'Error al cargar los reportes';
             },
           });
       },
-      error: (err) => {
-        this.error = err?.error?.message || 'Error al obtener estado';
-        console.error('Error al obtener estado:', err);
+      error: () => {
+        this.error = 'Error al obtener estado';
       },
     });
   }
@@ -88,7 +74,7 @@ export class PendientesListComponent implements OnInit {
   abrirModal(reporte: Reporte): void {
     this.reporteSeleccionado = reporte;
     this.mostrarModal = true;
-    document.body.style.overflow = 'hidden'; // opcional
+    document.body.style.overflow = 'hidden';
   }
 
   cerrarModal(): void {
@@ -99,6 +85,6 @@ export class PendientesListComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.estudianteSubscription?.unsubscribe();
+    this.sub?.unsubscribe();
   }
 }

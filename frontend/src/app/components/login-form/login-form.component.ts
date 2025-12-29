@@ -15,7 +15,6 @@ export class LoginFormComponent implements OnInit {
 
   loginForm: FormGroup;
   error: string = '';
-  successMessage: string = '';
   loading: boolean = false;
 
   constructor(
@@ -29,26 +28,22 @@ export class LoginFormComponent implements OnInit {
     });
   }
 
+  // 🔁 Si ya hay sesión activa, redirigir automáticamente
   ngOnInit(): void {
-    // 🔁 Si ya hay sesión, redirigir
     this.authService.me().subscribe({
       next: (resp) => {
-        const rol = resp.data.id_rol;
-        if (rol === 1) {
-          this.router.navigateByUrl('/reportes-pendientes');
-        } else {
-          this.router.navigateByUrl('/inicio');
+        if (resp?.data?.id_rol) {
+          this.redirigirPorRol(resp.data.id_rol);
         }
       },
       error: () => {
-        // No hay sesión → quedarse en login
+        // No hay sesión → quedarse en login sin mostrar error
       }
     });
   }
 
   onSubmit(): void {
     this.error = '';
-    this.successMessage = '';
 
     if (this.loginForm.invalid || this.loading) {
       this.loginForm.markAllAsTouched();
@@ -57,24 +52,20 @@ export class LoginFormComponent implements OnInit {
 
     this.loading = true;
 
-    // 1️⃣ LOGIN → crea sesión
+    // 🔐 LOGIN
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
-
-        // 2️⃣ OBTENER SESIÓN
+        // 🔍 Luego del login, obtener la sesión real
         this.authService.me().subscribe({
           next: (resp) => {
             this.loading = false;
-            this.successMessage = 'Inicio de sesión exitoso';
 
-            const rol = resp.data.id_rol;
-
-            // 3️⃣ REDIRECCIÓN SEGÚN ROL
-            if (rol === 1) {
-              this.router.navigateByUrl('/reportes-pendientes');
-            } else {
-              this.router.navigateByUrl('/inicio');
+            if (!resp?.data?.id_rol) {
+              this.error = 'No se pudo determinar el rol';
+              return;
             }
+
+            this.redirigirPorRol(resp.data.id_rol);
           },
           error: () => {
             this.loading = false;
@@ -87,6 +78,25 @@ export class LoginFormComponent implements OnInit {
         this.error = err?.error?.message || 'Credenciales inválidas';
       }
     });
+  }
+
+  // 🔀 REDIRECCIÓN CENTRAL POR ROL (VERSIÓN CORRECTA)
+  private redirigirPorRol(rol: number): void {
+
+    // 🧑‍🎓 ESTUDIANTE
+    if (rol === 3) {
+      this.router.navigateByUrl('/estudiante/inicio');
+      return;
+    }
+
+    // 👷 TRABAJADOR (SUPERVISOR O ADMINISTRADOR)
+    if (rol === 1 || rol === 2) {
+      this.router.navigateByUrl('/trabajador/reportes-pendientes');
+      return;
+    }
+
+    // ❌ SOLO SI ES UN ROL DESCONOCIDO
+    this.error = 'Rol no autorizado';
   }
 
   get f() {
