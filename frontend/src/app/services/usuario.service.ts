@@ -28,9 +28,9 @@ export class UsuarioService {
     private http: HttpClient,
     private estudianteService: EstudianteService
   ) {
-    this.cargarDesdeStorage();
+    //this.cargarDesdeStorage();
   }
-
+/*
   verificarUsuario(payload: LoginPayload): Observable<UsuarioResponse> {
     return this.http.post<UsuarioResponse>(this.apiUrl, payload).pipe(
       tap(resp => {
@@ -39,8 +39,8 @@ export class UsuarioService {
         }
       })
     );
-  }
-
+  }*/
+/*
   private setUsuario(usuario: Usuario): void {
     this.usuarioSubject.next(usuario);
     localStorage.setItem('usuario', JSON.stringify(usuario));
@@ -49,8 +49,8 @@ export class UsuarioService {
     if (this.esEstudiante(usuario)) {
       this.cargarEstudiante(usuario.id_usuario);
     }
-  }
-
+  }*/
+/*
   private cargarEstudiante(idUsuario: number): void {
     this.estudianteService
       .obtenerEstudiantePorIdUsuarioNormalizado(idUsuario)
@@ -70,7 +70,7 @@ export class UsuarioService {
         }
       });
   }
-
+*//*
   private limpiarEstudiante(): void {
     this.estudianteSubject.next(null);
     localStorage.removeItem('estudiante');
@@ -94,7 +94,7 @@ export class UsuarioService {
       this.cargarEstudiante(usuario.id_usuario);
     }
   }
-
+*/
   private esEstudiante(usuario: Usuario): boolean {
     return usuario.id_rol !== 1;
   }

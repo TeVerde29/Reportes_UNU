@@ -6,7 +6,7 @@ import { Estudiante } from '../../models/estudiante.interface';
 import { ReporteService } from '../../services/reporte.service';
 import { Ubicacion, UbicacionResponse } from '../../models/ubicacion.interface';
 import { UbicacionService } from '../../services/ubicacion.service';
-import { TipoProbelma, TipoProbelmaResponse } from '../../models/tipo_problema.interface';
+import { TipoProbelma, TipoProbelmaResponse } from '../../models/tipoProblema.interface';
 import { TipoProblemaService } from '../../services/tipo-problema.service';
 import { UsuarioService } from '../../services/usuario.service';
 import { filter, take } from 'rxjs/operators';

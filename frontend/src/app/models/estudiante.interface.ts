@@ -4,8 +4,12 @@ export interface Estudiante {
     apellido_paterno: string;
     apellido_materno: string;
     dni: string;
-    id_carrera: number;
-    carrera: string; // viene del INNER JOIN
+    telefono: string;
+    correo: string;
+    escuela: string;
+    facultad: string;
+    codigo?: string;
+    clave?: string;
 }
 
 export interface EstudianteResponse {
