@@ -41,28 +41,23 @@ export class InicioListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    if (!this.usuarioService.isAuthenticated()) {
-      this.router.navigateByUrl('/login');
-      return;
-    }
-    if (this.usuarioService.isAdmin()) {
-      this.usuarioService.logout();
-      this.router.navigateByUrl('/login');
-      return;
-    }
-    this.estudianteSubscription = this.usuarioService.estudiante$
-      .pipe(filter((e): e is Estudiante => e !== null))
-      .subscribe({
-        next: (e) => {
-          this.estudiante = e;
-          this.intentarCargarMisLikes();
-        },
-        error: (err) => {
-          console.error('Error en estudiante$:', err);
-        }
-      });
-    this.cargarReportes();
-  }
+
+  // SOLO escuchar estudiante y cargar datos
+  this.estudianteSubscription = this.usuarioService.estudiante$
+    .pipe(filter((e): e is Estudiante => e !== null))
+    .subscribe({
+      next: (e) => {
+        this.estudiante = e;
+        this.intentarCargarMisLikes();
+      },
+      error: (err) => {
+        console.error('Error en estudiante$:', err);
+      }
+    });
+
+  this.cargarReportes();
+}
+
 
   cargarReportes(): void {
     this.estadoServide.obtenerEstadoPorNombre('Aceptado').subscribe({
@@ -236,4 +231,3 @@ export class InicioListComponent implements OnInit, OnDestroy {
   }
 
 }
-  
