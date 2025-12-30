@@ -7,10 +7,9 @@ function generarCodigoSeguro() {
   const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const L = "abcdefghijklmnopqrstuvwxyz";
   const D = "0123456789";
-  const S = "-_";
-  const all = U + L + D + S;
+  const all = U + L + D ;
   let codigo = '';
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < 32; i++) {
     codigo += all.charAt(Math.floor(Math.random() * all.length));
   }
   return codigo;
@@ -112,10 +111,8 @@ const crearReporte = async (req, res) => {
 };
 
 const actualizarReporte = async (req, res) => {
-  // Para rollback de imagen si la BD falla
   let backupPath = null;
   let targetPath = null;
-
   const safeUnlink = (p) => {
     try {
       if (p && fs.existsSync(p)) fs.unlinkSync(p);
@@ -123,18 +120,14 @@ const actualizarReporte = async (req, res) => {
       console.error('Error al eliminar archivo:', e);
     }
   };
-
   const restoreBackup = () => {
     try {
-      // Si ya se puso la nueva imagen, se borra
       if (targetPath && fs.existsSync(targetPath)) fs.unlinkSync(targetPath);
-      // Si existe backup, se restaura
       if (backupPath && fs.existsSync(backupPath) && targetPath) fs.renameSync(backupPath, targetPath);
     } catch (e) {
       console.error('Error al restaurar backup de imagen:', e);
     }
   };
-
   try {
     const { id } = req.params;
     const { titulo, descripcion, fecha_edicion, id_estado, id_tipo_problema, id_ubicacion, id_usuario } = req.body;
@@ -157,7 +150,7 @@ const actualizarReporte = async (req, res) => {
           message: 'Reporte no encontrado'
         });
       }
-      const fotoUrlActual = rowsFoto[0].foto_url; // ej: "/uploads/reportes/AbC123.webp"
+      const fotoUrlActual = rowsFoto[0].foto_url;
       if (!fotoUrlActual) {
         safeUnlink(req.file.path);
         return res.status(400).json({
@@ -165,9 +158,9 @@ const actualizarReporte = async (req, res) => {
           message: 'El reporte no tiene foto_url registrada'
         });
       }
-      const filenameActual = path.basename(fotoUrlActual);      // "AbC123.webp"
-      const extActual = path.extname(filenameActual).toLowerCase(); // ".webp"
-      const extNueva = path.extname(req.file.filename).toLowerCase(); // ext del archivo subido
+      const filenameActual = path.basename(fotoUrlActual);
+      const extActual = path.extname(filenameActual).toLowerCase();
+      const extNueva = path.extname(req.file.filename).toLowerCase();
       if (extNueva !== extActual) {
         safeUnlink(req.file.path);
         return res.status(400).json({
