@@ -12,7 +12,6 @@ import { UsuarioService } from '../../services/usuario.service';
 import { filter, take } from 'rxjs/operators';
 import { EstadoService } from '../../services/estado.service';
 import { Estado, EstadoResponse } from '../../models/estado.interface';
-import { ReporteCrearResponse } from '../../models/reporte.interface';
 
 @Component({
   selector: 'app-reporte-form',

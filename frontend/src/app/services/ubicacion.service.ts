@@ -12,10 +12,10 @@ export class UbicacionService {
   constructor(private http: HttpClient) { }
 
   obtenerUbicaciones(): Observable<UbicacionResponse> {
-    return this.http.get<UbicacionResponse>(this.apiUrl);
+    return this.http.get<UbicacionResponse>(this.apiUrl, { withCredentials: true });
   }
 
   obtenerUbicacionesPorId(id: number): Observable<UbicacionResponse> {
-    return this.http.get<UbicacionResponse>(`${this.apiUrl}/${id}`);
+    return this.http.get<UbicacionResponse>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 }

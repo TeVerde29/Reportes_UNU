@@ -12,7 +12,7 @@ const {
 } = require('../controllers/reporteController');
 
 router.post('/', upload.single('foto'), crearReporte);
-router.put('/:id', actualizarReporte);
+router.put('/:id', upload.single('foto'), actualizarReporte);
 router.get('/estado/:id', obtenerReportesPorIdEstado);
 router.get('/top/reacciones', obtenerReportesPorCantidadReacciones);
 router.get('/pendientes/estudiante/:id', obtenerReportesPendientesPorIdEstudiante);
