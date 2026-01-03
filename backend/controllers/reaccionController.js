@@ -1,11 +1,8 @@
 const db = require('../config/database');
 
-const LikesActivosPorIdEstudiante = async (req, res) => {
+const likesActivosPorIdEstudiante = async (req, res) => {
   try {
     const { id } = req.params;
-    if (!id) {
-      return res.status(400).json({ success: false, message: 'id_estudiante requerido' });
-    }
     const [rows] = await db.query(
       `SELECT id_reporte
        FROM reaccion
@@ -14,6 +11,7 @@ const LikesActivosPorIdEstudiante = async (req, res) => {
     );
     return res.status(200).json({
       success: true,
+      count: rows.length,
       data: rows.map(r => r.id_reporte)
     });
   } catch (error) {
@@ -181,7 +179,7 @@ const quitarLike = async (req, res) => {
 };
 
 module.exports = {
-  LikesActivosPorIdEstudiante,
+  likesActivosPorIdEstudiante,
   darLike,
   quitarLike
 };

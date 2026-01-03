@@ -41,23 +41,8 @@ export class InicioListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-
-  // SOLO escuchar estudiante y cargar datos
-  this.estudianteSubscription = this.usuarioService.estudiante$
-    .pipe(filter((e): e is Estudiante => e !== null))
-    .subscribe({
-      next: (e) => {
-        this.estudiante = e;
-        this.intentarCargarMisLikes();
-      },
-      error: (err) => {
-        console.error('Error en estudiante$:', err);
-      }
-    });
-
-  this.cargarReportes();
-}
-
+    this.cargarReportes();
+  }
 
   cargarReportes(): void {
     this.estadoServide.obtenerEstadoPorNombre('Aceptado').subscribe({
@@ -72,7 +57,7 @@ export class InicioListComponent implements OnInit, OnDestroy {
             if (resp.success && Array.isArray(resp.data)) {
               this.reportes = resp.data;
               this.misLikesCargados = false;
-              this.intentarCargarMisLikes();
+              //this.intentarCargarMisLikes();
             } else {
               this.error = 'No se pudieron cargar los reportes';
             }
@@ -93,8 +78,8 @@ export class InicioListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.estudianteSubscription?.unsubscribe();
   }
-
-  /*trackByIdReporte(index: number, item: Reporte): number {
+/*
+  trackByIdReporte(index: number, item: Reporte): number {
     return item.id_reporte;
   }
 
@@ -111,8 +96,9 @@ export class InicioListComponent implements OnInit, OnDestroy {
     const nuevo = Math.max(0, actual + delta);
     (r as any).cantidad_reacciones = nuevo;
   }
-
-  /*darLike(r: Reporte): void {
+*/
+/*
+  darLike(r: Reporte): void {
     const idReporte = r.id_reporte;
     if (!this.estudiante) return;
     const idEstudiante =
@@ -169,8 +155,9 @@ export class InicioListComponent implements OnInit, OnDestroy {
         this.setLikeLoading(idReporte, false);
       }
     });
-  }*/
-
+  }
+*/
+/*
   private intentarCargarMisLikes(): void {
     if (!this.estudiante) return;
     if (this.reportes.length === 0) return;
@@ -181,7 +168,7 @@ export class InicioListComponent implements OnInit, OnDestroy {
       null;
     if (!idEstudiante) return;
     this.misLikesCargando = true;
-    this.reaccionService.obtenerMisLikes(Number(idEstudiante)).subscribe({
+    this.reaccionService.likesActivosPorIdEstudiante(Number(idEstudiante)).subscribe({
       next: (resp) => {
         const ids = resp?.data ?? [];
         this.likedByMe = {};
@@ -196,7 +183,7 @@ export class InicioListComponent implements OnInit, OnDestroy {
       }
     });
   }
-
+*/
   timeAgo(value: string | Date | null | undefined): string {
     if (!value) return '';
     const date = value instanceof Date ? value : new Date(value);
