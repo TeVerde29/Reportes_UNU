@@ -17,6 +17,7 @@ export interface LoginPayload {
 export class UsuarioService {
 
   private apiUrl = `${environment.apiUrl}/usuario`;
-
   
+  
+
 }
