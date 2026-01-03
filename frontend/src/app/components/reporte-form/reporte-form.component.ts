@@ -12,6 +12,8 @@ import { UsuarioService } from '../../services/usuario.service';
 import { filter, take } from 'rxjs/operators';
 import { EstadoService } from '../../services/estado.service';
 import { Estado, EstadoResponse } from '../../models/estado.interface';
+import { AuthService } from '../../services/auth.service';
+import { ReporteResponse } from '../../models/reporte.interface';
 
 @Component({
   selector: 'app-reporte-form',
@@ -39,7 +41,7 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('mapaSvg') mapaSvg?: ElementRef<SVGSVGElement>;
   @ViewChild('fotoInput') fotoInput?: ElementRef<HTMLInputElement>;
-  
+
   private mapaInicializado = false;
   private cleanupFns: Array<() => void> = [];
   private ubicacionesPorNombre = new Map<string, Ubicacion>();
@@ -51,7 +53,8 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     private ubicacionService: UbicacionService,
     private tipoProblemaService: TipoProblemaService,
     private usuarioService: UsuarioService,
-    private estadoService: EstadoService
+    private estadoService: EstadoService,
+    private authService: AuthService
   ) {
     this.reporteForm = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(5)]],
@@ -61,27 +64,25 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+
   ngOnInit(): void {
-    if (!this.usuarioService.isAuthenticated()) {
+  this.authService.me().subscribe({
+    next: (user) => {
+      // sesión válida
+      console.log('Usuario autenticado:', user);
+
+      this.cargarTipoProblemas();
+      this.cargarUbicaciones();
+      this.cargarEstadoPendiente('Pendiente');
+
+      // ⚠️ por ahora SOLO eso
+    },
+    error: () => {
+      // sesión inválida
       this.router.navigateByUrl('/login');
-      return;
     }
-    this.cargarTipoProblemas();
-    this.cargarUbicaciones();
-    this.cargarEstadoPendiente('Pendiente');
-    this.usuarioService.estudiante$
-      .pipe(
-        filter((e): e is Estudiante => e !== null),
-        take(1)
-      )
-      .subscribe({
-        next: (e) => {
-          this.estudiante = e;
-          console.log('Estudiante cargado:', this.estudiante);
-        },
-        error: (err) => console.error('Error en estudiante$:', err)
-      });
-  }
+  });
+}
 
   ngAfterViewInit(): void {
     this.intentarInicializarMapa();
@@ -165,7 +166,7 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log('- foto:', this.fotoFile.name);
     this.enviando = true;
     this.reporteService.crearReporte(formData).subscribe({
-      next: (response: ReporteCrearResponse) => {
+      next: (response: ReporteResponse) => {
         console.log('Respuesta del servidor:', response);
         if (response.success) {
           this.successMessage = 'Reporte creado correctamente';
