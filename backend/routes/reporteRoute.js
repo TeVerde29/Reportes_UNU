@@ -1,5 +1,5 @@
 const express = require('express');
-const requireSession = require('../middlewares/requireSession');
+const requireSession = require('../middleware/requireSession');
 
 
 const router = express.Router();
