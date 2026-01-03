@@ -12,11 +12,11 @@ export class EstadoService {
   constructor(private http: HttpClient) { }
 
   obtenerEstados(): Observable<EstadoResponse> {
-    return this.http.get<EstadoResponse>(this.apiUrl);
+    return this.http.get<EstadoResponse>(this.apiUrl, { withCredentials: true });
   }
 
   obtenerEstadoPorNombre(nombre: string): Observable<EstadoResponse> {
-    return this.http.get<EstadoResponse>(`${this.apiUrl}/${encodeURIComponent(nombre)}`);
+    return this.http.get<EstadoResponse>(`${this.apiUrl}/${nombre}`, { withCredentials: true });
   }
 
 }

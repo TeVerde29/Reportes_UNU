@@ -12,6 +12,6 @@ export class TipoProblemaService {
   constructor(private http: HttpClient) { }
 
   obtenerTiposProblema(): Observable<TipoProbelmaResponse> {
-    return this.http.get<TipoProbelmaResponse>(this.apiUrl);
+    return this.http.get<TipoProbelmaResponse>(this.apiUrl, { withCredentials: true });
   }
 }
