@@ -1,11 +1,33 @@
 <div class="layout">
   <nav class="menu">
-    <h3>Estudiante</h3>
+    <div class="brand">
+      <div class="icon-unu">
+        <i class="fas fa-university"></i>
+      </div>
+      <h3>Estudiante</h3>
+    </div>
 
-    <a routerLink="/estudiante/inicio" routerLinkActive="active">Inicio</a>
-    <a routerLink="/estudiante/nuevo-reporte" routerLinkActive="active">Nuevo reporte</a>
+    <div class="nav-section">
+      <a class="menu-item active">
+        <i class="fas fa-home"></i> Inicio (Reportes aceptados)
+      </a>
+      <a class="menu-item">
+        <i class="fas fa-fire"></i> Tendencias (Más reacciones)
+      </a>
+    </div>
 
-    <button class="logout-btn" (click)="logout()">Cerrar sesión</button>
+    <div class="nav-section">
+      <a class="menu-item highlight">
+        <i class="fas fa-plus-circle"></i> Nuevo reporte
+      </a>
+      <a class="menu-item">
+        <i class="fas fa-clock"></i> Mis reportes pendientes
+      </a>
+    </div>
+
+    <button class="logout-btn" (click)="logout()">
+      <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+    </button>
   </nav>
 
   <main class="content">
