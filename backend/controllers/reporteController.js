@@ -110,7 +110,6 @@ const crearReporte = async (req, res) => {
     }
 };
 
-
 const actualizarReporte = async (req, res) => {
   let backupPath = null;
   let targetPath = null;
