@@ -27,22 +27,13 @@
           <button type="button" class="tab" [class.active]="activeTab === 'populares'" (click)="setActiveTab('populares')">
             Populares
           </button>
+          <button  type="button"   class="tab" [class.active]="activeTab === 'mis-reportes'" (click)="setActiveTab('mis-reportes')">
+            Mis Reportes
+          </button>
         </div>
 
         <!-- Botones de acción -->
         <div class="actions">
-          <button type="button" class="btn btn-ghost" title="Mis reportes">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M8 6h13" />
-              <path d="M8 12h13" />
-              <path d="M8 18h13" />
-              <path d="M3 6h.01" />
-              <path d="M3 12h.01" />
-              <path d="M3 18h.01" />
-            </svg>
-            <span class="btn-text">Mis reportes</span>
-          </button>
-
           <button type="button" class="btn btn-ghost" title="Cerrar sesión" (click)="logout()">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
