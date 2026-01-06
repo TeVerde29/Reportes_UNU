@@ -8,12 +8,12 @@ import { Ubicacion, UbicacionResponse } from '../../models/ubicacion.interface';
 import { UbicacionService } from '../../services/ubicacion.service';
 import { TipoProbelma, TipoProbelmaResponse } from '../../models/tipoProblema.interface';
 import { TipoProblemaService } from '../../services/tipo-problema.service';
-import { UsuarioService } from '../../services/usuario.service';
-import { filter, take } from 'rxjs/operators';
 import { EstadoService } from '../../services/estado.service';
 import { Estado, EstadoResponse } from '../../models/estado.interface';
 import { AuthService } from '../../services/auth.service';
 import { ReporteResponse } from '../../models/reporte.interface';
+import { Usuario } from '../../models/usuario.interface';
+import { EstudianteService } from '../../services/estudiante.service';
 
 @Component({
   selector: 'app-reporte-form',
@@ -32,8 +32,8 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
   tipoProblemas: TipoProbelma[] = [];
   estado: Estado | null = null;
   enviando = false;
+  usuario: Usuario | null = null;
 
-  // Variables para el manejo de la ubicación y foto
   ubicacionSeleccionadaNombre = '';
   previewUrl: string | null = null;
   fotoError: string = '';
@@ -52,8 +52,8 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     private reporteService: ReporteService,
     private ubicacionService: UbicacionService,
     private tipoProblemaService: TipoProblemaService,
-    private usuarioService: UsuarioService,
     private estadoService: EstadoService,
+    private estudianteService: EstudianteService,
     private authService: AuthService
   ) {
     this.reporteForm = this.fb.group({
@@ -66,23 +66,33 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   ngOnInit(): void {
-  this.authService.me().subscribe({
-    next: (user) => {
-      // sesión válida
-      console.log('Usuario autenticado:', user);
+    this.authService.me().subscribe({
+      next: (user) => {
+        this.usuario = user.data;
+        this.cargarEstudiante();
+        this.cargarTipoProblemas();
+        this.cargarUbicaciones();
+        this.cargarEstadoPendiente('Pendiente');
+      },
+      error: () => {
+        this.router.navigateByUrl('/login');
+      }
+    });
+  }
 
-      this.cargarTipoProblemas();
-      this.cargarUbicaciones();
-      this.cargarEstadoPendiente('Pendiente');
-
-      // ⚠️ por ahora SOLO eso
-    },
-    error: () => {
-      // sesión inválida
-      this.router.navigateByUrl('/login');
-    }
-  });
-}
+  cargarEstudiante(): void {
+    const idEstudiante = this.usuario?.id_estudiante ?? 0;
+    this.estudianteService.obtenerEstudiantePorId(idEstudiante).subscribe({
+      next: (resp) => {
+        if (resp.success && resp.data) {
+          this.estudiante = Array.isArray(resp.data) ? resp.data[0] : resp.data;
+        }
+      },
+      error: (er) => {
+        console.error('Error al obtener el estudiante:', er);
+      },
+    });
+  }
 
   ngAfterViewInit(): void {
     this.intentarInicializarMapa();
@@ -156,14 +166,6 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     formData.append('id_tipo_problema', String(this.reporteForm.value.id_tipo_problema));
     formData.append('id_ubicacion', String(this.reporteForm.value.id_ubicacion));
     formData.append('foto', this.fotoFile, this.fotoFile.name);
-    console.log('Enviando FormData:');
-    console.log('- titulo:', this.reporteForm.value.titulo);
-    console.log('- descripcion:', this.reporteForm.value.descripcion);
-    console.log('- id_estudiante:', this.estudiante.id_estudiante);
-    console.log('- id_estado:', this.estado.id_estado);
-    console.log('- id_tipo_problema:', this.reporteForm.value.id_tipo_problema);
-    console.log('- id_ubicacion:', this.reporteForm.value.id_ubicacion);
-    console.log('- foto:', this.fotoFile.name);
     this.enviando = true;
     this.reporteService.crearReporte(formData).subscribe({
       next: (response: ReporteResponse) => {
@@ -172,7 +174,7 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
           this.successMessage = 'Reporte creado correctamente';
           setTimeout(() => {
             this.router.navigateByUrl('/inicio');
-          }, 1500);
+          }, 500);
         } else {
           this.error = response.message || 'No se pudo crear el reporte';
         }
