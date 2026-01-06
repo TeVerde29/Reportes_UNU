@@ -6,13 +6,15 @@ import { Reporte } from '../../../models/reporte.interface';
 import { Subscription } from 'rxjs';
 import { ReporteService } from '../../../services/reporte.service';
 import { EstadoService } from '../../../services/estado.service';
+import { PendientesFormComponent } from '../pendientes-form/pendientes-form.component';
 
 @Component({
   selector: 'app-aceptados-list',
   imports: [
     CommonModule,
     FormsModule,
-    RouterLink,],
+    RouterLink,
+    PendientesFormComponent],
   templateUrl: './aceptados-list.component.html',
   styleUrl: './aceptados-list.component.css'
 })
@@ -20,6 +22,9 @@ export class AceptadosListComponent implements OnInit, OnDestroy {
 
   reportes: Reporte[] = [];
   error = '';
+
+  reporteSeleccionado: Reporte | null = null;
+  mostrarModal = false;
 
   private sub?: Subscription;
 
@@ -63,6 +68,19 @@ export class AceptadosListComponent implements OnInit, OnDestroy {
         this.error = 'Error al obtener estado';
       },
     });
+  }
+
+  abrirModal(reporte: Reporte): void {
+    this.reporteSeleccionado = reporte;
+    this.mostrarModal = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarModal(): void {
+    this.mostrarModal = false;
+    this.reporteSeleccionado = null;
+    document.body.style.overflow = '';
+    this.reportesAceptados();
   }
 
   ngOnDestroy(): void {

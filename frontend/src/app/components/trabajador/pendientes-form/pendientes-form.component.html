@@ -5,7 +5,7 @@
     <div class="modal-content border-0 shadow-lg">
 
       <div class="modal-header text-white" style="background-color: var(--green);">
-        <h5 class="modal-title fw-bold">Revisión de Reporte</h5>
+        <h5 class="modal-title fw-bold">Detalle del Reporte</h5>
         <button type="button" class="btn-close btn-close-white" (click)="cancelar()">✕</button>
       </div>
 
@@ -14,17 +14,17 @@
         <div class="row g-3">
           <div class="col-12">
             <label class="form-label fw-semibold">Título</label>
-            <input type="text" class="form-control" [(ngModel)]="form.titulo">
+            <input type="text" class="form-control bg-light" [(ngModel)]="form.titulo" [disabled]="tipoEstado !== 'Pendiente'">
           </div>
 
           <div class="col-12">
             <label class="form-label fw-semibold">Descripción</label>
-            <textarea class="form-control" rows="3" [(ngModel)]="form.descripcion"></textarea>
+            <textarea class="form-control bg-light" rows="3" [(ngModel)]="form.descripcion" [disabled]="tipoEstado !== 'Pendiente'"></textarea>
           </div>
 
           <div class="col-md-12">
             <label class="form-label fw-semibold">Tipo de problema</label>
-            <select class="form-select" [(ngModel)]="form.id_tipo_problema">
+            <select class="form-select bg-light" [(ngModel)]="form.id_tipo_problema" [disabled]="tipoEstado !== 'Pendiente'">
               <option *ngFor="let t of tiposProblema" [ngValue]="t.id_tipo_problema">
                 {{ t.nombre }}
               </option>
@@ -45,8 +45,8 @@
             <label class="form-label fw-semibold">Foto evidencia</label>
             <div class="border rounded bg-white p-2 text-center">
               <img [src]="'http://localhost:3000' + reporte.foto_url"
-                   class="img-fluid rounded shadow-sm"
-                   style="max-height: 250px; object-fit: contain;">
+                  class="img-fluid rounded shadow-sm"
+                  style="max-height: 250px; object-fit: contain;">
             </div>
           </div>
         </div>
@@ -54,10 +54,27 @@
       </div>
 
       <div class="modal-footer border-top bg-light">
-        <button class="btn btn-secondary px-4" (click)="cancelar()">Cancelar</button>
-        <button class="btn btn-danger px-4" (click)="rechazar()">Rechazar</button>
-        <button class="btn text-white px-4" style="background-color: var(--green);" (click)="aceptar()">Aceptar</button> 
+          <!-- siempre -->
+          <button class="btn btn-secondary px-4" (click)="cancelar()">
+            Cerrar
+          </button>
+
+          <!-- PENDIENTE -->
+          <ng-container *ngIf="tipoEstado === 'Pendiente'">
+            <button class="btn btn-danger px-4" (click)="rechazar()">Rechazar</button>
+            <button class="btn text-white px-4"
+                    style="background-color: var(--green);"
+                    (click)="aceptar()">Aceptar</button>
+          </ng-container>
+
+          <!-- ACEPTADO -->
+          <ng-container *ngIf="tipoEstado === 'Aceptado'">
+            <button class="btn btn-warning text-white px-4"
+                    (click)="solucionar()">Solucionar</button>
+          </ng-container>
+
       </div>
+
 
     </div>
   </div>

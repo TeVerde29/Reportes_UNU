@@ -24,6 +24,34 @@ const obtenerEstados = async (req, res) => {
     }
 };
 
+const obtenerEstadoPorID = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [estado] = await db.query(
+      `SELECT * FROM estado e WHERE e.id_estado = ?`,
+      [id]
+    );
+    if (!estado || estado.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No se encontraron estados',
+        data: estado
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: 'Estado obtenido correctamente',
+      data: estado
+    });
+  } catch (error) {
+    console.error('Error al obtener estado:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener estado',
+    });
+  }
+};
+
 const obtenerEstadoPorNombre = async (req, res) => {
   try {
     const { nombre } = req.params;
@@ -53,5 +81,6 @@ const obtenerEstadoPorNombre = async (req, res) => {
 
 module.exports = {
     obtenerEstados,
-    obtenerEstadoPorNombre
+    obtenerEstadoPorNombre,
+    obtenerEstadoPorID
 };

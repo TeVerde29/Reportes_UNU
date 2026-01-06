@@ -405,6 +405,35 @@ const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
   }
 };
 
+
+const listarReportes = async (req, res) => {
+  try {
+
+    const [reportes] = await db.query(
+      `SELECT * FROM reporte`,
+      [id]
+    );
+    if (!reportes || reportes.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No se encontraron reportes',
+        data: reportes
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: 'Reportes obtenidos correctamente',
+      data: reportes
+    });
+  } catch (error) {
+    console.error('Error al obtener reportes:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener reportes',
+    });
+  }
+};
+
 module.exports = {
   upload,
   crearReporte,
