@@ -1,8 +1,19 @@
 :host {
-  --unu-green: #006400;
-  --unu-bg: #e8f5e9;
-  --error-color: #d32f2f;
-  --success-color: #388e3c;
+  --green: #00643f;
+  --green-2: #0aa06e;
+  --green-soft: rgba(0, 100, 63, .10);
+  
+  --bg: #f3f6f9;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: rgba(148, 163, 184, .35);
+  
+  --error-color: #ef4444;
+  --success-color: #10b981;
+  
+  --shadow-soft: 0 10px 26px rgba(2, 6, 23, .06);
+  --shadow-hard: 0 18px 38px rgba(2, 6, 23, .10);
 
   --campus-bg: #eef2f3;
   --street: #cfd4d8;
@@ -15,82 +26,129 @@
   --active: #626D22;
   --active-stroke: #3B5F2D;
   --active-font-color: #ffffff;
+
+  display: block;
 }
 
-/* ======================================
-   CONTENEDOR PRINCIPAL
-   ====================================== */
+*,
+*::before,
+*::after{
+  box-sizing: border-box;
+}
+
+/* CONTENEDOR PRINCIPAL */
 .form-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
+  min-height: 100vh;
+  background: var(--bg);
 }
 
 .form-container h2 {
-  color: var(--unu-green);
-  margin-bottom: 20px;
+  color: var(--text);
+  margin: 0 0 24px;
+  font-size: 30px;
+  font-weight: 500;
   text-align: center;
 }
 
-/* ======================================
-   ALERTAS
-   ====================================== */
+/* ALERTAS */
 .alert {
-  padding: 12px 16px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  font-weight: 500;
+  border-radius: 14px;
+  padding: 14px 16px;
+  border: 1px solid rgba(226, 232, 240, .95);
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
 }
 
 .alert-error {
-  background-color: #ffebee;
-  color: var(--error-color);
-  border: 1px solid var(--error-color);
+  border-color: rgba(239, 68, 68, .25);
+  background: rgba(254, 242, 242, .95);
+  color: #991b1b;
+}
+
+.alert-error::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, .15);
+  animation: pulse 2s ease-in-out infinite;
 }
 
 .alert-success {
-  background-color: #e8f5e9;
-  color: var(--success-color);
-  border: 1px solid var(--success-color);
+  border-color: rgba(16, 185, 129, .25);
+  background: rgba(236, 253, 245, .95);
+  color: #065f46;
 }
 
-/* ======================================
-   FORMULARIO
-   ====================================== */
+.alert-success::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, .15);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .6; }
+}
+
+/* FORMULARIO */
 form {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--card);
+  border: 1px solid rgba(226, 232, 240, .95);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: var(--shadow-soft);
+  transition: all .3s ease;
+}
+
+form:hover {
+  box-shadow: 0 12px 32px rgba(2, 6, 23, .08);
 }
 
 .form-group {
-  margin-bottom: 24px;
+  margin-bottom: 10px;
 }
 
 .form-group label {
   display: block;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 8px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 10px;
+  font-size: 14px;
 }
 
 .form-group input[type="text"],
 .form-group textarea,
 .form-group select {
   width: 100%;
-  padding: 10px 12px;
-  border: 2px solid #ddd;
-  border-radius: 4px;
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   font-size: 14px;
-  transition: border-color 0.3s;
+  font-weight: 500;
+  color: var(--text);
+  background: #fff;
+  transition: all 0.3s ease;
 }
 
 .form-group input[type="text"]:focus,
 .form-group textarea:focus,
 .form-group select:focus {
   outline: none;
-  border-color: var(--unu-green);
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(0, 100, 63, .10);
 }
 
 .form-group input[type="text"].invalid,
@@ -101,81 +159,100 @@ form {
 .form-group textarea {
   resize: vertical;
   font-family: inherit;
+  min-height: 100px;
 }
 
 /* Input de archivo */
 .form-group input[type="file"] {
   display: block;
   width: 100%;
-  padding: 10px;
-  border: 2px dashed #ddd;
-  border-radius: 4px;
+  padding: 16px;
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
   cursor: pointer;
-  transition: border-color 0.3s;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+  font-weight: 600;
+  color: var(--muted);
 }
 
 .form-group input[type="file"]:hover {
-  border-color: var(--unu-green);
+  border-color: var(--green);
+  background: rgba(0, 100, 63, .05);
 }
 
 .help-text {
   display: block;
-  margin-top: 6px;
+  margin-top: 8px;
   font-size: 12px;
-  color: #666;
+  color: var(--muted);
+  font-weight: 600;
 }
 
 .error-text {
-  display: block;
-  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
   font-size: 13px;
   color: var(--error-color);
-  font-weight: 500;
+  font-weight: 700;
+}
+
+.error-text::before {
+  content: '⚠';
+  font-size: 14px;
 }
 
 /* Preview de imagen (estilo post/feed) */
-.image-preview{
-  margin-top: 12px;
+.image-preview {
+  margin-top: 16px;
   border-radius: 12px;
   overflow: hidden;
-  background: #f2f4f7;
+  background: #f1f5f9;
   border: 1px solid #e2e8f0;
-  padding: 0;                 /* 👈 quita el padding que achica */
-  max-height: 500px;          /* 👈 igual que el feed */
-  aspect-ratio: 16 / 10;       /* 👈 para que llene ancho como “post” */
+  padding: 0;
+  max-height: 500px;
+  aspect-ratio: 16 / 10;
+  transition: all .3s ease;
 }
 
-.image-preview img{
+.image-preview:hover {
+  box-shadow: 0 8px 24px rgba(2, 6, 23, .10);
+}
+
+.image-preview img {
   width: 100%;
   height: 100%;
-  object-fit: cover;          /* 👈 llena y recorta como en el feed */
+  object-fit: cover;
   display: block;
-  margin: 0;                  /* 👈 quita el centrado */
+  margin: 0;
   border-radius: 0;
 }
 
-/* ======================================
-   UBICACIÓN
-   ====================================== */
+/* UBICACIÓN */
 .selected-box {
-  background: var(--unu-bg);
-  border: 2px solid var(--unu-green);
-  color: var(--unu-green);
-  padding: 14px;
-  border-radius: 6px;
+  background: var(--green-soft);
+  border: 2px solid rgba(0, 100, 63, .30);
+  color: var(--green);
+  padding: 16px;
+  border-radius: 12px;
   text-align: center;
-  font-weight: 700;
+  font-weight: 800;
   margin: 8px 0 16px;
-  min-height: 50px;
+  min-height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all .3s ease;
 }
 
 .selected-box.empty {
   border-style: dashed;
-  color: #666;
-  font-weight: 500;
+  color: var(--muted);
+  font-weight: 600;
+  background: #f8fafc;
+  border-color: #e2e8f0;
 }
 
 /* Contenedor del mapa */
@@ -185,10 +262,11 @@ form {
   max-width: 800px;
   max-height: 600px;
   overflow: auto;
-  border: 2px solid #ddd;
-  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   padding: 16px;
   background: #fafafa;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, .05);
 }
 
 /* SVG responsive */
@@ -233,7 +311,6 @@ svg {
 .edificio:hover {
   stroke-width: 4;
   filter: brightness(0.95);
-  /*transform: scale(1.02);*/
 }
 
 .edificio.active {
@@ -254,66 +331,72 @@ svg {
 .txt.big { font-size: 18px; }
 .txt.mid { font-size: 13px; }
 
-/* Si el rect está activo, el texto cambia a blanco */
 .edificio.active + text {
   fill: var(--active-font-color) !important;
 }
 
-/* ======================================
-   BOTONES
-   ====================================== */
+/* BOTONES */
 .form-actions {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   justify-content: flex-end;
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 2px solid #eee;
+  margin-top: 10px;
+  padding-top: 10px;
 }
 
 button {
-  padding: 12px 32px;
+  padding: 12px 28px;
   border: none;
-  border-radius: 6px;
-  font-size: 15px;
-  font-weight: 600;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 button:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .btn-primary {
-  background-color: var(--unu-green);
+  background: linear-gradient(135deg, var(--green), var(--green-2));
   color: white;
+  box-shadow: 0 4px 12px rgba(0, 100, 63, .25);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #004d00;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,100,0,0.3);
+  box-shadow: 0 8px 24px rgba(0, 100, 63, .35);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
 }
 
 .btn-secondary {
-  background-color: #f5f5f5;
-  color: #333;
-  border: 2px solid #ddd;
+  background: #fff;
+  color: var(--text);
+  border: 1px solid #e2e8f0;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: #e0e0e0;
-  border-color: #999;
+  background: #f8fafc;
+  border-color: var(--muted);
+  transform: translateY(-1px);
 }
 
-/* ======================================
-   RESPONSIVE
-   ====================================== */
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .form-container {
     padding: 12px;
+  }
+
+  .form-container h2 {
+    font-size: 22px;
   }
 
   form {
