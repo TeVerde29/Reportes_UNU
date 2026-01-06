@@ -33,7 +33,6 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
   estado: Estado | null = null;
   enviando = false;
   usuario: Usuario | null = null;
-
   ubicacionSeleccionadaNombre = '';
   previewUrl: string | null = null;
   fotoError: string = '';

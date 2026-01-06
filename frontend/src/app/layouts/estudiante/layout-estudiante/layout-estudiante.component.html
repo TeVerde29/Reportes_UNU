@@ -1,36 +1,84 @@
-<div class="layout">
-  <nav class="menu">
-    <div class="brand">
-      <div class="icon-unu">
-        <i class="fas fa-university"></i>
+<div class="page">
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <!-- Brand -->
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19h16" />
+            <path d="M6 19V7l6-3 6 3v12" />
+            <path d="M9 19v-6h6v6" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">UNU Incidencias</h1>
+          <p class="brand-subtitle">Reportes de averías e incidencias</p>
+        </div>
       </div>
-      <h3>Estudiante</h3>
+
+      <!-- Top Actions: Tabs + Botones + Usuario -->
+      <div class="top-actions">
+        <!-- Tabs de orden (desktop) -->
+        <div class="tabs" role="tablist" aria-label="Orden de reportes">
+          <button type="button" class="tab" [class.active]="activeTab === 'ultimos'" (click)="setActiveTab('ultimos')">
+            Últimos
+          </button>
+          <button type="button" class="tab" [class.active]="activeTab === 'populares'" (click)="setActiveTab('populares')">
+            Populares
+          </button>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" title="Mis reportes">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 6h13" />
+              <path d="M8 12h13" />
+              <path d="M8 18h13" />
+              <path d="M3 6h.01" />
+              <path d="M3 12h.01" />
+              <path d="M3 18h.01" />
+            </svg>
+            <span class="btn-text">Mis reportes</span>
+          </button>
+
+          <button type="button" class="btn btn-ghost" title="Cerrar sesión" (click)="logout()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <path d="M16 17l5-5-5-5" />
+              <path d="M21 12H9" />
+            </svg>
+            <span class="btn-text">Salir</span>
+          </button>
+
+          <button type="button" class="btn btn-primary" title="Nuevo reporte" routerLink="/estudiante/nuevo-reporte">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14" />
+              <path d="M5 12h14" />
+            </svg>
+            <span class="btn-text">Nuevo</span>
+          </button>
+        </div>
+
+        <!-- Usuario chip -->
+        <div *ngIf="estudiante" class="user-chip">
+          <div class="user-avatar" aria-hidden="true">
+            {{ obtenerIniciales(estudiante.nombres + ' ' + estudiante.apellido_paterno) }}
+          </div>
+          <div class="user-info">
+            <div class="user-name">{{ estudiante.nombres }} {{ estudiante.apellido_paterno }}</div>
+            <div class="user-hint">Estudiante</div>
+          </div>
+        </div>
+      </div>
     </div>
+  </header>
 
-    <div class="nav-section">
-      <a class="menu-item active">
-        <i class="fas fa-home"></i> Inicio (Reportes aceptados)
-      </a>
-      <a class="menu-item">
-        <i class="fas fa-fire"></i> Tendencias (Más reacciones)
-      </a>
-    </div>
-
-    <div class="nav-section">
-      <a class="menu-item highlight">
-        <i class="fas fa-plus-circle"></i> Nuevo reporte
-      </a>
-      <a class="menu-item">
-        <i class="fas fa-clock"></i> Mis reportes pendientes
-      </a>
-    </div>
-
-    <button class="logout-btn" (click)="logout()">
-      <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-    </button>
-  </nav>
-
-  <main class="content">
-    <router-outlet></router-outlet>
-  </main>
+  <!-- Contenido dinámico -->
+  <div class="layout">
+    <main class="main">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
 </div>
