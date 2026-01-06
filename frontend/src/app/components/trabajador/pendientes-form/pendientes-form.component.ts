@@ -1,8 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-
 import { Reporte } from '../../../models/reporte.interface';
 import { ReporteService } from '../../../services/reporte.service';
 import { EstadoService } from '../../../services/estado.service';
@@ -12,7 +10,7 @@ import { TipoProbelma, TipoProbelmaResponse } from '../../../models/tipoProblema
 @Component({
   selector: 'app-pendientes-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './pendientes-form.component.html',
   styleUrl: './pendientes-form.component.css'
 })
@@ -23,8 +21,6 @@ export class PendientesFormComponent implements OnInit {
 
   tiposProblema: TipoProbelma[] = [];
   tipoEstado: string = '';
-
-
   form = {
     titulo: '',
     descripcion: '',
@@ -34,15 +30,13 @@ export class PendientesFormComponent implements OnInit {
   constructor(
     private reporteService: ReporteService,
     private estadoService: EstadoService,
-    private tipoProblemaService: TipoProblemaService,
-    private router: Router
+    private tipoProblemaService: TipoProblemaService
   ) {}
 
   ngOnInit(): void {
     this.form.titulo = this.reporte.titulo ?? '';
     this.form.descripcion = this.reporte.descripcion ?? '';
     this.form.id_tipo_problema = this.reporte.id_tipo_problema ?? 0;
-
     this.cargarTipoProblemas();
     this.cargarEstadoReporte();
   }
@@ -51,12 +45,10 @@ export class PendientesFormComponent implements OnInit {
     this.cerrar.emit();
   }
 
-
   aceptar(): void {
     this.estadoService.obtenerEstadoPorNombre('Aceptado').subscribe(res => {
       const estado = Array.isArray(res.data) ? res.data[0] : res.data;
       if (!estado) return;
-
       this.reporteService.revisarReporte(this.reporte.id_reporte, {
         titulo: this.form.titulo,
         descripcion: this.form.descripcion,
@@ -70,7 +62,6 @@ export class PendientesFormComponent implements OnInit {
     this.estadoService.obtenerEstadoPorNombre('Rechazado').subscribe(res => {
       const estado = Array.isArray(res.data) ? res.data[0] : res.data;
       if (!estado) return;
-
       this.reporteService.revisarReporte(this.reporte.id_reporte, {
         titulo: this.form.titulo,
         descripcion: this.form.descripcion,
@@ -84,7 +75,6 @@ export class PendientesFormComponent implements OnInit {
     this.estadoService.obtenerEstadoPorNombre('Resuelto').subscribe(res => {
       const estado = Array.isArray(res.data) ? res.data[0] : res.data;
       if (!estado) return;
-
       this.reporteService.revisarReporte(this.reporte.id_reporte, {
         titulo: this.form.titulo,
         descripcion: this.form.descripcion,
@@ -105,7 +95,6 @@ export class PendientesFormComponent implements OnInit {
 
   cargarEstadoReporte(): void {
     if (!this.reporte.id_estado) return;
-
     this.estadoService.obtenerEstadoPorId(this.reporte.id_estado)
       .subscribe({
         next: (res) => {
@@ -117,7 +106,5 @@ export class PendientesFormComponent implements OnInit {
         }
       });
   }
-
-
 
 }
