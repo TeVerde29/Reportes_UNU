@@ -21,7 +21,7 @@
 .login-card {
   position: relative;
   width: 90%;
-  max-width: 400px;
+  max-width: 500px;
   padding: 35px 35px;
   background: rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(20px) saturate(180%);
@@ -173,7 +173,7 @@
 }
 
 .submit-btn:hover {
-  background: rgba(27, 94, 32, 0.75);
+  background: rgba(27, 94, 32, 0.85);
   border-color: rgba(255, 255, 255, 0.4);
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
