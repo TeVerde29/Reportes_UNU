@@ -364,7 +364,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 16px;
   text-transform: uppercase;
   flex-shrink: 0;
   box-shadow: 0 4px 12px rgba(0, 100, 63, .20);
@@ -378,9 +378,9 @@
 .post-meta-top{
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
 }
 
 .post-student{
@@ -402,12 +402,12 @@
 
 .post-meta-bottom{
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 /* Tags */
-.tag{
+.tag {
   display: inline-flex;
   align-items: center;
   padding: 5px 12px;
@@ -420,17 +420,30 @@
   transition: all .2s ease;
 }
 
-.tag-green{
-  background: var(--green-soft);
+.tag-green {
+  background: rgba(0, 100, 63, .10); /* Verde suave */
   border-color: rgba(0, 100, 63, .18);
-  color: var(--green);
+  color: var(--green); /* El mismo verde para el texto */
 }
 
-.tag-gray{
-  background: #f1f5f9;
+.tag-red {
+  background: rgba(231, 76, 60, .10); /* Rojo suave */
+  border-color: rgba(231, 76, 60, .18);
+  color: #e74c3c; /* Texto rojo */
+}
+
+.tag-blue {
+  background: rgba(59, 130, 246, .10); /* Azul suave */
+  border-color: rgba(59, 130, 246, .25);
+  color: #3b82f6; /* Texto azul */
+}
+
+.tag-gray {
+  background: rgba(226, 232, 240, .10);
   color: #64748b;
   border-color: rgba(148, 163, 184, .25);
 }
+
 
 /* Body */
 .post-body{
@@ -477,9 +490,6 @@
 
 /* Footer */
 .post-foot{
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(226, 232, 240, .9);
   display: flex;
   align-items: center;
   justify-content: space-between;

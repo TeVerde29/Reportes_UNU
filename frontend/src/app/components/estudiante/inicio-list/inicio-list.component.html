@@ -28,22 +28,30 @@
         <div class="post-meta-top">
           <strong class="post-student">{{ r.estudiante || 'Usuario' }}</strong>
           <span class="dot">•</span>
-          <span class="post-career">{{ r.carrera || 'Sin carrera' }}</span>
+          <span class="post-career">Estudiante de {{ r.carrera || 'Sin carrera' }}</span>
           <span class="dot">•</span>
           <span class="post-date">{{ timeAgo(r.fecha_edicion) }}</span>
         </div>
         <div class="post-meta-bottom">
-          <span class="tag tag-gray">{{ r.tipo_problema }}</span>
+          <span class="tag tag-green">{{ r.tipo_problema }}</span>
           <span class="tag tag-green">{{ r.ubicacion }}</span>
+          <span *ngIf="activeTab === 'mis-reportes'" 
+                class="tag" 
+                [ngClass]="{
+                  'tag-green': r.estado === 'Aceptado',
+                  'tag-red': r.estado === 'Rechazado',
+                  'tag-yellow': r.estado === 'Pendiente',
+                  'tag-blue': r.estado === 'Resuelto'
+                }">
+            {{ r.estado }}
+          </span>
         </div>
       </div>
     </div>
-
     <!-- Cuerpo del post -->
     <div class="post-body">
       <h3 class="post-title">{{ r.titulo }}</h3>
       <p *ngIf="r.descripcion" class="post-text">{{ r.descripcion }}</p>
-      
       <div *ngIf="r.foto_url" class="post-media">
         <img
           [src]="'http://localhost:3000' + r.foto_url"
@@ -53,17 +61,16 @@
         />
       </div>
     </div>
-
     <!-- Footer del post -->
     <div class="post-foot">
       <div class="foot-left">
         <button 
+          *ngIf="activeTab !== 'mis-reportes'"
           type="button" 
           class="like-btn" 
           [class.liked]="isLiked(r)" 
           [disabled]="likeLoading[r.id_reporte!]"
           (click)="gestionarLike(r)">
-          
           <svg 
             class="like-icon" 
             [style.fill]="isLiked(r) ? 'var(--green)' : 'none'" 
@@ -71,12 +78,11 @@
             <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.72l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" 
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-
-          <span class="like-count">
-            {{ r.cantidad_reacciones || 0 }}
-          </span>
-
+          <span class="like-count"> {{ r.cantidad_reacciones || 0 }} </span>
           <span *ngIf="likeLoading[r.id_reporte!]" class="loader-mini"></span>
+        </button>
+        <button *ngIf="activeTab === 'mis-reportes' && r.estado === 'Pendiente'" type="button" class="like-btn" routerLink="/estudiante/nuevo-reporte">
+          <span class="btn-text">Editar</span>
         </button>
       </div>
     </div>
