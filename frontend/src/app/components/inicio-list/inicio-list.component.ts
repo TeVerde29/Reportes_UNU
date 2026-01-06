@@ -1,16 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { ReporteService } from '../../services/reporte.service';
 import { EstadoService } from '../../services/estado.service';
 import { AuthService } from '../../services/auth.service';
-import { EstudianteService } from '../../services/estudiante.service';
 import { ReaccionService } from '../../services/reaccion.service';
 import { Reporte } from '../../models/reporte.interface';
-import { Estudiante } from '../../models/estudiante.interface';
 import { Reaccion } from '../../models/reaccion.interface';
-import { Usuario } from '../../models/usuario.interface';
 
 @Component({
   selector: 'app-inicio-list',
@@ -19,55 +17,59 @@ import { Usuario } from '../../models/usuario.interface';
   templateUrl: './inicio-list.component.html',
   styleUrl: './inicio-list.component.css',
 })
-export class InicioListComponent implements OnInit {
+export class InicioListComponent implements OnInit, OnDestroy {
   reportes: Reporte[] = [];
   error: string = '';
-  estudiante: Estudiante | null = null;
-  usuario: Usuario | null = null;
   likedByMe: Record<number, boolean> = {};
   likeLoading: Record<number, boolean> = {};
-  reaccion: Reaccion | null = null;
   activeTab: 'ultimos' | 'populares' = 'ultimos';
+  private querySubscription?: Subscription;
+  private idEstudiante: number = 0;
 
   constructor(
-    private estudianteService: EstudianteService,
     private reporteService: ReporteService,
     private estadoService: EstadoService,
     private authService: AuthService,
     private reaccionService: ReaccionService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.cargarEstudiante();
-    this.cargarReportesPorFecha();
+    this.cargarIdEstudiante();
+    
+    // Escuchar cambios en los query params
+    this.querySubscription = this.route.queryParams.subscribe(params => {
+      const tab = params['tab'];
+      this.activeTab = tab === 'populares' ? 'populares' : 'ultimos';
+      
+      if (this.activeTab === 'ultimos') {
+        this.cargarReportesPorFecha();
+      } else {
+        this.cargarReportesConMasLikes();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.querySubscription?.unsubscribe();
   }
 
   setActiveTab(tab: 'ultimos' | 'populares'): void {
     this.activeTab = tab;
-    if (tab === 'ultimos') {
-      this.cargarReportesPorFecha();
-    } else {
-      this.cargarReportesConMasLikes();
-    }
+    // Actualizar la URL con query params
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: tab },
+      queryParamsHandling: 'merge'
+    });
   }
 
-  cargarEstudiante(): void {
+  cargarIdEstudiante(): void {
     this.authService.me().subscribe({
       next: (response) => {
-        this.usuario = response.data;
-        const idEstudiante = this.usuario?.id_estudiante ?? 0;
-        this.cargarLikesActivos(idEstudiante);
-        this.estudianteService.obtenerEstudiantePorId(idEstudiante).subscribe({
-          next: (resp) => {
-            if (resp.success && resp.data) {
-              this.estudiante = Array.isArray(resp.data) ? resp.data[0] : resp.data;
-            }
-          },
-          error: (er) => {
-            console.error('Error al obtener el estudiante:', er);
-          },
-        });
+        this.idEstudiante = response.data?.id_estudiante ?? 0;
+        this.cargarLikesActivos(this.idEstudiante);
       },
       error: (err) => {
         console.error(err);
@@ -155,16 +157,17 @@ export class InicioListComponent implements OnInit {
 
   gestionarLike(r: Reporte): void {
     const idReporte = r.id_reporte;
-    if (!idReporte || !this.estudiante) return;
-    const idEstudiante = (this.estudiante as any).id_estudiante ?? (this.estudiante as any).id;
-    if (!idEstudiante) return;
+    if (!idReporte || !this.idEstudiante) return;
     if (this.likeLoading[idReporte]) return;
+
     const payload: Reaccion = {
       id_reporte: idReporte,
-      id_estudiante: Number(idEstudiante)
+      id_estudiante: this.idEstudiante
     };
+
     const yaTieneLike = !!this.likedByMe[idReporte];
-    this.likeLoading[idReporte] = true; // Activar estado de carga
+    this.likeLoading[idReporte] = true;
+
     if (yaTieneLike) {
       this.reaccionService.quitarLike(payload).subscribe({
         next: () => {
@@ -239,12 +242,5 @@ export class InicioListComponent implements OnInit {
     if (month < 12) return `hace ${month} ${month === 1 ? 'mes' : 'meses'}`;
     const year = Math.floor(day / 365);
     return `hace ${year} ${year === 1 ? 'año' : 'años'}`;
-  }
-
-  logout(): void {
-    this.authService.logout().subscribe({
-      next: () => this.router.navigateByUrl('/login'),
-      error: () => this.router.navigateByUrl('/login')
-    });
   }
 }
