@@ -12,6 +12,7 @@ const {
   obtenerReportesPorIdEstado,
   obtenerReportesPorCantidadReacciones,
   obtenerReportesPendientesPorIdEstudiante,
+  obtenerReportesPorIdEstudiante,
   revisarReporte
 } = require('../controllers/reporteController');
 
@@ -24,6 +25,7 @@ router.put('/revisar/:id', requireSession ,revisarReporte);
 router.put('/:id',actualizarReporte);
 router.get('/estado/:id', obtenerReportesPorIdEstado);
 router.get('/top/reacciones', obtenerReportesPorCantidadReacciones);
+router.get('/mis-reportes/:id', obtenerReportesPorIdEstudiante);
 router.get('/:id', obtenerReportePorId);
 
 module.exports = router;
