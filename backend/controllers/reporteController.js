@@ -406,31 +406,40 @@ const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
 };
 
 
-const listarReportes = async (req, res) => {
+const obtenerReportesPorIdEstudiante = async (req, res) => {
   try {
-
-    const [reportes] = await db.query(
-      `SELECT * FROM reporte`,
-      [id]
-    );
-    if (!reportes || reportes.length === 0) {
+    const { id } = req.params;
+    const [reportes] = await db.query(`
+      SELECT
+        r.*,
+        CONCAT(e.nombres,' ',e.apellido_paterno,' ',e.apellido_materno) AS estudiante,
+        e.escuela AS carrera,
+        es.nombre AS estado,
+        tp.nombre AS tipo_problema,
+        u.nombre AS ubicacion
+      FROM reporte r
+      INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
+      INNER JOIN estado es ON r.id_estado = es.id_estado
+      INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
+      INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
+      WHERE r.id_estudiante = ?
+      ORDER BY r.fecha_reporte DESC
+    `, [id]);
+    if (reportes.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'No se encontraron reportes',
-        data: reportes
+        message: 'No se encontraron reportes para el estudiante'
       });
     }
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Reportes obtenidos correctamente',
+      count: reportes.length,
       data: reportes
     });
   } catch (error) {
     console.error('Error al obtener reportes:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Error al obtener reportes',
-    });
+    return res.status(500).json({ success: false, message: 'Error al obtener los pendientes' });
   }
 };
 
@@ -442,5 +451,6 @@ module.exports = {
   obtenerReportesPorIdEstado,
   obtenerReportesPorCantidadReacciones,
   obtenerReportesPendientesPorIdEstudiante,
+  obtenerReportesPorIdEstudiante,
   revisarReporte
 };

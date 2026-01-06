@@ -22,7 +22,7 @@ export class InicioListComponent implements OnInit, OnDestroy {
   error: string = '';
   likedByMe: Record<number, boolean> = {};
   likeLoading: Record<number, boolean> = {};
-  activeTab: 'ultimos' | 'populares' = 'ultimos';
+  activeTab: 'ultimos' | 'populares' | 'mis-reportes' = 'ultimos';
   private querySubscription?: Subscription;
   private idEstudiante: number = 0;
 
@@ -36,28 +36,26 @@ export class InicioListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.cargarIdEstudiante();
-
-    // Escuchar cambios en los query params
-    this.querySubscription = this.route.queryParams.subscribe(params => {
-      const tab = params['tab'];
-      this.activeTab = tab === 'populares' ? 'populares' : 'ultimos';
-
-      if (this.activeTab === 'ultimos') {
-        this.cargarReportesPorFecha();
-      } else {
-        this.cargarReportesConMasLikes();
-      }
-    });
-  }
+  this.cargarIdEstudiante();
+  this.querySubscription = this.route.queryParams.subscribe(params => {
+    const tab = params['tab'];
+    this.activeTab = (tab === 'populares' || tab === 'mis-reportes') ? tab : 'ultimos';
+    if (this.activeTab === 'ultimos') {
+      this.cargarReportesPorFecha();
+    } else if (this.activeTab === 'populares') {
+      this.cargarReportesConMasLikes();
+    } else {
+      this.cargarMisReportes();
+    }
+  });
+}
 
   ngOnDestroy(): void {
     this.querySubscription?.unsubscribe();
   }
 
-  setActiveTab(tab: 'ultimos' | 'populares'): void {
+  setActiveTab(tab: 'ultimos' | 'populares' | 'mis-reportes'): void {
     this.activeTab = tab;
-    // Actualizar la URL con query params
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab: tab },
@@ -155,19 +153,33 @@ export class InicioListComponent implements OnInit, OnDestroy {
     });
   }
 
+  cargarMisReportes(): void {
+    this.error = '';
+    this.reporteService.obtenerReportesPorIdEstudiante(this.idEstudiante).subscribe({
+      next: (resp) => {
+        if (resp.success && Array.isArray(resp.data)) {
+          this.reportes = resp.data;
+        } else {
+          this.error = 'No se pudieron cargar los reportes';
+        }
+      },
+      error: (er) => {
+        console.error('Error al obtener los reportes:', er);
+        this.error = 'Error al cargar los reportes';
+      },
+    });
+  }
+
   gestionarLike(r: Reporte): void {
     const idReporte = r.id_reporte;
     if (!idReporte || !this.idEstudiante) return;
     if (this.likeLoading[idReporte]) return;
-
     const payload: Reaccion = {
       id_reporte: idReporte,
       id_estudiante: this.idEstudiante
     };
-
     const yaTieneLike = !!this.likedByMe[idReporte];
     this.likeLoading[idReporte] = true;
-
     if (yaTieneLike) {
       this.reaccionService.quitarLike(payload).subscribe({
         next: () => {
