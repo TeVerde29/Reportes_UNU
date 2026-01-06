@@ -2,6 +2,7 @@
   <!-- Topbar -->
   <header class="topbar">
     <div class="topbar-inner">
+      <!-- Brand -->
       <div class="brand">
         <div class="brand-logo" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
@@ -10,22 +11,35 @@
             <path d="M9 19v-6h6v6" />
           </svg>
         </div>
-
         <div class="brand-text">
           <h1 class="brand-title">UNU Incidencias</h1>
           <p class="brand-subtitle">Reportes de averías e incidencias</p>
         </div>
       </div>
 
-      <!-- Tabs + Acciones (desktop) -->
+      <!-- Top Actions: Tabs + Botones + Usuario -->
       <div class="top-actions">
+        <!-- Tabs de orden (desktop) -->
         <div class="tabs" role="tablist" aria-label="Orden de reportes">
-          <button type="button" class="tab active" aria-selected="true">Últimos</button>
-          <button type="button" class="tab" aria-selected="false">Populares</button>
+          <button 
+            type="button" 
+            class="tab" 
+            [class.active]="activeTab === 'ultimos'" 
+            (click)="setActiveTab('ultimos')">
+            Últimos
+          </button>
+          <button 
+            type="button" 
+            class="tab" 
+            [class.active]="activeTab === 'populares'" 
+            (click)="setActiveTab('populares')">
+            Populares
+          </button>
         </div>
 
+        <!-- Botones de acción -->
         <div class="actions">
-          <button type="button" class="btn btn-ghost" title="Mis reportes" data-action="my-reports">
+          <button type="button" class="btn btn-ghost" title="Mis reportes">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M8 6h13" />
               <path d="M8 12h13" />
@@ -37,7 +51,7 @@
             <span class="btn-text">Mis reportes</span>
           </button>
 
-          <button type="button" class="btn btn-ghost" title="Cerrar sesión" data-action="logout" routerLink="/login">
+          <button type="button" class="btn btn-ghost" title="Cerrar sesión" (click)="logout()">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
               <path d="M16 17l5-5-5-5" />
@@ -45,8 +59,8 @@
             </svg>
             <span class="btn-text">Salir</span>
           </button>
-          <!--routerLink="/nuevo-reporte"-->
-          <button type="button" class="btn btn-primary"  title="Nuevo reporte">
+
+          <button type="button" class="btn btn-primary" title="Nuevo reporte" routerLink="/nuevo-reporte">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 5v14" />
               <path d="M5 12h14" />
@@ -55,12 +69,11 @@
           </button>
         </div>
 
-        <!-- Usuario (chip) -->
+        <!-- Usuario chip -->
         <div *ngIf="estudiante" class="user-chip">
           <div class="user-avatar" aria-hidden="true">
-            {{ (estudiante.nombres.slice(0,1) || 'U') + (estudiante.apellido_paterno.slice(0,1) || 'N') }}
+            {{ obtenerIniciales(estudiante.nombres + ' ' + estudiante.apellido_paterno) }}
           </div>
-
           <div class="user-info">
             <div class="user-name">{{ estudiante.nombres }} {{ estudiante.apellido_paterno }}</div>
             <div class="user-hint">Estudiante</div>
@@ -70,25 +83,36 @@
     </div>
   </header>
 
-  <!-- Layout (Feed + Sidebar) -->
+  <!-- Layout Principal -->
   <div class="layout">
-    <!-- Feed -->
     <main class="main">
+      <!-- Tabs compactos para móvil -->
       <section class="feed-head">
-        <!-- Tabs compactos en móvil -->
         <div class="tabs tabs-compact" role="tablist" aria-label="Orden de reportes">
-          <button type="button" class="tab active" aria-selected="true">Últimos</button>
-          <button type="button" class="tab" aria-selected="false">Populares</button>
+          <button 
+            type="button" 
+            class="tab" 
+            [class.active]="activeTab === 'ultimos'" 
+            (click)="setActiveTab('ultimos')">
+            Últimos
+          </button>
+          <button 
+            type="button" 
+            class="tab" 
+            [class.active]="activeTab === 'populares'" 
+            (click)="setActiveTab('populares')">
+            Populares
+          </button>
         </div>
       </section>
 
-      <!-- Error -->
+      <!-- Mensaje de error -->
       <div *ngIf="error" class="alert alert-error">
         <span class="alert-dot" aria-hidden="true"></span>
         <span>{{ error }}</span>
       </div>
 
-      <!-- Empty -->
+      <!-- Estado vacío -->
       <div *ngIf="!error && reportes.length === 0" class="empty-state">
         <div class="empty-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6">
@@ -100,57 +124,68 @@
         <p>Cuando se creen nuevos reportes, aparecerán aquí.</p>
       </div>
 
-      <!-- Feed Posts -->
+      <!-- Feed de reportes -->
       <section *ngIf="!error && reportes.length > 0" class="feed">
-        <article *ngFor="let r of reportes" class="post">
-          <!-- Header -->
+        <article *ngFor="let r of reportes; trackBy: trackByIdReporte" class="post">
+          <!-- Header del post -->
           <div class="post-head">
             <div class="post-avatar">
-              <!--{{ obtenerIniciales(r.estudiante) }}-->
-              {{ (r.estudiante ?? 'U').charAt(0).toUpperCase() }}
+              {{ obtenerIniciales(r.estudiante || 'Usuario') }}
             </div>
             <div class="post-meta">
               <div class="post-meta-top">
-                <strong class="post-student">{{ r.estudiante }}</strong>
+                <strong class="post-student">{{ r.estudiante || 'Usuario' }}</strong>
                 <span class="dot">•</span>
-                <span class="post-career">Estudiante de {{ r.carrera }}</span>
+                <span class="post-career">{{ r.carrera || 'Sin carrera' }}</span>
                 <span class="dot">•</span>
-                <span class="post-date">{{ r.fecha_edicion }}</span>
+                <span class="post-date">{{ timeAgo(r.fecha_edicion) }}</span>
               </div>
-              <div>
+              <div class="post-meta-bottom">
                 <span class="tag tag-gray">{{ r.tipo_problema }}</span>
                 <span class="tag tag-green">{{ r.ubicacion }}</span>
               </div>
             </div>
           </div>
 
-          <!-- Contenido -->
+          <!-- Cuerpo del post -->
           <div class="post-body">
             <h3 class="post-title">{{ r.titulo }}</h3>
             <p *ngIf="r.descripcion" class="post-text">{{ r.descripcion }}</p>
-
+            
             <div *ngIf="r.foto_url" class="post-media">
               <img
                 [src]="'http://localhost:3000' + r.foto_url"
-                [alt]="r.titulo"
+                [alt]="r.titulo || 'Imagen del reporte'"
                 loading="lazy"
                 class="post-image"
               />
             </div>
           </div>
 
-          <!-- Footer -->
+          <!-- Footer del post -->
           <div class="post-foot">
             <div class="foot-left">
-            <button type="button" class="like-btn" disabled>
-              <svg class="like-icon" viewBox="0 0 24 24" width="20" height="20">
-                <path
-                  d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.72l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"
-                />
-              </svg>
+              <button 
+                type="button" 
+                class="like-btn" 
+                [class.liked]="isLiked(r)" 
+                [disabled]="likeLoading[r.id_reporte!]"
+                (click)="gestionarLike(r)">
+                
+                <svg 
+                  class="like-icon" 
+                  [style.fill]="isLiked(r) ? 'var(--green)' : 'none'" 
+                  viewBox="0 0 24 24" width="20" height="20">
+                  <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.72l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" 
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
 
-              <span class="like-count">{{ r.cantidad_reacciones ?? 0 }}</span>
-            </button>
+                <span class="like-count">
+                  {{ r.cantidad_reacciones || 0 }}
+                </span>
+
+                <span *ngIf="likeLoading[r.id_reporte!]" class="loader-mini"></span>
+              </button>
             </div>
           </div>
         </article>
@@ -158,7 +193,7 @@
     </main>
   </div>
 
-  <!-- FAB móvil: Nuevo reporte -->
+  <!-- FAB para móvil -->
   <a class="fab" routerLink="/nuevo-reporte" aria-label="Nuevo reporte" title="Nuevo reporte">
     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M12 5v14" />
