@@ -20,7 +20,7 @@ export class LayoutTrabajadorComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router,
+    public  router: Router,
     private trabajadorService:TrabajadorService
   ) {}
 
@@ -60,6 +60,12 @@ export class LayoutTrabajadorComponent {
         console.error('No se pudo validar la sesión:', err);
         this.router.navigateByUrl('/login');
       }
+    });
+  }
+
+  irPendientes(): void {
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['/trabajador/reportes-pendientes']);
     });
   }
 }
