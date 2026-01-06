@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { RouterOutlet } from '@angular/router'; // 👈 IMPORTANTE
+import { RouterOutlet } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-layout-estudiante',
   standalone: true,
   imports: [
-    RouterOutlet   // 👈 AQUÍ SE REGISTRA
+    RouterOutlet
   ],
   templateUrl: './layout-estudiante.component.html',
   styleUrls: ['./layout-estudiante.component.css']
@@ -25,4 +25,5 @@ export class LayoutEstudianteComponent {
       error: () => this.router.navigateByUrl('/login')
     });
   }
+  
 }

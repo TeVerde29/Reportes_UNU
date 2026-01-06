@@ -11,6 +11,9 @@ import { Estudiante } from '../../models/estudiante.interface';
 import { UsuarioService } from '../../services/usuario.service';
 import { ReaccionService } from '../../services/reaccion.service';
 import { Reaccion } from '../../models/reaccion.interface';
+import { AuthService } from '../../services/auth.service';
+import { Usuario } from '../../models/usuario.interface';
+import { EstudianteService } from '../../services/estudiante.service';
 
 @Component({
   selector: 'app-inicio-list',
@@ -27,21 +30,54 @@ export class InicioListComponent implements OnInit, OnDestroy {
   reaccion: Reaccion | null = null;
   likedByMe: Record<number, boolean> = {};
   likeLoading: Record<number, boolean> = {};
+  usuario: Usuario | null = null;
 
   private estudianteSubscription?: Subscription;
   private misLikesCargados = false;
   private misLikesCargando = false;
 
   constructor(
+    private estudianteService: EstudianteService,
     private reporteService: ReporteService,
     private estadoServide: EstadoService,
     private usuarioService: UsuarioService,
     private reaccionService: ReaccionService,
-    private router: Router
+    private authService: AuthService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
     this.cargarReportes();
+  }
+
+  caragarEstudiante(): void{
+    this.authService.me().subscribe({
+      next: (response) => {
+        this.usuario = response;
+        if(this.usuario?.id_estudiante){
+          this.estudianteService.obtenerEstudiantePorId(this.usuario.id_estudiante).subscribe({
+            next: (resp) => {
+              if (resp.success && resp.data) {
+                if (Array.isArray(resp.data)) {
+                  this.estudiante = resp.data[0];
+                } else {
+                  this.estudiante = resp.data;
+                }
+              }
+            },
+            error: (er) => {
+              console.error('Error al obtener el estudainte:', er);
+            }
+          })
+        }else{
+          this.router.navigateByUrl('/login');
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        this.router.navigateByUrl('/login');
+      }
+    })
   }
 
   cargarReportes(): void {
@@ -96,8 +132,8 @@ export class InicioListComponent implements OnInit, OnDestroy {
     const nuevo = Math.max(0, actual + delta);
     (r as any).cantidad_reacciones = nuevo;
   }
-*/
-/*
+
+
   darLike(r: Reporte): void {
     const idReporte = r.id_reporte;
     if (!this.estudiante) return;
@@ -156,8 +192,7 @@ export class InicioListComponent implements OnInit, OnDestroy {
       }
     });
   }
-*/
-/*
+
   private intentarCargarMisLikes(): void {
     if (!this.estudiante) return;
     if (this.reportes.length === 0) return;
