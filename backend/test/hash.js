@@ -1,8 +1,17 @@
 const bcrypt = require('bcrypt');
+
 (async () => {
-  const plain = process.argv[2] ?? '0376'; // ejemplo
-  const hash = await bcrypt.hash(plain, 10);
-  console.log(hash);
+  try {
+    const plain = process.argv[2] ?? '0376';
+    const saltRounds = 10;
+    
+    const hash = await bcrypt.hash(plain, saltRounds);
+    
+    console.log(`Texto original: ${plain}`);
+    console.log(`Hash generado:  ${hash}`);
+  } catch (error) {
+    console.error("Error al generar el hash:", error.message);
+  }
 })();
 
 
