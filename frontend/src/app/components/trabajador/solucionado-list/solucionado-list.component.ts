@@ -6,6 +6,7 @@ import { Reporte } from '../../../models/reporte.interface';
 import { ReporteService } from '../../../services/reporte.service';
 import { EstadoService } from '../../../services/estado.service';
 import { Subscription } from 'rxjs';
+import { PendientesFormComponent } from '../pendientes-form/pendientes-form.component';
 
 @Component({
   selector: 'app-solucionado-list',
@@ -13,6 +14,7 @@ import { Subscription } from 'rxjs';
     CommonModule,
     FormsModule,
     RouterLink,
+    PendientesFormComponent
   ],
   templateUrl: './solucionado-list.component.html',
   styleUrl: './solucionado-list.component.css'
@@ -21,6 +23,9 @@ export class SolucionadoListComponent implements OnInit, OnDestroy{
 
   reportes: Reporte[] = [];
   error = '';
+
+  reporteSeleccionado: Reporte | null = null;
+  mostrarModal = false;
 
   private sub?: Subscription;
   constructor(
@@ -63,6 +68,19 @@ export class SolucionadoListComponent implements OnInit, OnDestroy{
         this.error = 'Error al obtener estado';
       },
     });
+  }
+
+  abrirModal(reporte: Reporte): void {
+    this.reporteSeleccionado = reporte;
+    this.mostrarModal = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarModal(): void {
+    this.mostrarModal = false;
+    this.reporteSeleccionado = null;
+    document.body.style.overflow = '';
+    this.reportesSolucionar();
   }
 
   ngOnDestroy(): void {

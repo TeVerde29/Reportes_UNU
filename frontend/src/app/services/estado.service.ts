@@ -19,4 +19,8 @@ export class EstadoService {
     return this.http.get<EstadoResponse>(`${this.apiUrl}/${nombre}`, { withCredentials: true });
   }
 
+  obtenerEstadoPorId(id: number): Observable<EstadoResponse> {
+    return this.http.get<EstadoResponse>(`${this.apiUrl}/obtener/${id}`, { withCredentials: true });
+  }
+
 }

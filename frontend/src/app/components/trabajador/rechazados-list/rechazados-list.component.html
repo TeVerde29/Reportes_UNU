@@ -19,6 +19,7 @@
               <th class="border-0 text-center">Tipo</th>
               <th class="border-0">Ubicación</th>
               <th class="border-0">Fecha</th>
+              <th class="border-0">Ver</th>
             </tr>
           </thead>
 
@@ -42,6 +43,17 @@
                 <span class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ r.ubicacion }}</span>
               </td>
               <td class="text-muted">{{ r.fecha_edicion }}</td>
+              <td class="text-center pe-4">
+                <button
+                  type="button"
+                  class="btn btn-sm d-inline-flex align-items-center gap-2"
+                  style="background-color: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px;"
+                  (click)="abrirModal(r)"
+                >
+                  <i class="bi bi-eye text-primary"></i>
+                  <span>Ver</span>
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -54,3 +66,9 @@
     </div>
   </div>
 </div>
+
+<app-pendientes-form
+  *ngIf="mostrarModal && reporteSeleccionado"
+  [reporte]="reporteSeleccionado"
+  (cerrar)="cerrarModal()">
+</app-pendientes-form>

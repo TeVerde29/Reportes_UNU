@@ -10,13 +10,11 @@
 
     <ul class="nav nav-pills flex-column mb-auto mt-4">
       <li class="nav-item mb-2">
-        <a
-          class="nav-link text-white custom-nav d-flex align-items-center"
-          (click)="irPendientes()"
-          [class.active]="router.url === '/trabajador/reportes-pendientes'"
-        >
-          <i class="bi bi-hourglass-split me-2"></i>
-          <span>Reportes pendientes</span>
+        <a routerLink="/trabajador/reportes-pendientes"
+          routerLinkActive="active"
+          class="nav-link text-white custom-nav d-flex align-items-center">
+          <i class="bi bi-check2-all me-2"></i>
+          <span>Reportes Pendientes</span>
         </a>
       </li>
       <li class="nav-item mb-2">
@@ -24,7 +22,7 @@
           routerLinkActive="active"
           class="nav-link text-white custom-nav d-flex align-items-center">
           <i class="bi bi-check2-all me-2"></i>
-          <span>Reportes aceptados</span>
+          <span>Reportes Aceptados</span>
         </a>
       </li>
       <li class="nav-item mb-2">
@@ -32,7 +30,7 @@
           routerLinkActive="active"
           class="nav-link text-white custom-nav d-flex align-items-center">
           <i class="bi bi-hammer me-2"></i>
-          <span>Reportes solucionados</span>
+          <span>Reportes Solucionados</span>
         </a>
       </li>
       <li class="nav-item mb-2">

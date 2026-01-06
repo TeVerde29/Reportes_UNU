@@ -6,6 +6,7 @@ import { Reporte } from '../../../models/reporte.interface';
 import { Subscription } from 'rxjs';
 import { ReporteService } from '../../../services/reporte.service';
 import { EstadoService } from '../../../services/estado.service';
+import { PendientesFormComponent } from '../pendientes-form/pendientes-form.component';
 
 @Component({
   selector: 'app-rechazados-list',
@@ -13,6 +14,7 @@ import { EstadoService } from '../../../services/estado.service';
     CommonModule,
     FormsModule,
     RouterLink,
+    PendientesFormComponent
   ],
   templateUrl: './rechazados-list.component.html',
   styleUrl: './rechazados-list.component.css'
@@ -20,7 +22,10 @@ import { EstadoService } from '../../../services/estado.service';
 export class RechazadosListComponent implements OnInit, OnDestroy {
 
   reportes: Reporte[] = [];
-    error = '';
+  error = '';
+
+  reporteSeleccionado: Reporte | null = null;
+  mostrarModal = false;
 
     private sub?: Subscription;
 
@@ -64,6 +69,19 @@ export class RechazadosListComponent implements OnInit, OnDestroy {
           this.error = 'Error al obtener estado';
         },
       });
+    }
+
+    abrirModal(reporte: Reporte): void {
+      this.reporteSeleccionado = reporte;
+      this.mostrarModal = true;
+      document.body.style.overflow = 'hidden';
+    }
+
+    cerrarModal(): void {
+      this.mostrarModal = false;
+      this.reporteSeleccionado = null;
+      document.body.style.overflow = '';
+      this.reportesRechazados();
     }
 
     ngOnDestroy(): void {

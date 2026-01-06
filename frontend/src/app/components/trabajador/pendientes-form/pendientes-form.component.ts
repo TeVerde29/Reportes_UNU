@@ -22,6 +22,8 @@ export class PendientesFormComponent implements OnInit {
   @Output() cerrar = new EventEmitter<void>();
 
   tiposProblema: TipoProbelma[] = [];
+  tipoEstado: string = '';
+
 
   form = {
     titulo: '',
@@ -42,6 +44,7 @@ export class PendientesFormComponent implements OnInit {
     this.form.id_tipo_problema = this.reporte.id_tipo_problema ?? 0;
 
     this.cargarTipoProblemas();
+    this.cargarEstadoReporte();
   }
 
   cancelar(): void {
@@ -77,6 +80,20 @@ export class PendientesFormComponent implements OnInit {
     });
   }
 
+  solucionar(): void {
+    this.estadoService.obtenerEstadoPorNombre('Resuelto').subscribe(res => {
+      const estado = Array.isArray(res.data) ? res.data[0] : res.data;
+      if (!estado) return;
+
+      this.reporteService.revisarReporte(this.reporte.id_reporte, {
+        titulo: this.form.titulo,
+        descripcion: this.form.descripcion,
+        id_tipo_problema: this.form.id_tipo_problema,
+        id_estado: estado.id_estado
+      }).subscribe(() => this.cerrar.emit());
+    });
+  }
+
 
   cargarTipoProblemas(): void {
     this.tipoProblemaService.obtenerTiposProblema().subscribe({
@@ -85,5 +102,22 @@ export class PendientesFormComponent implements OnInit {
       }
     });
   }
+
+  cargarEstadoReporte(): void {
+    if (!this.reporte.id_estado) return;
+
+    this.estadoService.obtenerEstadoPorId(this.reporte.id_estado)
+      .subscribe({
+        next: (res) => {
+          const estado = Array.isArray(res.data) ? res.data[0] : res.data;
+          this.tipoEstado = estado?.nombre ?? '';
+        },
+        error: () => {
+          this.tipoEstado = '';
+        }
+      });
+  }
+
+
 
 }
