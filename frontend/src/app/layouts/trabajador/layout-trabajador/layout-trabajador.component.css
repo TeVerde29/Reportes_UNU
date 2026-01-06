@@ -1,30 +1,26 @@
-.layout {
-  display: flex;
-  min-height: 100vh;
-}
-
-.menu {
-  width: 230px;
-  background: #111;
-  color: #fff;
-  padding: 16px;
-}
-
-.menu a {
+/* Tus variables se mantienen igual */
+:host {
+  --green: #00643f;
+  --green-2: #0aa06e;
+  --green-soft: rgba(0, 100, 63, .10);
+  --bg: #f3f6f9;
   display: block;
-  color: #ddd;
-  padding: 10px;
-  margin-top: 6px;
-  border-radius: 6px;
-  text-decoration: none;
 }
 
-.menu a.active {
-  background: #1e6b3a;
-  color: #fff;
+/* Solo este toque para los estados de los links */
+.custom-nav {
+  transition: 0.2s;
+  opacity: 0.8;
 }
 
-.content {
-  flex: 1;
-  padding: 16px;
+.custom-nav:hover {
+  background-color: rgba(255,255,255,0.1);
+  opacity: 1;
+}
+
+/* El link activo ahora usa tus colores de fondo */
+.custom-nav.active {
+  background-color: white !important;
+  color: var(--green) !important;
+  font-weight: bold;
 }

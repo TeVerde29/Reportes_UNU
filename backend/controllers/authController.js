@@ -149,18 +149,20 @@ const login = async (req, res) => {
  * Saber si hay sesión activa
  */
 const me = (req, res) => {
+
   if (!req.session.auth) {
-    return res.status(401).json({
-      success: false,
-      message: 'No autenticado'
+    return res.status(200).json({
+      success: true,
+      data: null
     });
   }
 
-  return res.json({
+  return res.status(200).json({
     success: true,
     data: req.session.auth
   });
 };
+
 
 /**
  * POST /api/auth/logout

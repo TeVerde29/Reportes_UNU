@@ -45,7 +45,7 @@ export const routes: Routes = [
     children: [
       { path: 'reportes-pendientes', component: PendientesListComponent },
       { path: 'ver-reporte/:id', component: PendientesFormComponent },
-      
+
       { path: '', redirectTo: 'reportes-pendientes', pathMatch: 'full' }
     ]
   },
