@@ -241,6 +241,7 @@ const obtenerReportePorId = async (req, res) => {
 const obtenerReportesPorIdEstado = async (req, res) => {
   try {
     const { id } = req.params;
+
     const [reporte] = await db.query(`
       SELECT
         r.*,
@@ -257,23 +258,22 @@ const obtenerReportesPorIdEstado = async (req, res) => {
       WHERE r.id_estado = ?
       ORDER BY r.fecha_edicion DESC
     `, [id]);
-    if (reporte.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'No se encontraron reportes para el estado indicado'
-      });
-    }
-    res.status(200).json({
+
+    return res.status(200).json({
       success: true,
-      message: 'Reportes obtenidos correctamente',
       count: reporte.length,
       data: reporte
     });
+
   } catch (error) {
     console.error('Error al obtener reportes por id_estado:', error);
-    return res.status(500).json({ success: false, message: 'Error al obtener reportes por id_estado' });
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener reportes por id estado'
+    });
   }
 };
+
 
 const obtenerReportesPorCantidadReacciones = async (req, res) => {
   try {

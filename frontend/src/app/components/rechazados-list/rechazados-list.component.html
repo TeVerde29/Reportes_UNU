@@ -2,7 +2,7 @@
 
   <div class="d-flex align-items-center mb-4">
     <h2 class="h4 fw-bold mb-0" style="color: var(--text); border-left: 5px solid var(--green); padding-left: 15px;">
-      Reportes Pendientes
+      Reportes Rechazados
     </h2>
   </div>
 
@@ -12,20 +12,21 @@
         <table class="table table-hover align-middle mb-0">
           <thead style="background-color: var(--bg); color: var(--muted);">
             <tr>
-              <th class="ps-4 py-3 border-0">ID</th>
+              <th class="text-center border-0">N°</th>
               <th class="border-0">Título</th>
               <th class="border-0">Estudiante</th>
               <th class="border-0 d-none d-md-table-cell">Carrera</th>
               <th class="border-0 text-center">Tipo</th>
               <th class="border-0">Ubicación</th>
               <th class="border-0">Fecha</th>
-              <th class="border-0 text-center pe-4">Acciones</th>
             </tr>
           </thead>
 
           <tbody>
-            <tr *ngFor="let r of reportes; let i=index">
-              <td class="ps-4 fw-bold text-primary">{{ i + 1 }}</td>
+            <tr *ngFor="let r of reportes; let i = index">
+              <td class="ps-4 fw-bold text-primary">
+                {{ i + 1 }}
+              </td>
               <td>
                 <div class="fw-medium" style="color: var(--text);">{{ r.titulo }}</div>
               </td>
@@ -41,17 +42,6 @@
                 <span class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ r.ubicacion }}</span>
               </td>
               <td class="text-muted">{{ r.fecha_edicion }}</td>
-              <td class="text-center pe-4">
-                <button
-                  type="button"
-                  class="btn btn-sm d-inline-flex align-items-center gap-2"
-                  style="background-color: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px;"
-                  (click)="abrirModal(r)"
-                >
-                  <i class="bi bi-eye text-primary"></i>
-                  <span>Ver</span>
-                </button>
-              </td>
             </tr>
           </tbody>
         </table>
@@ -59,14 +49,8 @@
 
       <div *ngIf="!error && reportes.length === 0" class="text-center py-5">
         <i class="bi bi-clipboard-x display-1 text-muted opacity-25"></i>
-        <p class="mt-3 text-muted fw-medium">No hay reportes pendientes en este momento.</p>
+        <p class="mt-3 text-muted fw-medium">No hay reportes a solucionar en este momento.</p>
       </div>
     </div>
   </div>
 </div>
-
-<app-pendientes-form
-  *ngIf="mostrarModal && reporteSeleccionado"
-  [reporte]="reporteSeleccionado"
-  (cerrar)="cerrarModal()">
-</app-pendientes-form>

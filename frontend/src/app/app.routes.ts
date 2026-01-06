@@ -14,15 +14,18 @@ import { PendientesFormComponent } from './components/pendientes-form/pendientes
 import { AuthGuard } from './guards/auth.guard';
 import { LayoutEstudianteComponent } from './layouts/estudiante/layout-estudiante/layout-estudiante.component';
 import { LayoutTrabajadorComponent } from './layouts/trabajador/layout-trabajador/layout-trabajador.component';
+import { SolucionadoListComponent } from './components/solucionado-list/solucionado-list.component';
+import { AceptadosListComponent } from './components/aceptados-list/aceptados-list.component';
+import { RechazadosListComponent } from './components/rechazados-list/rechazados-list.component';
 
 export const routes: Routes = [
 
-  // 🔓 LOGIN (PÚBLICO)
+  // LOGIN (PÚBLICO)
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginFormComponent },
 
   // ============================
-  // 🧑‍🎓 ESTUDIANTE
+  // ESTUDIANTE
   // ============================
   {
     path: 'estudiante',
@@ -36,7 +39,7 @@ export const routes: Routes = [
   },
 
   // ============================
-  // 👷 TRABAJADOR
+  //  TRABAJADOR
   // ============================
   {
     path: 'trabajador',
@@ -44,12 +47,14 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'reportes-pendientes', component: PendientesListComponent },
+      { path: 'reportes-solucionados', component: SolucionadoListComponent },
+      { path: 'reportes-aceptados', component: AceptadosListComponent },
+      { path: 'reportes-rechazados', component: RechazadosListComponent },
       { path: 'ver-reporte/:id', component: PendientesFormComponent },
 
       { path: '', redirectTo: 'reportes-pendientes', pathMatch: 'full' }
     ]
   },
 
-  // ❌ CUALQUIER OTRA RUTA
   { path: '**', redirectTo: 'login' }
 ];

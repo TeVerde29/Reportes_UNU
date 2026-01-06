@@ -1,7 +1,7 @@
 <div class="d-flex vh-100 overflow-hidden">
 
   <aside class="d-flex flex-column flex-shrink-0 p-3 text-white shadow"
-         style="width: 280px; background-color: var(--green); z-index: 1050;">
+        style="width: 280px; background-color: var(--green); z-index: 1050;">
 
     <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none border-bottom pb-3 w-100">
       <i class="bi bi-shield-lock-fill fs-4 me-2" style="color: var(--green-2)"></i>
@@ -10,41 +10,43 @@
 
     <ul class="nav nav-pills flex-column mb-auto mt-4">
       <li class="nav-item mb-2">
-        <a routerLink="/trabajador/reportes-aceptados"
-           routerLinkActive="active"
-           class="nav-link text-white custom-nav d-flex align-items-center">
-          <i class="bi bi-check2-all me-2"></i>
-          <span>Reportes aceptados</span>
-        </a>
-      </li>
-      <li class="nav-item mb-2">
-        <a routerLink="/trabajador/reportes-pendientes"
-           routerLinkActive="active"
-           class="nav-link text-white custom-nav d-flex align-items-center">
+        <a
+          class="nav-link text-white custom-nav d-flex align-items-center"
+          (click)="irPendientes()"
+          [class.active]="router.url === '/trabajador/reportes-pendientes'"
+        >
           <i class="bi bi-hourglass-split me-2"></i>
           <span>Reportes pendientes</span>
         </a>
       </li>
       <li class="nav-item mb-2">
-        <a routerLink="/trabajador/solucionar-reportes"
-           routerLinkActive="active"
-           class="nav-link text-white custom-nav d-flex align-items-center">
+        <a routerLink="/trabajador/reportes-aceptados"
+          routerLinkActive="active"
+          class="nav-link text-white custom-nav d-flex align-items-center">
+          <i class="bi bi-check2-all me-2"></i>
+          <span>Reportes aceptados</span>
+        </a>
+      </li>
+      <li class="nav-item mb-2">
+        <a routerLink="/trabajador/reportes-solucionados"
+          routerLinkActive="active"
+          class="nav-link text-white custom-nav d-flex align-items-center">
           <i class="bi bi-hammer me-2"></i>
-          <span>Solucionar Reportes</span>
+          <span>Reportes solucionados</span>
         </a>
       </li>
       <li class="nav-item mb-2">
         <a routerLink="/trabajador/reportes-rechazados"
-           routerLinkActive="active"
-           class="nav-link text-white custom-nav d-flex align-items-center">
+          routerLinkActive="active"
+          class="nav-link text-white custom-nav d-flex align-items-center">
           <i class="bi bi-x-circle me-2"></i>
           <span>Reportes Rechazados</span>
         </a>
       </li>
       <li class="nav-item mb-2">
         <a routerLink="/trabajador/estadisticas"
-           routerLinkActive="active"
-           class="nav-link text-white custom-nav d-flex align-items-center">
+          routerLinkActive="active"
+          class="nav-link text-white custom-nav d-flex align-items-center">
           <i class="bi bi-bar-chart-line me-2"></i>
           <span>Estadísticas</span>
         </a>
