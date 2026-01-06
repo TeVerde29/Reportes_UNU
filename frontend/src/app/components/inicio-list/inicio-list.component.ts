@@ -153,73 +153,56 @@ export class InicioListComponent implements OnInit {
     });
   }
 
-  // Dentro de tu clase InicioListComponent
-
-gestionarLike(r: Reporte): void {
-  const idReporte = r.id_reporte;
-  
-  // 1. Validaciones iniciales
-  if (!idReporte || !this.estudiante) return;
-  
-  const idEstudiante = (this.estudiante as any).id_estudiante ?? (this.estudiante as any).id;
-  if (!idEstudiante) return;
-
-  // 2. Bloquear si ya hay una petición en curso para este reporte
-  if (this.likeLoading[idReporte]) return;
-
-  const payload: Reaccion = {
-    id_reporte: idReporte,
-    id_estudiante: Number(idEstudiante)
-  };
-
-  // 3. Determinar qué acción tomar
-  const yaTieneLike = !!this.likedByMe[idReporte];
-  
-  this.likeLoading[idReporte] = true; // Activar estado de carga
-
-  if (yaTieneLike) {
-    // CASO: QUITAR LIKE
-    this.reaccionService.quitarLike(payload).subscribe({
-      next: () => {
-        this.likedByMe[idReporte] = false;
-        this.actualizarContador(r, -1);
-        this.likeLoading[idReporte] = false;
-      },
-      error: (err) => {
-        console.error('Error al quitar like:', err);
-        this.likeLoading[idReporte] = false;
-      }
-    });
-  } else {
-    // CASO: DAR LIKE
-    this.reaccionService.darLike(payload).subscribe({
-      next: () => {
-        this.likedByMe[idReporte] = true;
-        this.actualizarContador(r, 1);
-        this.likeLoading[idReporte] = false;
-      },
-      error: (err) => {
-        // Manejo especial: si por alguna razón el front no sabía que ya había like
-        if (err?.error?.message?.includes('Ya has dado like')) {
-          this.likedByMe[idReporte] = true;
+  gestionarLike(r: Reporte): void {
+    const idReporte = r.id_reporte;
+    if (!idReporte || !this.estudiante) return;
+    const idEstudiante = (this.estudiante as any).id_estudiante ?? (this.estudiante as any).id;
+    if (!idEstudiante) return;
+    if (this.likeLoading[idReporte]) return;
+    const payload: Reaccion = {
+      id_reporte: idReporte,
+      id_estudiante: Number(idEstudiante)
+    };
+    const yaTieneLike = !!this.likedByMe[idReporte];
+    this.likeLoading[idReporte] = true; // Activar estado de carga
+    if (yaTieneLike) {
+      this.reaccionService.quitarLike(payload).subscribe({
+        next: () => {
+          this.likedByMe[idReporte] = false;
+          this.actualizarContador(r, -1);
+          this.likeLoading[idReporte] = false;
+        },
+        error: (err) => {
+          console.error('Error al quitar like:', err);
+          this.likeLoading[idReporte] = false;
         }
-        this.likeLoading[idReporte] = false;
-      }
-    });
+      });
+    } else {
+      this.reaccionService.darLike(payload).subscribe({
+        next: () => {
+          this.likedByMe[idReporte] = true;
+          this.actualizarContador(r, 1);
+          this.likeLoading[idReporte] = false;
+        },
+        error: (err) => {
+          if (err?.error?.message?.includes('Ya has dado like')) {
+            this.likedByMe[idReporte] = true;
+          }
+          this.likeLoading[idReporte] = false;
+        }
+      });
+    }
   }
-}
-
-// Método auxiliar para actualizar el número en la vista
-private actualizarContador(r: Reporte, cambio: number): void {
-  if (r.cantidad_reacciones !== undefined) {
-    r.cantidad_reacciones = Math.max(0, r.cantidad_reacciones + cambio);
+  
+  private actualizarContador(r: Reporte, cambio: number): void {
+    if (r.cantidad_reacciones !== undefined) {
+      r.cantidad_reacciones = Math.max(0, r.cantidad_reacciones + cambio);
+    }
   }
-}
 
-// Método para verificar el estado en el HTML
-isLiked(r: Reporte): boolean {
-  return !!(r.id_reporte && this.likedByMe[r.id_reporte]);
-}
+  isLiked(r: Reporte): boolean {
+    return !!(r.id_reporte && this.likedByMe[r.id_reporte]);
+  }
 
   trackByIdReporte(index: number, item: Reporte): number {
     return item.id_reporte ?? index;
@@ -241,7 +224,7 @@ isLiked(r: Reporte): boolean {
     const diffMs = Date.now() - date.getTime();
     const diff = Math.max(0, diffMs);
     const sec = Math.floor(diff / 1000);
-    if (sec < 5) return 'ahora';
+    if (sec < 10) return 'ahora';
     if (sec < 60) return `hace ${sec}s`;
     const min = Math.floor(sec / 60);
     if (min < 60) return `hace ${min}min`;
