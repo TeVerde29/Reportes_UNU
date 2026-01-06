@@ -3,12 +3,12 @@ import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { ReporteService } from '../../services/reporte.service';
-import { EstadoService } from '../../services/estado.service';
-import { AuthService } from '../../services/auth.service';
-import { ReaccionService } from '../../services/reaccion.service';
-import { Reporte } from '../../models/reporte.interface';
-import { Reaccion } from '../../models/reaccion.interface';
+import { ReporteService } from '../../../services/reporte.service';
+import { EstadoService } from '../../../services/estado.service';
+import { AuthService } from '../../../services/auth.service';
+import { ReaccionService } from '../../../services/reaccion.service';
+import { Reporte } from '../../../models/reporte.interface';
+import { Reaccion } from '../../../models/reaccion.interface';
 
 @Component({
   selector: 'app-inicio-list',
@@ -37,12 +37,12 @@ export class InicioListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.cargarIdEstudiante();
-    
+
     // Escuchar cambios en los query params
     this.querySubscription = this.route.queryParams.subscribe(params => {
       const tab = params['tab'];
       this.activeTab = tab === 'populares' ? 'populares' : 'ultimos';
-      
+
       if (this.activeTab === 'ultimos') {
         this.cargarReportesPorFecha();
       } else {
@@ -196,7 +196,7 @@ export class InicioListComponent implements OnInit, OnDestroy {
       });
     }
   }
-  
+
   private actualizarContador(r: Reporte, cambio: number): void {
     if (r.cantidad_reacciones !== undefined) {
       r.cantidad_reacciones = Math.max(0, r.cantidad_reacciones + cambio);
