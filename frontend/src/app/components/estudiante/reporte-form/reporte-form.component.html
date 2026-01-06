@@ -1,5 +1,4 @@
 <div class="form-container">
-  <h2>Nuevo Reporte de Incidencia</h2>
 
   <!-- Mensajes de error/éxito -->
   <div *ngIf="error" class="alert alert-error">
@@ -11,7 +10,7 @@
   </div>
 
   <form [formGroup]="reporteForm" (ngSubmit)="onSubmit()">
-    
+    <h2>Nuevo Reporte de Incidencia</h2>
     <!-- TÍTULO -->
     <div class="form-group">
       <label for="titulo">Título *</label>
@@ -28,7 +27,7 @@
 
     <!-- DESCRIPCIÓN -->
     <div class="form-group">
-      <label for="descripcion">Descripción (Opcional)</label>
+      <label for="descripcion">Descripción</label>
       <textarea 
         id="descripcion"
         formControlName="descripcion"
