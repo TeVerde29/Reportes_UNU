@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { Reporte } from '../../../models/reporte.interface';
 import { ReporteService } from '../../../services/reporte.service';
 import { EstadoService } from '../../../services/estado.service';
@@ -13,7 +12,6 @@ import { PendientesFormComponent } from '../pendientes-form/pendientes-form.comp
   imports: [
     CommonModule,
     FormsModule,
-    RouterLink,
     PendientesFormComponent
   ],
   templateUrl: './solucionado-list.component.html',
@@ -23,7 +21,6 @@ export class SolucionadoListComponent implements OnInit, OnDestroy{
 
   reportes: Reporte[] = [];
   error = '';
-
   reporteSeleccionado: Reporte | null = null;
   mostrarModal = false;
 
@@ -48,7 +45,6 @@ export class SolucionadoListComponent implements OnInit, OnDestroy{
           this.error = 'No se encontró el estado Resuelto';
           return;
         }
-
         this.reporteService
           .obtenerReportesPorIdEstado(estadoResuelto.id_estado)
           .subscribe({
