@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { EstadoService } from '../../services/estado.service';
-import { ReporteService } from '../../services/reporte.service';
-import { Reporte } from '../../models/reporte.interface';
+import { EstadoService } from '../../../services/estado.service';
+import { ReporteService } from '../../../services/reporte.service';
+import { Reporte } from '../../../models/reporte.interface';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

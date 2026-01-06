@@ -2,18 +2,18 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Estudiante } from '../../models/estudiante.interface';
-import { ReporteService } from '../../services/reporte.service';
-import { Ubicacion, UbicacionResponse } from '../../models/ubicacion.interface';
-import { UbicacionService } from '../../services/ubicacion.service';
-import { TipoProbelma, TipoProbelmaResponse } from '../../models/tipoProblema.interface';
-import { TipoProblemaService } from '../../services/tipo-problema.service';
-import { EstadoService } from '../../services/estado.service';
-import { Estado, EstadoResponse } from '../../models/estado.interface';
-import { AuthService } from '../../services/auth.service';
-import { ReporteResponse } from '../../models/reporte.interface';
-import { Usuario } from '../../models/usuario.interface';
-import { EstudianteService } from '../../services/estudiante.service';
+import { Estudiante } from '../../../models/estudiante.interface';
+import { ReporteService } from '../../../services/reporte.service';
+import { Ubicacion, UbicacionResponse } from '../../../models/ubicacion.interface';
+import { UbicacionService } from '../../../services/ubicacion.service';
+import { TipoProbelma, TipoProbelmaResponse } from '../../../models/tipoProblema.interface';
+import { TipoProblemaService } from '../../../services/tipo-problema.service';
+import { EstadoService } from '../../../services/estado.service';
+import { Estado, EstadoResponse } from '../../../models/estado.interface';
+import { AuthService } from '../../../services/auth.service';
+import { ReporteResponse } from '../../../models/reporte.interface';
+import { Usuario } from '../../../models/usuario.interface';
+import { EstudianteService } from '../../../services/estudiante.service';
 
 @Component({
   selector: 'app-reporte-form',
