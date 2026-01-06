@@ -20,6 +20,18 @@ export class ReporteService {
     return this.http.put<ReporteResponse>(`${this.apiUrl}/${id}`, formData, { withCredentials: true });
   }
 
+  revisarReporte(
+    id: number,
+    payload: {
+      titulo: string;
+      descripcion: string;
+      id_tipo_problema: number;
+      id_estado: number;
+    }
+  ) {
+    return this.http.put(`${this.apiUrl}/revisar/${id}`, payload,{ withCredentials: true });
+  }
+
   obtenerReportePorId(id: number): Observable<ReporteResponse> {
     return this.http.get<ReporteResponse>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }

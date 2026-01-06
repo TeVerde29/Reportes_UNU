@@ -48,7 +48,7 @@ export class PendientesFormComponent implements OnInit {
     this.cerrar.emit();
   }
 
-  /*
+
   aceptar(): void {
     this.estadoService.obtenerEstadoPorNombre('Aceptado').subscribe(res => {
       const estado = Array.isArray(res.data) ? res.data[0] : res.data;
@@ -76,7 +76,7 @@ export class PendientesFormComponent implements OnInit {
       }).subscribe(() => this.cerrar.emit());
     });
   }
-    */
+
 
   cargarTipoProblemas(): void {
     this.tipoProblemaService.obtenerTiposProblema().subscribe({

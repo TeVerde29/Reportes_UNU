@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 
 (async () => {
   try {
-    const plain = process.argv[2] ?? '0376';
+    const plain = process.argv[2] ?? '0767';
     const saltRounds = 10;
     
     const hash = await bcrypt.hash(plain, saltRounds);

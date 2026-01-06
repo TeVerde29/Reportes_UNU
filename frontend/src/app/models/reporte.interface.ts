@@ -1,7 +1,7 @@
 export interface Reporte {
-    id_reporte?: number;
+    id_reporte: number;
     titulo?: string;
-    descripcion?: string; 
+    descripcion?: string;
     foto_url?: string;
     fecha_reporte?: string;
     fecha_edicion?: string;

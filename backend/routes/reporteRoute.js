@@ -11,12 +11,14 @@ const {
   obtenerReportePorId,
   obtenerReportesPorIdEstado,
   obtenerReportesPorCantidadReacciones,
-  obtenerReportesPendientesPorIdEstudiante
+  obtenerReportesPendientesPorIdEstudiante,
+  revisarReporte
 } = require('../controllers/reporteController');
 
 // 🔐 RUTAS PROTEGIDAS
 router.post('/', requireSession, upload.single('foto'), crearReporte);
 router.get('/pendientes/estudiante/:id', requireSession, obtenerReportesPendientesPorIdEstudiante);
+router.put('/revisar/:id', requireSession ,revisarReporte);
 
 // 🌐 RUTAS PÚBLICAS
 router.put('/:id',actualizarReporte);
