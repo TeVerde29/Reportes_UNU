@@ -1,22 +1,18 @@
 import { Routes } from '@angular/router';
 
 // COMPONENTES
-import { LoginFormComponent } from './components/login-form/login-form.component';
-import { InicioListComponent } from './components/inicio-list/inicio-list.component';
-import { ReporteFormComponent } from './components/reporte-form/reporte-form.component';
-import { PendientesListComponent } from './components/pendientes-list/pendientes-list.component';
-import { PendientesFormComponent } from './components/pendientes-form/pendientes-form.component';
+import { LoginFormComponent } from './components/auth/login-form/login-form.component';
+import { InicioListComponent } from './components/estudiante/inicio-list/inicio-list.component';
+import { ReporteFormComponent } from './components/estudiante/reporte-form/reporte-form.component';
+import { PendientesListComponent } from './components/trabajador/pendientes-list/pendientes-list.component';
+import { PendientesFormComponent } from './components/trabajador/pendientes-form/pendientes-form.component';
 
-// LAYOUTS
-
-
-// GUARD
 import { AuthGuard } from './guards/auth.guard';
 import { LayoutEstudianteComponent } from './layouts/estudiante/layout-estudiante/layout-estudiante.component';
 import { LayoutTrabajadorComponent } from './layouts/trabajador/layout-trabajador/layout-trabajador.component';
-import { SolucionadoListComponent } from './components/solucionado-list/solucionado-list.component';
-import { AceptadosListComponent } from './components/aceptados-list/aceptados-list.component';
-import { RechazadosListComponent } from './components/rechazados-list/rechazados-list.component';
+import { SolucionadoListComponent } from './components/trabajador/solucionado-list/solucionado-list.component';
+import { AceptadosListComponent } from './components/trabajador/aceptados-list/aceptados-list.component';
+import { RechazadosListComponent } from './components/trabajador/rechazados-list/rechazados-list.component';
 
 export const routes: Routes = [
 

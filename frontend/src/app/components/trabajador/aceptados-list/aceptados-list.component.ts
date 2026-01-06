@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Reporte } from '../../models/reporte.interface';
+import { Reporte } from '../../../models/reporte.interface';
 import { Subscription } from 'rxjs';
-import { ReporteService } from '../../services/reporte.service';
-import { EstadoService } from '../../services/estado.service';
+import { ReporteService } from '../../../services/reporte.service';
+import { EstadoService } from '../../../services/estado.service';
 
 @Component({
   selector: 'app-aceptados-list',
