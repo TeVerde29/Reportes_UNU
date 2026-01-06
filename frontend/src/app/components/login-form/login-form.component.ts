@@ -28,7 +28,6 @@ export class LoginFormComponent implements OnInit {
     });
   }
 
-  // 🔁 Si ya hay sesión activa, redirigir automáticamente
   ngOnInit(): void {
     this.authService.me().subscribe({
       next: (resp) => {
@@ -44,27 +43,20 @@ export class LoginFormComponent implements OnInit {
 
   onSubmit(): void {
     this.error = '';
-
     if (this.loginForm.invalid || this.loading) {
       this.loginForm.markAllAsTouched();
       return;
     }
-
     this.loading = true;
-
-    // 🔐 LOGIN
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
-        // 🔍 Luego del login, obtener la sesión real
         this.authService.me().subscribe({
           next: (resp) => {
             this.loading = false;
-
             if (!resp?.data?.id_rol) {
               this.error = 'No se pudo determinar el rol';
               return;
             }
-
             this.redirigirPorRol(resp.data.id_rol);
           },
           error: () => {
@@ -80,22 +72,15 @@ export class LoginFormComponent implements OnInit {
     });
   }
 
-  // 🔀 REDIRECCIÓN CENTRAL POR ROL (VERSIÓN CORRECTA)
   private redirigirPorRol(rol: number): void {
-
-    // 🧑‍🎓 ESTUDIANTE
     if (rol === 3) {
       this.router.navigateByUrl('/estudiante/inicio');
       return;
     }
-
-    // 👷 TRABAJADOR (SUPERVISOR O ADMINISTRADOR)
     if (rol === 1 || rol === 2) {
       this.router.navigateByUrl('/trabajador/reportes-pendientes');
       return;
     }
-
-    // ❌ SOLO SI ES UN ROL DESCONOCIDO
     this.error = 'Rol no autorizado';
   }
 
