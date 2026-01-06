@@ -1,60 +1,64 @@
-<div class="modal-backdrop"></div>
+<div class="modal-backdrop fade show" *ngIf="reporte"></div>
 
-<div class="modal" *ngIf="reporte">
-  <div class="modal-card">
+<div class="modal d-block" tabindex="-1" *ngIf="reporte">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg">
 
-    <div class="modal-header">
-      <h3 class="modal-title">Revisión de Reporte</h3>
-      <button class="modal-close" (click)="cancelar()">✕</button>
-    </div>
-
-    <div class="modal-body">
-
-      <div class="form-group">
-        <label>Título</label>
-        <input type="text" [(ngModel)]="form.titulo">
+      <div class="modal-header text-white" style="background-color: var(--green);">
+        <h5 class="modal-title fw-bold">Revisión de Reporte</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="cancelar()">✕</button>
       </div>
 
-      <div class="form-group">
-        <label>Descripción</label>
-        <textarea rows="3" [(ngModel)]="form.descripcion"></textarea>
-      </div>
+      <div class="modal-body p-4" style="background-color: #f8f9fa;">
 
-      <div class="form-group">
-        <label>Tipo de problema</label>
-        <select [(ngModel)]="form.id_tipo_problema">
-          <option *ngFor="let t of tiposProblema" [ngValue]="t.id_tipo_problema">
-            {{ t.nombre }}
-          </option>
-        </select>
-      </div>
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label fw-semibold">Título</label>
+            <input type="text" class="form-control" [(ngModel)]="form.titulo">
+          </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Estudiante</label>
-          <input type="text" [value]="reporte.estudiante" disabled>
+          <div class="col-12">
+            <label class="form-label fw-semibold">Descripción</label>
+            <textarea class="form-control" rows="3" [(ngModel)]="form.descripcion"></textarea>
+          </div>
+
+          <div class="col-md-12">
+            <label class="form-label fw-semibold">Tipo de problema</label>
+            <select class="form-select" [(ngModel)]="form.id_tipo_problema">
+              <option *ngFor="let t of tiposProblema" [ngValue]="t.id_tipo_problema">
+                {{ t.nombre }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Estudiante</label>
+            <input type="text" class="form-control bg-light" [value]="reporte.estudiante" disabled>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Ubicación</label>
+            <input type="text" class="form-control bg-light" [value]="reporte.ubicacion" disabled>
+          </div>
+
+          <div class="col-12" *ngIf="reporte.foto_url">
+            <label class="form-label fw-semibold">Foto evidencia</label>
+            <div class="border rounded bg-white p-2 text-center">
+              <img [src]="'http://localhost:3000' + reporte.foto_url"
+                   class="img-fluid rounded shadow-sm"
+                   style="max-height: 250px; object-fit: contain;">
+            </div>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>Ubicación</label>
-          <input type="text" [value]="reporte.ubicacion" disabled>
-        </div>
       </div>
 
-      <div class="form-group" *ngIf="reporte.foto_url">
-        <label>Foto evidencia</label>
-        <div class="image-preview-modal">
-          <img [src]="'http://localhost:3000' + reporte.foto_url">
-        </div>
+      <div class="modal-footer border-top bg-light">
+        <!-- <button class="btn btn-secondary px-4" (click)="cancelar()">Cancelar</button>
+        <button class="btn btn-danger px-4" (click)="rechazar()">Rechazar</button>
+        <button class="btn text-white px-4" style="background-color: var(--green);" (click)="aceptar()">Aceptar</button> -->
       </div>
 
     </div>
-
-    <div class="modal-footer">
-      <!-- <button class="btn btn-ghost" (click)="cancelar()">Cancelar</button>
-      <button class="btn btn-danger" (click)="rechazar()">Rechazar</button>
-      <button class="btn btn-primary" (click)="aceptar()">Aceptar</button> -->
-    </div>
-
   </div>
 </div>
