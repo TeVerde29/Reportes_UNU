@@ -16,7 +16,7 @@ import { Usuario } from '../../../models/usuario.interface';
 export class LayoutEstudianteComponent implements OnInit {
   estudiante: Estudiante | null = null;
   usuario: Usuario | null = null;
-  activeTab: 'ultimos' | 'populares' = 'ultimos';
+  activeTab: 'ultimos' | 'populares' | 'mis-reportes' = 'ultimos';
 
   constructor(
     private authService: AuthService,
@@ -27,10 +27,9 @@ export class LayoutEstudianteComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarEstudiante();
-    
-    // Leer el tab desde la URL
     this.route.queryParams.subscribe(params => {
-      this.activeTab = params['tab'] === 'populares' ? 'populares' : 'ultimos';
+      const tab = params['tab'];
+      this.activeTab = (tab === 'populares' || tab === 'mis-reportes') ? tab : 'ultimos';
     });
   }
 
@@ -57,9 +56,8 @@ export class LayoutEstudianteComponent implements OnInit {
     });
   }
 
-  setActiveTab(tab: 'ultimos' | 'populares'): void {
+  setActiveTab(tab: 'ultimos' | 'populares' | 'mis-reportes'): void {
     this.activeTab = tab;
-    // Actualizar la URL con query params
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab: tab },

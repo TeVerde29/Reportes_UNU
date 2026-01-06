@@ -48,4 +48,8 @@ export class ReporteService {
     return this.http.get<ReporteResponse>(`${this.apiUrl}/pendientes/estudiante/${id}`, { withCredentials: true });
   }
 
+  obtenerReportesPorIdEstudiante(id: number): Observable<ReporteResponse> {
+    return this.http.get<ReporteResponse>(`${this.apiUrl}/mis-reportes/${id}`, { withCredentials: true });
+  }
+
 }

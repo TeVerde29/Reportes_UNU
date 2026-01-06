@@ -93,7 +93,6 @@
 .top-actions{
   display: flex;
   align-items: center;
-  gap: 12px;
   flex-wrap: wrap;
 }
 
@@ -250,7 +249,7 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 12px;
-  margin: 0 0 20px;
+  margin: 0 0 5px;
 }
 
 .tabs-compact{
