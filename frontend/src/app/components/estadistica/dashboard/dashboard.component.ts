@@ -69,7 +69,10 @@ export class DashboardComponent implements OnInit {
     labels: [],
     datasets: [{
       data: [],
-      backgroundColor: ['#1976d2', '#2e7d32', '#ed6c02', '#d32f2f', '#9c27b0', '#00bcd4'],
+      backgroundColor: [
+        '#1976d2', '#2e7d32', '#ed6c02', '#d32f2f',
+        '#9c27b0', '#00bcd4', '#795548', '#607d8b'
+      ],
       hoverOffset: 10
     }]
   };
@@ -156,7 +159,7 @@ export class DashboardComponent implements OnInit {
       next: (res) => {
         this.estadisticaPorMes = res.porMes;
         this.estadisticaPorTipoProblema = res.porTipo;
-        this.estadisticaPorUbicacion = res.porUbicacion.slice(0, 5); 
+        this.estadisticaPorUbicacion = res.porUbicacion.slice(0, 5);
 
         this.calcularKPIs();
         this.cargarGraficoPorMes();
