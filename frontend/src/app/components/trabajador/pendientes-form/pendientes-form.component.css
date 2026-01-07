@@ -1,29 +1,209 @@
-/* Asegura que el modal sea visible ya que no usamos el JS de Bootstrap */
-.modal.d-block {
-  display: block !important;
-  background: rgba(0, 0, 0, 0.4);
-}
-
-/* Variables de color (asegúrate de que existan en tu :root) */
-:host {
-  --green: #198754; /* Ajusta al verde de tu paleta */
-}
-
-/* Ajuste fino para los inputs al enfocarlos */
-.form-control:focus, .form-select:focus {
-  border-color: var(--green);
-  box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.15);
-}
-
-/* Estilo para el botón de cerrar (✕) */
-.btn-close-white {
-  filter: invert(1) grayscale(100%) brightness(200%);
-  opacity: 0.8;
+.custom-modal {
   border: none;
-  background: none;
-  font-size: 1.2rem;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
-.btn-close-white:hover {
-  opacity: 1;
+.modal-header {
+  padding: 24px 32px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-indicator {
+  width: 4px;
+  height: 40px;
+  background: var(--green);
+  border-radius: 4px;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+}
+
+.modal-subtitle {
+  font-size: 13px;
+  color: #64748b;
+  margin: 2px 0 0 0;
+}
+
+.btn-close-custom {
+  background: #f1f5f9;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-close-custom:hover {
+  background: #ef4444;
+  color: white;
+  transform: rotate(90deg);
+}
+
+.custom-body {
+  padding: 32px;
+  background: #ffffff;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.custom-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+/* Campos de texto más suaves */
+.custom-input, .custom-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+  background-color: #fcfdfe;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  resize: vertical; /* Permite agrandar pero solo hacia abajo */
+  min-height: 45px;
+}
+
+.custom-input:focus, .custom-select:focus {
+  outline: none;
+  border-color: var(--green);
+  background-color: #fff;
+  box-shadow: 0 8px 20px -10px rgba(0, 100, 63, 0.15);
+}
+
+.read-only-box {
+  padding: 12px 16px;
+  background: #f1f5f9;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.image-container {
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.image-container:hover {
+  border-color: var(--green);
+}
+
+.img-evidence {
+  max-height: 300px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+  object-fit: contain;
+}
+
+/* --- FOOTER Y BOTONES --- */
+.custom-footer {
+  padding: 24px 32px;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action-group {
+  display: flex;
+  gap: 12px;
+}
+
+button {
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mejoramos el botón Cerrar */
+.btn-cancel {
+  background: #64748b;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-cancel:hover {
+  background: #475569;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Botón Rechazar */
+.btn-reject {
+  background: #fee2e2;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+}
+
+.btn-reject:hover {
+  background: #ef4444;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Botón Aceptar */
+.btn-accept {
+  background: var(--green);
+  color: white;
+  box-shadow: 0 4px 14px 0 rgba(0, 100, 63, 0.3);
+}
+
+.btn-accept:hover {
+  background: var(--green-2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px 0 rgba(0, 100, 63, 0.4);
+}
+
+/* Botón Solucionar */
+.btn-solve {
+  background: #f59e0b;
+  color: white;
+  box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.3);
+}
+
+.btn-solve:hover {
+  background: #d97706;
+  transform: translateY(-2px);
 }

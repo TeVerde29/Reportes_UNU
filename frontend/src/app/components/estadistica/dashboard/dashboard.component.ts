@@ -60,7 +60,22 @@ export class DashboardComponent implements OnInit {
   lineChartOptions: ChartConfiguration<'line'>['options'] = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { display: false } }
+    plugins: { legend: { display: false } },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1,
+          callback: function(value) {
+            const numericValue = Number(value);
+            if (Number.isInteger(numericValue)) {
+              return numericValue;
+            }
+            return null; 
+          }
+        }
+      }
+    }
   };
 
 
@@ -111,7 +126,19 @@ export class DashboardComponent implements OnInit {
       legend: { display: false },
     },
     scales: {
-      x: { beginAtZero: true },
+      x: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1,
+          callback: function(value) {
+            const numericValue = Number(value);
+            if (Number.isInteger(numericValue)) {
+              return numericValue;
+            }
+            return null;
+          }
+        }
+      },
       y: {
         ticks: {
           color: '#555',

@@ -68,4 +68,13 @@ export class LayoutTrabajadorComponent {
       this.router.navigate(['/trabajador/reportes-pendientes']);
     });
   }
+
+  obtenerIniciales(nombre: string): string {
+    if (!nombre) return 'U';
+    const partes = nombre.trim().split(' ');
+    if (partes.length === 1) {
+      return partes[0].charAt(0).toUpperCase();
+    }
+    return (partes[0].charAt(0) + partes[partes.length - 1].charAt(0)).toUpperCase();
+  }
 }
