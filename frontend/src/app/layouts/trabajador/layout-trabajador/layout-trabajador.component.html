@@ -1,104 +1,64 @@
-<div class="d-flex vh-100 overflow-hidden">
+<div class="page">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">UNU Incidencias</h1>
+          <p class="brand-subtitle">PANEL TRABAJADOR</p>
+        </div>
+      </div>
 
-  <aside class="d-flex flex-column flex-shrink-0 p-3 text-white shadow"
-        style="width: 280px; background-color: var(--green); z-index: 1050;">
-
-    <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none border-bottom pb-3 w-100">
-      <i class="bi bi-shield-lock-fill fs-4 me-2" style="color: var(--green-2)"></i>
-      <span class="fs-5 fw-bold text-uppercase tracking-wider">Trabajador</span>
-    </div>
-
-    <ul class="nav nav-pills flex-column mb-auto mt-4">
-      <li class="nav-item mb-2">
-        <a routerLink="/trabajador/reportes-pendientes"
-          routerLinkActive="active"
-          class="nav-link text-white custom-nav d-flex align-items-center">
-          <i class="bi bi-check2-all me-2"></i>
-          <span>Reportes Pendientes</span>
-        </a>
-      </li>
-      <li class="nav-item mb-2">
-        <a routerLink="/trabajador/reportes-aceptados"
-          routerLinkActive="active"
-          class="nav-link text-white custom-nav d-flex align-items-center">
-          <i class="bi bi-check2-all me-2"></i>
-          <span>Reportes Aceptados</span>
-        </a>
-      </li>
-      <li class="nav-item mb-2">
-        <a routerLink="/trabajador/reportes-solucionados"
-          routerLinkActive="active"
-          class="nav-link text-white custom-nav d-flex align-items-center">
-          <i class="bi bi-hammer me-2"></i>
-          <span>Reportes Solucionados</span>
-        </a>
-      </li>
-      <li class="nav-item mb-2">
-        <a routerLink="/trabajador/reportes-rechazados"
-          routerLinkActive="active"
-          class="nav-link text-white custom-nav d-flex align-items-center">
-          <i class="bi bi-x-circle me-2"></i>
-          <span>Reportes Rechazados</span>
-        </a>
-      </li>
-      <li class="nav-item mb-2">
-        <a routerLink="/trabajador/estadisticas"
-          routerLinkActive="active"
-          class="nav-link text-white custom-nav d-flex align-items-center">
-          <i class="bi bi-bar-chart-line me-2"></i>
-          <span>Estadísticas</span>
-        </a>
-      </li>
-    </ul>
-
-    <div class="mt-auto">
-      <hr class="text-white-50">
-      <button (click)="logout()"
-              class="btn btn-outline-light w-100 d-flex align-items-center justify-content-center py-2 border-0 shadow-sm"
-              style="background: rgba(255,255,255,0.05);">
-        <i class="bi bi-box-arrow-left me-2"></i>
-        <span>Cerrar sesión</span>
-      </button>
-    </div>
-  </aside>
-
-  <div class="d-flex flex-column flex-grow-1 overflow-auto" style="background-color: var(--bg);">
-
-    <header class="navbar navbar-expand-lg bg-white border-bottom px-4 shadow-sm sticky-top" style="height: 70px;">
-      <div class="container-fluid d-flex justify-content-between">
-
-        <span class="navbar-text text-dark fs-6">
-          Bienvenido,
-          <strong style="color: var(--green);">
-            <ng-container *ngIf="trabajador; else loadingName">
-              {{ trabajador.nombres }} {{ trabajador.apellido_paterno }}
-            </ng-container>
-            <ng-template #loadingName>
-              <span class="spinner-border spinner-border-sm text-success mx-1" role="status"></span>
-              Cargando...
-            </ng-template>
-          </strong>
-        </span>
-
-        <div class="d-flex align-items-center">
-          <button class="btn border-0 position-relative p-2"
-                  style="background-color: var(--green-soft); color: var(--green); border-radius: 10px;">
-            <i class="bi bi-bell fs-5"></i>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill border border-2 border-white"
-                  style="background-color: var(--green-2);">
-              3+
-            </span>
+      <div class="top-actions">
+        <div class="tabs" role="tablist">
+          <button type="button" class="tab" routerLink="/trabajador/reportes-pendientes" routerLinkActive="active">
+            Pendientes
+          </button>
+          <button type="button" class="tab" routerLink="/trabajador/reportes-aceptados" routerLinkActive="active">
+            Aceptados
+          </button>
+          <button type="button" class="tab" routerLink="/trabajador/reportes-solucionados" routerLinkActive="active">
+            Solucionados
+          </button>
+          <button type="button" class="tab" routerLink="/trabajador/reportes-rechazados" routerLinkActive="active">
+            Rechazados
+          </button>
+          <button type="button" class="tab" routerLink="/trabajador/estadisticas" routerLinkActive="active">
+            Estadísticas
           </button>
         </div>
 
-      </div>
-    </header>
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" title="Cerrar sesión" (click)="logout()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <path d="M16 17l5-5-5-5" />
+              <path d="M21 12H9" />
+            </svg>
+            <span class="btn-text">Salir</span>
+          </button>
+        </div>
 
-    <main class="p-4 flex-grow-1">
-      <div class="container-fluid">
-        <router-outlet></router-outlet>
+        <div *ngIf="trabajador" class="user-chip">
+          <div class="user-avatar" aria-hidden="true">
+            {{ obtenerIniciales(trabajador.nombres + ' ' + trabajador.apellido_paterno) }}
+          </div>
+          <div class="user-info">
+            <div class="user-name">{{ trabajador.nombres }} {{ trabajador.apellido_paterno }}</div>
+            <div class="user-hint">Trabajador</div>
+          </div>
+        </div>
       </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <main class="main">
+      <router-outlet></router-outlet>
     </main>
-
   </div>
 </div>

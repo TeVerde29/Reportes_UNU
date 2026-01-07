@@ -2,28 +2,34 @@
 
 <div class="modal d-block" tabindex="-1" *ngIf="reporte">
   <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content border-0 shadow-lg">
+    <div class="modal-content custom-modal">
 
-      <div class="modal-header text-white" style="background-color: var(--green);">
-        <h5 class="modal-title fw-bold">Detalle del Reporte</h5>
-        <button type="button" class="btn-close btn-close-white" (click)="cancelar()">✕</button>
+      <div class="modal-header">
+        <div class="header-content">
+          <div class="header-indicator"></div>
+          <div>
+            <h5 class="modal-title">Detalle de Incidencia</h5>
+            <p class="modal-subtitle">ID Reporte: #{{ reporte.id_reporte }}</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close-custom" (click)="cancelar()">✕</button>
       </div>
 
-      <div class="modal-body p-4" style="background-color: #f8f9fa;">
-        <div class="row g-3">
+      <div class="modal-body custom-body">
+        <div class="row g-4">
           <div class="col-12">
-            <label class="form-label fw-semibold">Título</label>
-            <input type="text" class="form-control bg-light" [(ngModel)]="form.titulo" [disabled]="tipoEstado !== 'Pendiente'">
+            <label class="custom-label">Título de la Incidencia</label>
+            <input type="text" class="custom-input" [(ngModel)]="form.titulo" [disabled]="tipoEstado !== 'Pendiente'">
           </div>
 
           <div class="col-12">
-            <label class="form-label fw-semibold">Descripción</label>
-            <textarea class="form-control bg-light" rows="3" [(ngModel)]="form.descripcion" [disabled]="tipoEstado !== 'Pendiente'"></textarea>
+            <label class="custom-label">Descripción Detallada</label>
+            <textarea class="custom-input" rows="3" [(ngModel)]="form.descripcion" [disabled]="tipoEstado !== 'Pendiente'"></textarea>
           </div>
 
-          <div class="col-md-12">
-            <label class="form-label fw-semibold">Tipo de problema</label>
-            <select class="form-select bg-light" [(ngModel)]="form.id_tipo_problema" [disabled]="tipoEstado !== 'Pendiente'">
+          <div class="col-md-6">
+            <label class="custom-label">Categoría de Problema</label>
+            <select class="custom-select" [(ngModel)]="form.id_tipo_problema" [disabled]="tipoEstado !== 'Pendiente'">
               <option *ngFor="let t of tiposProblema" [ngValue]="t.id_tipo_problema">
                 {{ t.nombre }}
               </option>
@@ -31,46 +37,37 @@
           </div>
 
           <div class="col-md-6">
-            <label class="form-label fw-semibold">Estudiante</label>
-            <input type="text" class="form-control bg-light" [value]="reporte.estudiante" disabled>
+            <label class="custom-label">Estudiante Solicitante</label>
+            <div class="read-only-box">{{ reporte.estudiante }}</div>
           </div>
 
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Ubicación</label>
-            <input type="text" class="form-control bg-light" [value]="reporte.ubicacion" disabled>
+          <div class="col-md-12">
+            <label class="custom-label">Ubicación Reportada</label>
+            <div class="read-only-box location">
+              <i class="bi bi-geo-alt"></i> {{ reporte.ubicacion }}
+            </div>
           </div>
 
           <div class="col-12" *ngIf="reporte.foto_url">
-            <label class="form-label fw-semibold">Foto evidencia</label>
-            <div class="border rounded bg-white p-2 text-center">
-              <img [src]="'http://localhost:3000' + reporte.foto_url"
-                  class="img-fluid rounded shadow-sm"
-                  style="max-height: 250px; object-fit: contain;">
+            <label class="custom-label">Evidencia Visual</label>
+            <div class="image-container">
+              <img [src]="'http://localhost:3000' + reporte.foto_url" class="img-evidence">
             </div>
           </div>
         </div>
       </div>
 
-      <div class="modal-footer border-top bg-light">
-          <!-- siempre -->
-          <button class="btn btn-secondary px-4" (click)="cancelar()">
-            Cerrar
-          </button>
+      <div class="modal-footer custom-footer">
+        <button class="btn-cancel" (click)="cancelar()">Cerrar</button>
 
-          <!-- PENDIENTE -->
-          <ng-container *ngIf="tipoEstado === 'Pendiente'">
-            <button class="btn btn-danger px-4" (click)="rechazar()">Rechazar</button>
-            <button class="btn text-white px-4"
-                    style="background-color: var(--green);"
-                    (click)="aceptar()">Aceptar</button>
-          </ng-container>
+        <div class="action-group" *ngIf="tipoEstado === 'Pendiente'">
+          <button class="btn-reject" (click)="rechazar()">Rechazar Reporte</button>
+          <button class="btn-accept" (click)="aceptar()">Aceptar Reporte</button>
+        </div>
 
-          <!-- ACEPTADO -->
-          <ng-container *ngIf="tipoEstado === 'Aceptado'">
-            <button class="btn btn-warning text-white px-4"
-                    (click)="solucionar()">Solucionar</button>
-          </ng-container>
-
+        <button *ngIf="tipoEstado === 'Aceptado'" class="btn-solve" (click)="solucionar()">
+          Marcar como Solucionado
+        </button>
       </div>
 
     </div>

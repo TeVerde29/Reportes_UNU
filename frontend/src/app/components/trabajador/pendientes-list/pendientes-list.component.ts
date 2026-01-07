@@ -24,6 +24,9 @@ export class PendientesListComponent implements OnInit, OnDestroy {
   error = '';
   reporteSeleccionado: Reporte | null = null;
   mostrarModal = false;
+  filtroTexto: string = '';
+  paginaActual: number = 1;
+  itemsPorPagina: number = 5;
 
   private sub?: Subscription;
 
@@ -34,6 +37,45 @@ export class PendientesListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.reportesPendientes();
+  }
+
+  get reportesFiltrados(): Reporte[] {
+    if (!this.filtroTexto.trim()) return this.reportes;
+    const busqueda = this.filtroTexto.toLowerCase();
+    return this.reportes.filter(r =>
+      r.titulo?.toLowerCase().includes(busqueda) ||
+      r.estudiante?.toLowerCase().includes(busqueda) ||
+      r.ubicacion?.toLowerCase().includes(busqueda)
+    );
+  }
+
+  get reportesPaginados(): Reporte[] {
+    const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
+    const fin = inicio + this.itemsPorPagina;
+    return this.reportesFiltrados.slice(inicio, fin);
+  }
+
+  get totalReportesDinamico(): number {
+    return this.reportesFiltrados.length;
+  }
+
+  get totalPaginas(): number {
+    return Math.ceil(this.reportesFiltrados.length / this.itemsPorPagina);
+  }
+
+  get paginas(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  }
+
+  onSearchChange(): void {
+    this.paginaActual = 1;
+  }
+
+  cambiarPagina(pagina: number): void {
+    if (pagina >= 1 && pagina <= this.totalPaginas) {
+      this.paginaActual = pagina;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 
   reportesPendientes(): void {
@@ -54,6 +96,7 @@ export class PendientesListComponent implements OnInit, OnDestroy {
             next: (resp) => {
               if (resp.success && Array.isArray(resp.data)) {
                 this.reportes = resp.data;
+                this.paginaActual = 1;
               } else {
                 this.error = 'No se pudieron cargar los reportes';
               }
@@ -85,4 +128,6 @@ export class PendientesListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
   }
+
+  protected readonly Math = Math;
 }
