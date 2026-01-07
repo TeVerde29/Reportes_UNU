@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Estudiante } from '../../../models/estudiante.interface';
 import { ReporteService } from '../../../services/reporte.service';
 import { Ubicacion, UbicacionResponse } from '../../../models/ubicacion.interface';
@@ -25,7 +25,9 @@ import { EstudianteService } from '../../../services/estudiante.service';
 export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   reporteForm: FormGroup;
+  isEditMode: boolean = false;
   error: string = '';
+  id_reporte: number | null = null;
   successMessage: string = '';
   estudiante: Estudiante | null = null;
   ubicaciones: Ubicacion[] = [];
@@ -47,6 +49,7 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
+    private route: ActivatedRoute,
     private router: Router,
     private reporteService: ReporteService,
     private ubicacionService: UbicacionService,
@@ -57,12 +60,11 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.reporteForm = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(5)]],
-      descripcion: [''],
+      descripcion: ['', [Validators.required]],
       id_tipo_problema: [null, [Validators.required]],
       id_ubicacion: [null, [Validators.required]],
     });
   }
-
 
   ngOnInit(): void {
     this.authService.me().subscribe({
@@ -72,6 +74,13 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cargarTipoProblemas();
         this.cargarUbicaciones();
         this.cargarEstadoPendiente('Pendiente');
+        this.route.params.subscribe(params => {
+          if(params['id']){
+            this.isEditMode = true;
+            this.id_reporte = +params['id'];
+            this.cargarReporte(this.id_reporte);
+          }
+        });
       },
       error: () => {
         this.router.navigateByUrl('/login');
@@ -136,55 +145,122 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     reader.readAsDataURL(file);
   }
 
-  onSubmit(): void {
-    if (this.enviando) return;
-    this.error = '';
-    this.successMessage = '';
-    if (this.reporteForm.invalid) {
-      this.reporteForm.markAllAsTouched();
-      this.error = 'Por favor completa todos los campos requeridos.';
-      return;
-    }
-    if (!this.estudiante?.id_estudiante) {
-      this.error = 'No se encontró el estudiante para registrar el reporte.';
-      return;
-    }
-    if (!this.estado?.id_estado) {
-      this.error = 'No se pudo cargar el estado Pendiente.';
-      return;
-    }
-    if (!this.fotoFile) {
-      this.error = 'Debes seleccionar una imagen.';
-      return;
-    }
-    const formData = new FormData();
-    formData.append('titulo', this.reporteForm.value.titulo);
-    formData.append('descripcion', this.reporteForm.value.descripcion || '');
-    formData.append('id_estudiante', String(this.estudiante.id_estudiante));
-    formData.append('id_estado', String(this.estado.id_estado));
-    formData.append('id_tipo_problema', String(this.reporteForm.value.id_tipo_problema));
-    formData.append('id_ubicacion', String(this.reporteForm.value.id_ubicacion));
+onSubmit(): void {
+  if (this.enviando) return;
+  this.error = '';
+  this.successMessage = '';
+  if (this.reporteForm.invalid) {
+    this.reporteForm.markAllAsTouched();
+    this.error = 'Por favor, completa los campos obligatorios.';
+    return;
+  }
+  this.enviando = true;
+  const formData = new FormData();
+  // Campos básicos (extraídos del formulario)
+  formData.append('titulo', this.reporteForm.get('titulo')?.value);
+  formData.append('descripcion', this.reporteForm.get('descripcion')?.value || '');
+  formData.append('id_tipo_problema', this.reporteForm.get('id_tipo_problema')?.value);
+  formData.append('id_ubicacion', this.reporteForm.get('id_ubicacion')?.value);
+
+  // Datos de sesión (Usuario y Estado)
+  // Nota: Asegúrate de tener estas variables cargadas en tu componente
+  const idEstadoActual = this.reporteForm.get('id_estado')?.value || this.estado?.id_estado;
+  const idUsuarioActual = this.usuario?.id_usuario || this.reporteForm.get('id_usuario')?.value;
+  formData.append('id_estado', String(idEstadoActual));
+  formData.append('id_usuario', String(idUsuarioActual));
+  // Si hay una NUEVA imagen seleccionada, la agregamos
+  if (this.fotoFile) {
     formData.append('foto', this.fotoFile, this.fotoFile.name);
-    this.enviando = true;
-    this.reporteService.crearReporte(formData).subscribe({
-      next: (response: ReporteResponse) => {
-        console.log('Respuesta del servidor:', response);
-        if (response.success) {
-          this.successMessage = 'Reporte creado correctamente';
-          setTimeout(() => {
-            this.router.navigateByUrl('/inicio');
-          }, 500);
+  }
+  if (this.isEditMode && this.id_reporte) {
+    // MODO EDICIÓN
+    this.reporteService.actualizarReporte(this.id_reporte, formData).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.successMessage = '¡Reporte actualizado con éxito!';
+          setTimeout(() => this.router.navigate(['/mis-reportes']), 500);
         } else {
-          this.error = response.message || 'No se pudo crear el reporte';
+          this.error = res.message;
+          this.enviando = false;
         }
-        this.enviando = false;
       },
       error: (err) => {
-        console.error('Error al crear el reporte:', err);
-        this.error = err.error?.message || 'Error al crear el reporte';
+        this.error = 'Error al conectar con el servidor';
         this.enviando = false;
       }
     });
+  } else {
+    // MODO CREACIÓN
+    // Aquí asegúrate de enviar también el id_estudiante
+    if (this.estudiante?.id_estudiante) {
+      formData.append('id_estudiante', String(this.estudiante.id_estudiante));
+    }
+    this.reporteService.crearReporte(formData).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.successMessage = '¡Reporte creado con éxito!';
+          setTimeout(() => this.router.navigate(['/inicio']), 500);
+        } else {
+          this.error = res.message;
+          this.enviando = false;
+        }
+      },
+      error: (err) => {
+        this.error = 'Error al crear el reporte';
+        this.enviando = false;
+      }
+    });
+  }
+}
+
+  // Funciones auxiliares para no repetir código en el submit
+  private manejarRespuesta(response: ReporteResponse, mensajeExito: string) {
+    console.log('Respuesta:', response);
+    if (response.success) {
+      this.successMessage = mensajeExito;
+      setTimeout(() => {
+        this.router.navigateByUrl('/mis-reportes'); // O '/mis-reportes'
+      }, 500);
+    } else {
+      this.error = response.message || 'Error en la operación';
+    }
+    this.enviando = false;
+  }
+
+  private manejarError(err: any) {
+    console.error('Error:', err);
+    this.error = err.error?.message || 'Ocurrió un error al procesar la solicitud';
+    this.enviando = false;
+  }
+
+  cargarReporte(id: number) {
+  this.reporteService.obtenerReportePorId(id).subscribe({
+    next: (response) => {
+      if (response.success && !Array.isArray(response.data)) {
+        const data = response.data!;
+        this.reporteForm.patchValue(data);
+        // MOSTRAR IMAGEN: Si el reporte tiene foto, armamos la URL del servidor
+        if (data.foto_url) {
+          this.previewUrl = `http://localhost:3000${data.foto_url}`;
+        }
+      }
+    }
+  });
+}
+
+  // Agrega esta pequeña función auxiliar para pintar el mapa cuando editas
+  private actualizarMapaVisual(id: number): void {
+    if (!this.mapaSvg?.nativeElement) return;
+    const svg = this.mapaSvg.nativeElement;
+    // Quitar clase active anterior
+    const anteriores = Array.from(svg.querySelectorAll('.active'));
+    anteriores.forEach(el => el.classList.remove('active'));
+    
+    // Buscar el edificio por ID y activarlo
+    const edificio = svg.querySelector(`[data-id="${id}"]`);
+    if (edificio) {
+      edificio.classList.add('active');
+    }
   }
 
   cargarEstadoPendiente(nombre: string): void {
@@ -298,6 +374,24 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.mapaInicializado = true;
     console.log('Mapa inicializado correctamente');
+  }
+
+  getTimestamp(): number {
+    return new Date().getTime();
+  }
+
+  // Reemplaza o añade esta función en tu .ts
+  getFormattedPreviewUrl(): string | null {
+    if (!this.previewUrl) return null;
+
+    // Si la imagen empieza con 'data:image', es una previsualización local (Base64)
+    // En este caso NO añadimos el timestamp porque corrompe el Base64
+    if (this.previewUrl.startsWith('data:image')) {
+      return this.previewUrl;
+    }
+
+    // Si es una URL del servidor (contiene http), añadimos el timestamp para evitar el cache
+    return `${this.previewUrl}?t=${new Date().getTime()}`;
   }
 
   private normalize(text: string): string {
