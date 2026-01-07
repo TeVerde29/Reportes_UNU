@@ -13,6 +13,7 @@ import { LayoutTrabajadorComponent } from './layouts/trabajador/layout-trabajado
 import { SolucionadoListComponent } from './components/trabajador/solucionado-list/solucionado-list.component';
 import { AceptadosListComponent } from './components/trabajador/aceptados-list/aceptados-list.component';
 import { RechazadosListComponent } from './components/trabajador/rechazados-list/rechazados-list.component';
+import { DashboardComponent } from './components/estadistica/dashboard/dashboard.component';
 
 export const routes: Routes = [
 
@@ -47,6 +48,7 @@ export const routes: Routes = [
       { path: 'reportes-aceptados', component: AceptadosListComponent },
       { path: 'reportes-rechazados', component: RechazadosListComponent },
       { path: 'ver-reporte/:id', component: PendientesFormComponent },
+      { path: 'estadisticas', component: DashboardComponent },
 
       { path: '', redirectTo: 'reportes-pendientes', pathMatch: 'full' }
     ]

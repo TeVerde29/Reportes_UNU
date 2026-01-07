@@ -13,7 +13,11 @@ const {
   obtenerReportesPorCantidadReacciones,
   obtenerReportesPendientesPorIdEstudiante,
   obtenerReportesPorIdEstudiante,
-  revisarReporte
+  revisarReporte,
+  obtenerReportesPorTipoProblema,
+  obtenerReportesPorUbicacion,
+  obtenerReportesPorTipoYUbicacion,
+  obtenerReportesPorMes
 } = require('../controllers/reporteController');
 
 // RUTAS PROTEGIDAS
@@ -28,7 +32,10 @@ router.get('/top/reacciones', obtenerReportesPorCantidadReacciones);
 router.get('/mis-reportes/:id', obtenerReportesPorIdEstudiante);
 router.get('/:id', obtenerReportePorId);
 
-//Para reporte
-
+//Para estadistica
+router.get('/estadisticas/tipo-problema', obtenerReportesPorTipoProblema);
+router.get('/estadisticas/ubicacion', obtenerReportesPorUbicacion);
+router.get('/estadisticas/tipo-problema-ubicacion', obtenerReportesPorTipoYUbicacion);
+router.get('/estadisticas/por-mes', obtenerReportesPorMes);
 
 module.exports = router;
