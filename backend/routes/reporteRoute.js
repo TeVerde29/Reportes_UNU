@@ -26,7 +26,7 @@ router.get('/pendientes/estudiante/:id', requireSession, obtenerReportesPendient
 router.put('/revisar/:id', requireSession ,revisarReporte);
 
 // RUTAS PÚBLICAS
-router.put('/:id',actualizarReporte);
+router.put('/:id', upload.single('foto'), actualizarReporte);
 router.get('/estado/:id', obtenerReportesPorIdEstado);
 router.get('/top/reacciones', obtenerReportesPorCantidadReacciones);
 router.get('/mis-reportes/:id', obtenerReportesPorIdEstudiante);

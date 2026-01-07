@@ -113,95 +113,64 @@ const crearReporte = async (req, res) => {
 const actualizarReporte = async (req, res) => {
   let backupPath = null;
   let targetPath = null;
+
   const safeUnlink = (p) => {
-    try {
-      if (p && fs.existsSync(p)) fs.unlinkSync(p);
-    } catch (e) {
-      console.error('Error al eliminar archivo:', e);
-    }
+    try { if (p && fs.existsSync(p)) fs.unlinkSync(p); } catch (e) { console.error('Error al eliminar:', e); }
   };
-  const restoreBackup = () => {
-    try {
-      if (targetPath && fs.existsSync(targetPath)) fs.unlinkSync(targetPath);
-      if (backupPath && fs.existsSync(backupPath) && targetPath) fs.renameSync(backupPath, targetPath);
-    } catch (e) {
-      console.error('Error al restaurar backup de imagen:', e);
-    }
-  };
+
   try {
     const { id } = req.params;
-    const { titulo, descripcion, fecha_edicion, id_estado, id_tipo_problema, id_ubicacion, id_usuario } = req.body;
-    if (!titulo || !descripcion || !fecha_edicion || id_estado == null || id_tipo_problema == null || id_ubicacion == null || id_usuario == null) {
-      if (req.file && req.file.path) safeUnlink(req.file.path);
-      return res.status(400).json({
-        success: false,
-        message: 'Faltan datos obligatorios'
-      });
+    
+    // Si usas upload.single('foto') en la ruta, req.body dejará de ser undefined
+    const { titulo, descripcion, id_estado, id_tipo_problema, id_ubicacion, id_usuario } = req.body;
+
+    // Validación básica
+    if (!titulo || !id_tipo_problema || !id_ubicacion) {
+      if (req.file) safeUnlink(req.file.path);
+      return res.status(400).json({ success: false, message: 'Faltan campos obligatorios (titulo, tipo o ubicación)' });
     }
+
+    const fecha_edicion = new Date();
+
+    // Lógica de Imagen
     if (req.file && req.file.path) {
-      const [rowsFoto] = await db.query(
-        "SELECT foto_url FROM reporte WHERE id_reporte = ? LIMIT 1",
-        [id]
-      );
-      if (!rowsFoto || rowsFoto.length === 0) {
-        safeUnlink(req.file.path);
-        return res.status(404).json({
-          success: false,
-          message: 'Reporte no encontrado'
-        });
+      const [rowsFoto] = await db.query("SELECT foto_url FROM reporte WHERE id_reporte = ?", [id]);
+      
+      if (rowsFoto.length > 0 && rowsFoto[0].foto_url) {
+        const filenameActual = path.basename(rowsFoto[0].foto_url);
+        const uploadDir = path.join('C:', 'Reportes_UNU_IMG', 'uploads', 'reportes');
+        targetPath = path.join(uploadDir, filenameActual);
+
+        // Backup y reemplazo
+        if (fs.existsSync(targetPath)) {
+          backupPath = `${targetPath}.bak_${Date.now()}`;
+          fs.renameSync(targetPath, backupPath);
+        }
+        fs.renameSync(req.file.path, targetPath);
+      } else {
+        // Si no tenía foto antes, podrías manejar la creación de una nueva aquí
+        safeUnlink(req.file.path); 
       }
-      const fotoUrlActual = rowsFoto[0].foto_url;
-      if (!fotoUrlActual) {
-        safeUnlink(req.file.path);
-        return res.status(400).json({
-          success: false,
-          message: 'El reporte no tiene foto_url registrada'
-        });
-      }
-      const filenameActual = path.basename(fotoUrlActual);
-      const extActual = path.extname(filenameActual).toLowerCase();
-      const extNueva = path.extname(req.file.filename).toLowerCase();
-      if (extNueva !== extActual) {
-        safeUnlink(req.file.path);
-        return res.status(400).json({
-          success: false,
-          message: `La nueva imagen debe tener la misma extensión que la actual: ${extActual}`
-        });
-      }
-      const uploadDir = path.join('C:', 'Reportes_UNU_IMG', 'uploads', 'reportes');
-      targetPath = path.join(uploadDir, filenameActual);
-      if (fs.existsSync(targetPath)) {
-        backupPath = `${targetPath}.bak_${Date.now()}`;
-        fs.renameSync(targetPath, backupPath);
-      }
-      fs.renameSync(req.file.path, targetPath);
     }
+
+    // Ejecutar actualización
     await db.query(`
       UPDATE reporte 
       SET titulo = ?, descripcion = ?, fecha_edicion = ?, id_estado = ?, id_tipo_problema = ?, id_ubicacion = ?, id_usuario = ?
       WHERE id_reporte = ?
     `, [titulo, descripcion, fecha_edicion, id_estado, id_tipo_problema, id_ubicacion, id_usuario, id]);
+
     if (backupPath) safeUnlink(backupPath);
-    const [reporte] = await db.query(
-      `SELECT * FROM reporte WHERE id_reporte = ?`,
-      [id]
-    );
+
     return res.status(200).json({
       success: true,
-      message: 'Reporte actualizado correctamente',
-      data: reporte[0]
+      message: 'Reporte actualizado correctamente'
     });
+
   } catch (error) {
     console.error('Error al actualizar reporte:', error);
-    if (backupPath || targetPath) {
-      restoreBackup();
-      if (backupPath) safeUnlink(backupPath);
-    }
-    if (req.file && req.file.path) safeUnlink(req.file.path);
-    return res.status(500).json({
-      success: false,
-      message: 'Error al actualizar reporte'
-    });
+    if (req.file) safeUnlink(req.file.path);
+    return res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
 };
 
