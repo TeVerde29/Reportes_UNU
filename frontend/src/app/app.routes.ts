@@ -31,6 +31,7 @@ export const routes: Routes = [
     children: [
       { path: 'inicio', component: InicioListComponent },
       { path: 'nuevo-reporte', component: ReporteFormComponent },
+      { path: 'editar-reporte/:id', component: ReporteFormComponent },
       { path: '', redirectTo: 'inicio', pathMatch: 'full' }
     ]
   },
