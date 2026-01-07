@@ -1,13 +1,8 @@
 <div class="form-container">
 
   <!-- Mensajes de error/éxito -->
-  <div *ngIf="error" class="alert alert-error">
-    {{ error }}
-  </div>
-  
-  <div *ngIf="successMessage" class="alert alert-success">
-    {{ successMessage }}
-  </div>
+  <div *ngIf="error" class="alert alert-error"> {{ error }} </div>
+  <div *ngIf="successMessage" class="alert alert-success"> {{ successMessage }} </div>
 
   <form [formGroup]="reporteForm" (ngSubmit)="onSubmit()">
     <h2>Nuevo Reporte de Incidencia</h2>
@@ -48,10 +43,7 @@
         required>
       <small class="help-text">Formatos: JPG, PNG, GIF, WEBP. Máximo 5MB</small>
       
-      <div *ngIf="fotoError" class="error-text">
-        {{ fotoError }}
-      </div>
-
+      <div *ngIf="fotoError" class="error-text"> {{ fotoError }} </div>
       <!-- Preview de la imagen -->
       <div *ngIf="previewUrl" class="image-preview">
         <img [src]="previewUrl" alt="Vista previa">
