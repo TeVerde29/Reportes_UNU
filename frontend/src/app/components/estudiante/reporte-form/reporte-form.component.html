@@ -5,7 +5,8 @@
   <div *ngIf="successMessage" class="alert alert-success"> {{ successMessage }} </div>
 
   <form [formGroup]="reporteForm" (ngSubmit)="onSubmit()">
-    <h2>Nuevo Reporte de Incidencia</h2>
+    <h2>{{ isEditMode ? 'Editar Reporte de Incidencia' : 'Nuevo Reporte de Incidencia' }}</h2>
+
     <!-- TÍTULO -->
     <div class="form-group">
       <label for="titulo">Título *</label>
@@ -40,13 +41,13 @@
         name="foto" 
         accept="image/jpeg,image/png,image/gif,image/webp"
         (change)="onFileSelected($event)"
-        required>
+      >
       <small class="help-text">Formatos: JPG, PNG, GIF, WEBP. Máximo 5MB</small>
       
       <div *ngIf="fotoError" class="error-text"> {{ fotoError }} </div>
-      <!-- Preview de la imagen -->
+      
       <div *ngIf="previewUrl" class="image-preview">
-        <img [src]="previewUrl" alt="Vista previa">
+        <img [src]="getFormattedPreviewUrl()" alt="Vista previa" style="max-height: 500px; width: auto; display: block; margin-top: 10px;">
       </div>
     </div>
 
@@ -385,3 +386,4 @@
     </div>
   </form>
 </div>
+

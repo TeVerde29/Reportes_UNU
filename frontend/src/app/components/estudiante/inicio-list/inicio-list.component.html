@@ -64,24 +64,17 @@
     <!-- Footer del post -->
     <div class="post-foot">
       <div class="foot-left">
-        <button 
-          *ngIf="activeTab !== 'mis-reportes'"
-          type="button" 
-          class="like-btn" 
-          [class.liked]="isLiked(r)" 
-          [disabled]="likeLoading[r.id_reporte!]"
-          (click)="gestionarLike(r)">
-          <svg 
-            class="like-icon" 
-            [style.fill]="isLiked(r) ? 'var(--green)' : 'none'" 
-            viewBox="0 0 24 24" width="20" height="20">
+        <button *ngIf="activeTab !== 'mis-reportes'" type="button" class="like-btn" 
+          [class.liked]="isLiked(r)" [disabled]="likeLoading[r.id_reporte!]" (click)="gestionarLike(r)">
+          <svg class="like-icon" [style.fill]="isLiked(r) ? 'var(--green)' : 'none'" viewBox="0 0 24 24" width="20" height="20">
             <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.72l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" 
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           <span class="like-count"> {{ r.cantidad_reacciones || 0 }} </span>
           <span *ngIf="likeLoading[r.id_reporte!]" class="loader-mini"></span>
         </button>
-        <button *ngIf="activeTab === 'mis-reportes' && r.estado === 'Pendiente'" type="button" class="like-btn" routerLink="/estudiante/nuevo-reporte">
+        <button *ngIf="activeTab === 'mis-reportes' && r.estado === 'Pendiente'" type="button"
+          class="like-btn" [routerLink]="['/estudiante/editar-reporte',r.id_reporte]">
           <span class="btn-text">Editar</span>
         </button>
       </div>
