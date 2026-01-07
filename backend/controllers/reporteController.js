@@ -443,6 +443,154 @@ const obtenerReportesPorIdEstudiante = async (req, res) => {
   }
 };
 
+
+
+const obtenerReportesPorTipoProblema = async (req, res) => {
+  try {
+    const [resultados] = await db.query(`
+      SELECT 
+        tp.id_tipo_problema,
+        tp.nombre AS tipo_problema,
+        COUNT(r.id_reporte) AS total_reportes
+      FROM tipo_problema tp
+      LEFT JOIN reporte r 
+        ON r.id_tipo_problema = tp.id_tipo_problema
+      GROUP BY 
+        tp.id_tipo_problema,
+        tp.nombre
+      ORDER BY total_reportes DESC
+    `);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Estadística de reportes por tipo de problema obtenida correctamente',
+      data: resultados
+    });
+
+  } catch (error) {
+    console.error('Error al obtener estadística por tipo de problema:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener la estadística de reportes'
+    });
+  }
+};
+
+const obtenerReportesPorUbicacion = async (req, res) => {
+  try {
+    const [resultados] = await db.query(`
+      SELECT 
+        u.id_ubicacion,
+        u.nombre AS ubicacion,
+        COUNT(r.id_reporte) AS total_reportes
+      FROM ubicacion u
+      LEFT JOIN reporte r 
+        ON r.id_ubicacion = u.id_ubicacion
+      GROUP BY 
+        u.id_ubicacion,
+        u.nombre
+      ORDER BY total_reportes DESC
+    `);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Estadística de reportes por ubicación obtenida correctamente',
+      data: resultados
+    });
+
+  } catch (error) {
+    console.error('Error al obtener estadística por ubicación:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener la estadística por ubicación'
+    });
+  }
+};
+
+
+const obtenerReportesPorTipoYUbicacion = async (req, res) => {
+  try {
+    const [resultados] = await db.query(`
+      SELECT
+        u.id_ubicacion,
+        u.nombre AS ubicacion,
+        tp.id_tipo_problema,
+        tp.nombre AS tipo_problema,
+        COUNT(r.id_reporte) AS total_reportes
+      FROM reporte r
+      INNER JOIN ubicacion u 
+        ON r.id_ubicacion = u.id_ubicacion
+      INNER JOIN tipo_problema tp 
+        ON r.id_tipo_problema = tp.id_tipo_problema
+      GROUP BY
+        u.id_ubicacion,
+        u.nombre,
+        tp.id_tipo_problema,
+        tp.nombre
+      ORDER BY
+        u.nombre,
+        total_reportes DESC
+    `);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Estadística de reportes por tipo de problema y ubicación obtenida correctamente',
+      data: resultados
+    });
+
+  } catch (error) {
+    console.error('Error al obtener estadística tipo vs ubicación:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener la estadística tipo de problema vs ubicación'
+    });
+  }
+};
+
+
+const obtenerReportesPorMes = async (req, res) => {
+  try {
+    const [resultados] = await db.query(`
+      SELECT
+          t.anio,
+          t.mes_numero,
+          DATE_FORMAT(
+              STR_TO_DATE(CONCAT(t.anio, '-', t.mes_numero, '-01'), '%Y-%m-%d'),
+              '%M'
+          ) AS mes_nombre,
+          COUNT(*) AS total_reportes
+      FROM (
+          SELECT
+              YEAR(fecha_reporte) AS anio,
+              MONTH(fecha_reporte) AS mes_numero
+          FROM reporte
+      ) t
+      GROUP BY
+          t.anio,
+          t.mes_numero
+      ORDER BY
+          t.anio,
+          t.mes_numero
+    `);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Estadística de reportes por mes obtenida correctamente',
+      data: resultados
+    });
+
+  } catch (error) {
+    console.error('Error al obtener reportes por mes:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener la estadística de reportes por mes'
+    });
+  }
+};
+
+
+
+
 module.exports = {
   upload,
   crearReporte,
@@ -452,5 +600,9 @@ module.exports = {
   obtenerReportesPorCantidadReacciones,
   obtenerReportesPendientesPorIdEstudiante,
   obtenerReportesPorIdEstudiante,
-  revisarReporte
+  revisarReporte,
+  obtenerReportesPorTipoProblema,
+  obtenerReportesPorUbicacion,
+  obtenerReportesPorTipoYUbicacion,
+  obtenerReportesPorMes
 };
