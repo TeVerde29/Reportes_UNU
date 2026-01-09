@@ -18,9 +18,9 @@
    =============================== */
 .kpi-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .kpi-card {
@@ -38,7 +38,7 @@
 
 .kpi-card h4 {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #7f8c8d;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -48,7 +48,7 @@
   margin: 10px 0 0 0;
   font-size: 2.25rem;
   font-weight: 800;
-  color: #2e7d32;
+  color: #00643f;
 }
 
 .kpi-text {
