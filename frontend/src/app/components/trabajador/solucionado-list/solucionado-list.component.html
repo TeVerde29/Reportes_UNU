@@ -1,67 +1,108 @@
-<div class="container-fluid py-4">
+<div class="content-container">
+  <header class="section-header">
+    <div class="section-title-wrapper">
+      <div class="section-indicator"></div>
+      <div>
+        <h2 class="section-title">Reportes Solucionados</h2>
+        <p class="section-subtitle">Historial de incidencias resueltas con éxito</p>
+      </div>
+    </div>
 
-  <div class="d-flex align-items-center mb-4">
-    <h2 class="h4 fw-bold mb-0" style="color: var(--text); border-left: 5px solid var(--green); padding-left: 15px;">
-      Reportes Solucionados
-    </h2>
-  </div>
+    <div class="search-box">
+      <i class="bi bi-search search-icon"></i>
+      <input
+        type="text"
+        [(ngModel)]="filtroTexto"
+        (ngModelChange)="onSearchChange()"
+        placeholder="Buscar en el historial..."
+        class="search-input">
+    </div>
+  </header>
 
-  <div class="card border-0 shadow-sm" style="border-radius: 15px; background-color: var(--card);">
-    <div class="card-body p-0">
-      <div class="table-responsive" *ngIf="!error && reportes.length > 0">
-        <table class="table table-hover align-middle mb-0">
-          <thead style="background-color: var(--bg); color: var(--muted);">
-            <tr>
-              <th class="text-center border-0">N°</th>
-              <th class="border-0">Título</th>
-              <th class="border-0">Estudiante</th>
-              <th class="border-0 d-none d-md-table-cell">Carrera</th>
-              <th class="border-0 text-center">Tipo</th>
-              <th class="border-0">Ubicación</th>
-              <th class="border-0">Fecha</th>
-              <th class="border-0">Ver</th>
-            </tr>
-          </thead>
+  <div class="data-card">
+    <div class="table-container" *ngIf="!error && reportesFiltrados.length > 0">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th class="text-center">N°</th>
+            <th>Título de Incidencia</th>
+            <th>Fecha</th>
+            <th>Estudiante</th>
+            <th class="d-hide-mobile">Carrera</th>
+            <th class="text-center">Categoría</th>
+            <th>Ubicación</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of reportesPaginados; let i=index">
+            <td class="text-center row-id">
+              {{ (paginaActual - 1) * itemsPorPagina + (i + 1) }}
+            </td>
+            <td>
+              <span class="main-text">{{ r.titulo }}</span>
+            </td>
+            <td>
+              <span class="fecha-text">{{ r.fecha_edicion | date:'dd/MM/yyyy' }}</span>
+            </td>
+            <td>
+              <span class="user-name-cell">{{ r.estudiante }}</span>
+            </td>
+            <td class="d-hide-mobile">
+              <span class="carrera-tag">{{ r.carrera }}</span>
+            </td>
+            <td class="text-center">
+              <span class="status-badge" style="background-color: #f0fdf4; color: #166534;">
+                {{ r.tipo_problema }}
+              </span>
+            </td>
+            <td>
+              <div class="location-cell">
+                <span>{{ r.ubicacion }}</span>
+              </div>
+            </td>
+            <td class="text-center">
+              <button class="btn-action" (click)="abrirModal(r)">
+                <i class="bi bi-eye-fill"></i>
+                <span>Ver</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-          <tbody>
-            <tr *ngFor="let r of reportes; let i = index">
-              <td class="ps-4 fw-bold text-primary">
-                {{ i + 1 }}
-              </td>
-              <td>
-                <div class="fw-medium" style="color: var(--text);">{{ r.titulo }}</div>
-              </td>
-              <td style="color: var(--muted); font-size: 0.9rem;">{{ r.estudiante }}</td>
-              <td class="d-none d-md-table-cell text-truncate" style="max-width: 150px;">{{ r.carrera }}</td>
-              <td class="text-center">
-                <span class="badge rounded-pill px-3 py-2"
-                      style="background-color: var(--green-soft); color: var(--green); font-weight: 600;">
-                  {{ r.tipo_problema }}
-                </span>
-              </td>
-              <td>
-                <span class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ r.ubicacion }}</span>
-              </td>
-              <td class="text-muted">{{ r.fecha_edicion }}</td>
-              <td class="text-center pe-4">
-                <button
-                  type="button"
-                  class="btn btn-sm d-inline-flex align-items-center gap-2"
-                  style="background-color: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px;"
-                  (click)="abrirModal(r)"
-                >
-                  <i class="bi bi-eye text-primary"></i>
-                  <span>Ver</span>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <div *ngIf="!error && reportes.length === 0" class="empty-state">
+      <div class="empty-icon"><i class="bi bi-check2-circle"></i></div>
+      <h3>Sin reportes solucionados</h3>
+      <p>Aún no se han registrado incidencias finalizadas en el sistema.</p>
+    </div>
+
+    <div *ngIf="!error && reportes.length > 0 && reportesFiltrados.length === 0" class="empty-state">
+      <div class="empty-icon"><i class="bi bi-search"></i></div>
+      <h3>Sin resultados</h3>
+      <p>No hay coincidencias para "<strong>{{ filtroTexto }}</strong>".</p>
+    </div>
+
+    <div class="table-footer" *ngIf="!error && reportesFiltrados.length > 0">
+      <div class="pagination-info">
+        Mostrando <span>{{ (paginaActual - 1) * itemsPorPagina + 1 }}</span> -
+        <span>{{ Math.min(paginaActual * itemsPorPagina, totalReportesDinamico) }}</span>
+        de <span>{{ totalReportesDinamico }}</span> reportes
       </div>
 
-      <div *ngIf="!error && reportes.length === 0" class="text-center py-5">
-        <i class="bi bi-clipboard-x display-1 text-muted opacity-25"></i>
-        <p class="mt-3 text-muted fw-medium">No hay reportes a solucionar en este momento.</p>
+      <div class="pagination-controls">
+        <button class="btn-pagination" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <div class="page-numbers">
+          <button *ngFor="let p of paginas" class="page-num" [class.active]="p === paginaActual" (click)="cambiarPagina(p)">
+            {{ p }}
+          </button>
+        </div>
+        <button class="btn-pagination" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)">
+          <i class="bi bi-chevron-right"></i>
+        </button>
       </div>
     </div>
   </div>
