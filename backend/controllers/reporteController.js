@@ -16,14 +16,14 @@ function generarCodigoSeguro() {
 }
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) { // ESTO ES PARA GUARDAR LA IMAGEN EN ESA RUTA
+  destination: function (req, file, cb) {
     const uploadPath = path.join('C:', 'Reportes_UNU_IMG', 'uploads', 'reportes');
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
     cb(null, uploadPath);
   },
-  filename: function (req, file, cb) { // ESTO ES COMO SE LLAMARA LA IMG GUARDADA
+  filename: function (req, file, cb) {
     const ext = path.extname(file.originalname).toLowerCase();
     const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
     if (!allowedExtensions.includes(ext)) {
@@ -113,60 +113,42 @@ const crearReporte = async (req, res) => {
 const actualizarReporte = async (req, res) => {
   let backupPath = null;
   let targetPath = null;
-
   const safeUnlink = (p) => {
     try { if (p && fs.existsSync(p)) fs.unlinkSync(p); } catch (e) { console.error('Error al eliminar:', e); }
   };
-
   try {
     const { id } = req.params;
-    
-    // Si usas upload.single('foto') en la ruta, req.body dejará de ser undefined
     const { titulo, descripcion, id_estado, id_tipo_problema, id_ubicacion, id_usuario } = req.body;
-
-    // Validación básica
     if (!titulo || !id_tipo_problema || !id_ubicacion) {
       if (req.file) safeUnlink(req.file.path);
       return res.status(400).json({ success: false, message: 'Faltan campos obligatorios (titulo, tipo o ubicación)' });
     }
-
     const fecha_edicion = new Date();
-
-    // Lógica de Imagen
     if (req.file && req.file.path) {
       const [rowsFoto] = await db.query("SELECT foto_url FROM reporte WHERE id_reporte = ?", [id]);
-      
       if (rowsFoto.length > 0 && rowsFoto[0].foto_url) {
         const filenameActual = path.basename(rowsFoto[0].foto_url);
         const uploadDir = path.join('C:', 'Reportes_UNU_IMG', 'uploads', 'reportes');
         targetPath = path.join(uploadDir, filenameActual);
-
-        // Backup y reemplazo
         if (fs.existsSync(targetPath)) {
           backupPath = `${targetPath}.bak_${Date.now()}`;
           fs.renameSync(targetPath, backupPath);
         }
         fs.renameSync(req.file.path, targetPath);
       } else {
-        // Si no tenía foto antes, podrías manejar la creación de una nueva aquí
         safeUnlink(req.file.path); 
       }
     }
-
-    // Ejecutar actualización
     await db.query(`
       UPDATE reporte 
       SET titulo = ?, descripcion = ?, fecha_edicion = ?, id_estado = ?, id_tipo_problema = ?, id_ubicacion = ?, id_usuario = ?
       WHERE id_reporte = ?
     `, [titulo, descripcion, fecha_edicion, id_estado, id_tipo_problema, id_ubicacion, id_usuario, id]);
-
     if (backupPath) safeUnlink(backupPath);
-
     return res.status(200).json({
       success: true,
       message: 'Reporte actualizado correctamente'
     });
-
   } catch (error) {
     console.error('Error al actualizar reporte:', error);
     if (req.file) safeUnlink(req.file.path);
@@ -178,7 +160,6 @@ const revisarReporte = async (req, res) => {
     try {
         const { id } = req.params;
         const { titulo, descripcion, id_tipo_problema, id_estado } = req.body;
-
     const [existe] = await db.query(
         `SELECT id_reporte FROM reporte WHERE id_reporte = ?`,
         [id]
