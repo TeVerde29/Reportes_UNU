@@ -136,35 +136,41 @@ export class InicioListComponent implements OnInit, OnDestroy {
     });
   }
 
-  cargarReportesConMasLikes(): void {
-    this.error = '';
-    this.reporteService.obtenerReportesPorMayorReacciones().subscribe({
-      next: (resp) => {
-        if (resp.success && Array.isArray(resp.data)) {
-          this.reportes = resp.data;
-        } else {
-          this.error = 'No se pudieron cargar los reportes';
-        }
-      },
-      error: (er) => {
-        console.error('Error al obtener los reportes:', er);
-        this.error = 'Error al cargar los reportes';
-      },
-    });
-  }
+cargarReportesConMasLikes(): void {
+  this.error = '';
+  this.reporteService.obtenerReportesPorMayorReacciones().subscribe({
+    next: (resp) => {
+      if (resp.success && Array.isArray(resp.data)) {
+        this.reportes = resp.data;
+        this.error = '';
+      } else {
+        this.reportes = [];
+        this.error = '';
+      }
+    },
+    error: (er) => {
+      console.error('Error al obtener los reportes:', er);
+      this.reportes = [];
+      this.error = 'Error al cargar los reportes';
+    },
+  });
+}
 
   cargarMisReportes(): void {
-    this.error = '';
+    this.error = ''; 
     this.reporteService.obtenerReportesPorIdEstudiante(this.idEstudiante).subscribe({
       next: (resp) => {
         if (resp.success && Array.isArray(resp.data)) {
           this.reportes = resp.data;
+          this.error = ''; 
         } else {
+          this.reportes = [];
           this.error = 'No se pudieron cargar los reportes';
         }
       },
       error: (er) => {
         console.error('Error al obtener los reportes:', er);
+        this.reportes = [];
         this.error = 'Error al cargar los reportes';
       },
     });

@@ -164,21 +164,18 @@ const revisarReporte = async (req, res) => {
         `SELECT id_reporte FROM reporte WHERE id_reporte = ?`,
         [id]
     );
-
     if (existe.length === 0) {
       return res.status(404).json({
         success: false,
         message: 'Reporte no encontrado'
       });
     }
-
     if (!titulo || !id_tipo_problema || !id_estado) {
       return res.status(400).json({
         success: false,
         message: 'Datos obligatorios incompletos'
       });
     }
-
     await db.query(
       `
       UPDATE reporte
@@ -198,12 +195,10 @@ const revisarReporte = async (req, res) => {
         id
       ]
     );
-
     res.status(200).json({
       success: true,
       message: 'Reporte revisado correctamente'
     });
-
   } catch (error) {
     console.error('Error al revisar reporte:', error);
     res.status(500).json({
@@ -249,7 +244,6 @@ const obtenerReportePorId = async (req, res) => {
 const obtenerReportesPorIdEstado = async (req, res) => {
   try {
     const { id } = req.params;
-
     const [reporte] = await db.query(`
       SELECT
         r.*,
@@ -266,13 +260,11 @@ const obtenerReportesPorIdEstado = async (req, res) => {
       WHERE r.id_estado = ?
       ORDER BY r.fecha_edicion DESC
     `, [id]);
-
     return res.status(200).json({
       success: true,
       count: reporte.length,
       data: reporte
     });
-
   } catch (error) {
     console.error('Error al obtener reportes por id_estado:', error);
     return res.status(500).json({
@@ -281,7 +273,6 @@ const obtenerReportesPorIdEstado = async (req, res) => {
     });
   }
 };
-
 
 const obtenerReportesPorCantidadReacciones = async (req, res) => {
   try {
@@ -303,7 +294,12 @@ const obtenerReportesPorCantidadReacciones = async (req, res) => {
       ORDER BY r.cantidad_reacciones DESC, r.fecha_edicion DESC
     `, [estado]);
     if (reportes.length === 0) {
-      return res.status(404).json({ success: false, message: 'No se encontraron reportes' });
+      return res.status(200).json({
+        success: false,
+        message: 'No se encontraron reportes',
+        count: 0,
+        data: []
+      });
     }
     res.status(200).json({
       success: true,
@@ -355,7 +351,6 @@ const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
   }
 };
 
-
 const obtenerReportesPorIdEstudiante = async (req, res) => {
   try {
     const { id } = req.params;
@@ -393,8 +388,6 @@ const obtenerReportesPorIdEstudiante = async (req, res) => {
   }
 };
 
-
-
 const obtenerReportesPorTipoProblema = async (req, res) => {
   try {
     const [resultados] = await db.query(`
@@ -410,13 +403,11 @@ const obtenerReportesPorTipoProblema = async (req, res) => {
         tp.nombre
       ORDER BY total_reportes DESC
     `);
-
     return res.status(200).json({
       success: true,
       message: 'Estadística de reportes por tipo de problema obtenida correctamente',
       data: resultados
     });
-
   } catch (error) {
     console.error('Error al obtener estadística por tipo de problema:', error);
     return res.status(500).json({
@@ -441,13 +432,11 @@ const obtenerReportesPorUbicacion = async (req, res) => {
         u.nombre
       ORDER BY total_reportes DESC
     `);
-
     return res.status(200).json({
       success: true,
       message: 'Estadística de reportes por ubicación obtenida correctamente',
       data: resultados
     });
-
   } catch (error) {
     console.error('Error al obtener estadística por ubicación:', error);
     return res.status(500).json({
@@ -456,7 +445,6 @@ const obtenerReportesPorUbicacion = async (req, res) => {
     });
   }
 };
-
 
 const obtenerReportesPorTipoYUbicacion = async (req, res) => {
   try {
@@ -481,13 +469,11 @@ const obtenerReportesPorTipoYUbicacion = async (req, res) => {
         u.nombre,
         total_reportes DESC
     `);
-
     return res.status(200).json({
       success: true,
       message: 'Estadística de reportes por tipo de problema y ubicación obtenida correctamente',
       data: resultados
     });
-
   } catch (error) {
     console.error('Error al obtener estadística tipo vs ubicación:', error);
     return res.status(500).json({
@@ -496,7 +482,6 @@ const obtenerReportesPorTipoYUbicacion = async (req, res) => {
     });
   }
 };
-
 
 const obtenerReportesPorMes = async (req, res) => {
   try {
@@ -522,13 +507,11 @@ const obtenerReportesPorMes = async (req, res) => {
           t.anio,
           t.mes_numero
     `);
-
     return res.status(200).json({
       success: true,
       message: 'Estadística de reportes por mes obtenida correctamente',
       data: resultados
     });
-
   } catch (error) {
     console.error('Error al obtener reportes por mes:', error);
     return res.status(500).json({
@@ -537,9 +520,6 @@ const obtenerReportesPorMes = async (req, res) => {
     });
   }
 };
-
-
-
 
 module.exports = {
   upload,
