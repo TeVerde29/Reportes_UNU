@@ -39,9 +39,9 @@
 }
 
 .topbar-inner{
-  max-width: 1000px;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 14px 18px;
+  padding: 10px 1px;
   display: flex;
   align-items: center;
   justify-content: space-between;

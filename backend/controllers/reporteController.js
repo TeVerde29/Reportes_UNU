@@ -371,9 +371,10 @@ const obtenerReportesPorIdEstudiante = async (req, res) => {
       ORDER BY r.fecha_reporte DESC
     `, [id]);
     if (reportes.length === 0) {
-      return res.status(404).json({
+      return res.status(200).json({
         success: false,
-        message: 'No se encontraron reportes para el estudiante'
+        message: 'No se encontraron reportes para el estudiante',
+        data: []
       });
     }
     res.status(200).json({

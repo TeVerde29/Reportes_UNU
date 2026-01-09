@@ -25,6 +25,7 @@ export class InicioListComponent implements OnInit, OnDestroy {
   activeTab: 'ultimos' | 'populares' | 'mis-reportes' = 'ultimos';
   private querySubscription?: Subscription;
   private idEstudiante: number = 0;
+  private idEstudianteListo = false;
 
   constructor(
     private reporteService: ReporteService,
@@ -36,19 +37,34 @@ export class InicioListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-  this.cargarIdEstudiante();
-  this.querySubscription = this.route.queryParams.subscribe(params => {
-    const tab = params['tab'];
-    this.activeTab = (tab === 'populares' || tab === 'mis-reportes') ? tab : 'ultimos';
+    this.cargarIdEstudiante();
+    this.querySubscription = this.route.queryParams.subscribe(params => {
+      const tab = params['tab'];
+      this.activeTab = (tab === 'populares' || tab === 'mis-reportes') ? tab : 'ultimos';
+      this.cargarSegunTab();
+    });
+  }
+
+  private cargarSegunTab(): void {
     if (this.activeTab === 'ultimos') {
       this.cargarReportesPorFecha();
-    } else if (this.activeTab === 'populares') {
-      this.cargarReportesConMasLikes();
-    } else {
-      this.cargarMisReportes();
+      return;
     }
-  });
-}
+
+    if (this.activeTab === 'populares') {
+      this.cargarReportesConMasLikes();
+      return;
+    }
+
+    // mis-reportes
+    if (!this.idEstudianteListo || !this.idEstudiante) {
+      // Aún no está el id, no dispares la petición
+      return;
+    }
+
+    this.cargarMisReportes();
+  }
+
 
   ngOnDestroy(): void {
     this.querySubscription?.unsubscribe();
@@ -67,7 +83,9 @@ export class InicioListComponent implements OnInit, OnDestroy {
     this.authService.me().subscribe({
       next: (response) => {
         this.idEstudiante = response.data?.id_estudiante ?? 0;
+        this.idEstudianteListo = true;
         this.cargarLikesActivos(this.idEstudiante);
+        this.cargarSegunTab();
       },
       error: (err) => {
         console.error(err);
