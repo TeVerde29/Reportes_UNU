@@ -36,7 +36,7 @@ export class LoginFormComponent implements OnInit {
         }
       },
       error: () => {
-        // No hay sesión → quedarse en login sin mostrar error
+        
       }
     });
   }

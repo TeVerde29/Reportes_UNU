@@ -21,9 +21,7 @@ export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginFormComponent },
 
-  // ============================
   // ESTUDIANTE
-  // ============================
   {
     path: 'estudiante',
     component: LayoutEstudianteComponent,
@@ -36,9 +34,7 @@ export const routes: Routes = [
     ]
   },
 
-  // ============================
   //  TRABAJADOR
-  // ============================
   {
     path: 'trabajador',
     component: LayoutTrabajadorComponent,
