@@ -7,10 +7,7 @@
 <!-- Estado vacío -->
 <div *ngIf="!error && reportes.length === 0" class="empty-state">
   <div class="empty-icon" aria-hidden="true">
-    <svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6">
-      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-      <path d="M9 11l3 3L22 4" />
-    </svg>
+    <mat-icon>inbox</mat-icon>
   </div>
   <h3>No hay reportes por mostrar</h3>
   <p>Cuando se creen nuevos reportes, aparecerán aquí.</p>
@@ -18,30 +15,29 @@
 
 <!-- Feed de reportes -->
 <section *ngIf="!error && reportes.length > 0" class="feed">
-  <article *ngFor="let r of reportes; trackBy: trackByIdReporte" class="post">
+  <mat-card *ngFor="let r of reportes; trackBy: trackByIdReporte" class="post">
     <!-- Header del post -->
     <div class="post-head">
-      <div class="post-avatar">
+      <div class="post-avatar" aria-hidden="true">
         {{ obtenerIniciales(r.estudiante || 'Usuario') }}
       </div>
       <div class="post-meta">
         <div class="post-meta-top">
           <strong class="post-student">{{ r.estudiante || 'Usuario' }}</strong>
-          <span class="dot">•</span>
-          <span class="post-career">Estudiante de {{ r.carrera || 'Sin carrera' }}</span>
-          <span class="dot">•</span>
+          <span class="post-career">{{ r.carrera || 'Sin carrera' }}</span>
+          <span class="dot" aria-hidden="true">•</span>
           <span class="post-date">{{ timeAgo(r.fecha_edicion) }}</span>
         </div>
         <div class="post-meta-bottom">
-          <span class="tag tag-green">{{ r.tipo_problema }}</span>
-          <span class="tag tag-green">{{ r.ubicacion }}</span>
-          <span *ngIf="activeTab === 'mis-reportes'" 
-                class="tag" 
+          <span class="eu-tag">{{ r.tipo_problema }}</span>
+          <span class="eu-tag">{{ r.ubicacion }}</span>
+          <span *ngIf="activeTab === 'mis-reportes'"
+                class="eu-badge"
                 [ngClass]="{
-                  'tag-green': r.estado === 'Aceptado',
-                  'tag-red': r.estado === 'Rechazado',
-                  'tag-yellow': r.estado === 'Pendiente',
-                  'tag-blue': r.estado === 'Resuelto'
+                  'eu-badge-pendiente': r.estado === 'Pendiente',
+                  'eu-badge-aceptado': r.estado === 'Aceptado',
+                  'eu-badge-resuelto': r.estado === 'Resuelto',
+                  'eu-badge-rechazado': r.estado === 'Rechazado'
                 }">
             {{ r.estado }}
           </span>
@@ -64,28 +60,22 @@
     <!-- Footer del post -->
     <div class="post-foot">
       <div class="foot-left">
-        <button *ngIf="activeTab !== 'mis-reportes'" type="button" class="like-btn" 
+        <button *ngIf="activeTab !== 'mis-reportes'" type="button" class="like-btn"
           [class.liked]="isLiked(r)" [disabled]="likeLoading[r.id_reporte!]" (click)="gestionarLike(r)">
-          <svg class="like-icon" [style.fill]="isLiked(r) ? 'var(--green)' : 'none'" viewBox="0 0 24 24" width="20" height="20">
-            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.72l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" 
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <span class="like-count"> {{ r.cantidad_reacciones || 0 }} </span>
+          <mat-icon class="like-icon">thumb_up</mat-icon>
+          <span class="like-count">{{ r.cantidad_reacciones || 0 }}</span>
           <span *ngIf="likeLoading[r.id_reporte!]" class="loader-mini"></span>
         </button>
-        <button *ngIf="activeTab === 'mis-reportes' && r.estado === 'Pendiente'" type="button"
-          class="like-btn" [routerLink]="['/estudiante/editar-reporte',r.id_reporte]">
-          <span class="btn-text">Editar</span>
+        <button *ngIf="activeTab === 'mis-reportes' && r.estado === 'Pendiente'" mat-stroked-button type="button"
+          class="edit-btn" [routerLink]="['/estudiante/editar-reporte', r.id_reporte]">
+          Editar
         </button>
       </div>
     </div>
-  </article>
+  </mat-card>
 </section>
 
-<!-- FAB para móvil -->
-<a class="fab" routerLink="/estudiante/nuevo-reporte" aria-label="Nuevo reporte" title="Nuevo reporte">
-  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
-    <path d="M12 5v14" />
-    <path d="M5 12h14" />
-  </svg>
+<!-- FAB para nuevo reporte -->
+<a mat-fab class="fab" routerLink="/estudiante/nuevo-reporte" aria-label="Nuevo reporte" title="Nuevo reporte">
+  <mat-icon>add</mat-icon>
 </a>

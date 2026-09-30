@@ -1,209 +1,272 @@
-.custom-modal {
-  border: none;
-  border-radius: 20px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.1);
+/* Review Modal — Eucalyptus Civic Modern (solo visual, embebido, sin MatDialog) */
+
+.eu-review-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background-color: rgba(26, 46, 38, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
-.modal-header {
-  padding: 24px 32px;
-  background: #ffffff;
-  border-bottom: 1px solid #f1f5f9;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.header-indicator {
-  width: 4px;
-  height: 40px;
-  background: var(--green);
-  border-radius: 4px;
-}
-
-.modal-title {
-  font-size: 20px;
-  font-weight: 800;
-  color: #1e293b;
-  margin: 0;
-}
-
-.modal-subtitle {
-  font-size: 13px;
-  color: #64748b;
-  margin: 2px 0 0 0;
-}
-
-.btn-close-custom {
-  background: #f1f5f9;
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+.eu-review-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1051;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
+  padding: 1.5rem;
+  pointer-events: none;
+}
+
+.eu-review-card {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 840px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--eu-card, #ffffff);
+  border: 1px solid var(--eu-border, #e1e9e4);
+  border-radius: 16px;
+  box-shadow:
+    0 20px 25px -5px rgba(23, 48, 37, 0.14),
+    0 8px 10px -6px rgba(23, 48, 37, 0.08);
+}
+
+/* Header */
+.eu-review-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--eu-border, #e1e9e4);
+}
+
+.eu-review-header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.eu-review-indicator {
+  width: 4px;
+  align-self: stretch;
+  min-height: 44px;
+  border-radius: 4px;
+  background: var(--eu-primary, #2d5a46);
+}
+
+.eu-review-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 26px;
+  color: var(--eu-ink, #111e1a);
+}
+
+.eu-review-subtitle {
+  margin: 2px 0 6px;
+  font-size: 12px;
+  color: var(--eu-muted, #6c7a74);
+}
+
+.eu-review-close {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--eu-inset, #f0f4f2);
+  color: var(--eu-ink-soft, #414944);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
-.btn-close-custom:hover {
-  background: #ef4444;
-  color: white;
-  transform: rotate(90deg);
+.eu-review-close:hover {
+  background: #f3bcbc;
+  color: #9c2b2b;
 }
 
-.custom-body {
-  padding: 32px;
-  background: #ffffff;
-  max-height: 70vh;
+.eu-review-close mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Body dos columnas */
+.eu-review-body {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
   overflow-y: auto;
 }
 
-.custom-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  color: #475569;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 8px;
+.eu-review-data {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
 }
 
-/* Campos de texto más suaves */
-.custom-input, .custom-select {
+.eu-field {
   width: 100%;
-  padding: 12px 16px;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #1e293b;
-  background-color: #fcfdfe;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-  resize: vertical; /* Permite agrandar pero solo hacia abajo */
-  min-height: 45px;
 }
 
-.custom-input:focus, .custom-select:focus {
-  outline: none;
-  border-color: var(--green);
-  background-color: #fff;
-  box-shadow: 0 8px 20px -10px rgba(0, 100, 63, 0.15);
+/* Read-only inset */
+.eu-read-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.eu-read-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--eu-muted, #6c7a74);
 }
 
 .read-only-box {
   padding: 12px 16px;
-  background: #f1f5f9;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
+  background: var(--eu-inset, #f0f4f2);
+  border: 1px solid var(--eu-border, #e1e9e4);
+  border-radius: 8px;
   font-size: 14px;
-  font-weight: 600;
-  color: #64748b;
+  font-weight: 500;
+  color: var(--eu-ink, #111e1a);
 }
 
-.image-container {
-  background: #f8fafc;
-  border: 2px dashed #cbd5e1;
-  border-radius: 16px;
-  padding: 16px;
-  transition: border-color 0.3s ease;
-}
-
-.image-container:hover {
-  border-color: var(--green);
-}
-
-.img-evidence {
-  max-height: 300px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-  object-fit: contain;
-}
-
-/* --- FOOTER Y BOTONES --- */
-.custom-footer {
-  padding: 24px 32px;
-  background: #f8fafc;
-  border-top: 1px solid #f1f5f9;
+.read-only-box.location {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 8px;
 }
 
-.action-group {
-  display: flex;
-  gap: 12px;
+.eu-pin {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--eu-primary, #2d5a46);
 }
 
-button {
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: none;
+/* Evidencia */
+.eu-review-evidence {
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.eu-evidence-frame {
+  background: var(--eu-inset, #f0f4f2);
+  border: 1px solid var(--eu-border, #e1e9e4);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.eu-evidence-img {
+  display: block;
+  width: 100%;
+  max-height: 380px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.eu-evidence-empty {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 8px;
+  min-height: 220px;
+  border: 2px dashed var(--eu-border-soft, #d1dcd6);
+  border-radius: 8px;
+  background: #f7faf8;
+  color: var(--eu-muted, #6c7a74);
 }
 
-/* Mejoramos el botón Cerrar */
-.btn-cancel {
-  background: #64748b;
-  color: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+.eu-evidence-empty p {
+  margin: 0;
+  font-size: 13px;
 }
 
-.btn-cancel:hover {
-  background: #475569;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+/* Footer */
+.eu-review-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.5rem;
+  background: var(--eu-canvas, #f5f8f6);
+  border-top: 1px solid var(--eu-border, #e1e9e4);
 }
 
-/* Botón Rechazar */
-.btn-reject {
-  background: #fee2e2;
-  color: #ef4444;
-  border: 1px solid #fecaca;
+.eu-review-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.btn-reject:hover {
-  background: #ef4444;
-  color: white;
-  transform: translateY(-1px);
+.eu-btn-ghost {
+  color: var(--eu-primary, #2d5a46);
 }
 
-/* Botón Aceptar */
-.btn-accept {
-  background: var(--green);
-  color: white;
-  box-shadow: 0 4px 14px 0 rgba(0, 100, 63, 0.3);
+.eu-btn-accept {
+  background-color: #235b3c;
+  color: #fff;
 }
 
-.btn-accept:hover {
-  background: var(--green-2);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px 0 rgba(0, 100, 63, 0.4);
+.eu-btn-reject {
+  background-color: #c84b4b;
+  color: #fff;
 }
 
-/* Botón Solucionar */
-.btn-solve {
-  background: #f59e0b;
-  color: white;
-  box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.3);
+.eu-btn-resolve {
+  background-color: #1f5987;
+  color: #fff;
 }
 
-.btn-solve:hover {
-  background: #d97706;
-  transform: translateY(-2px);
+/* Responsive: una columna en móvil */
+@media (max-width: 767px) {
+  .eu-review-modal {
+    padding: 1rem;
+    align-items: flex-end;
+  }
+
+  .eu-review-card {
+    max-height: 94vh;
+  }
+
+  .eu-review-body {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .eu-review-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .eu-review-actions {
+    flex-direction: column;
+  }
+
+  .eu-review-actions .mat-mdc-button,
+  .eu-review-actions .mat-mdc-unelevated-button,
+  .eu-review-footer .mat-mdc-button,
+  .eu-review-footer .mat-mdc-unelevated-button {
+    width: 100%;
+  }
 }

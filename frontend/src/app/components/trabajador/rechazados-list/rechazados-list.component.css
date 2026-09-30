@@ -1,7 +1,7 @@
+/* Eucalyptus Civic — lista trabajador (solo visual, sin cambios funcionales) */
 .content-container {
   max-width: 1200px;
   margin: 0 auto;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   animation: fadeIn 0.4s ease-out;
 }
 
@@ -10,11 +10,12 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Header de sección: título + subtítulo + badge de estado */
 .section-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
+  align-items: flex-end;
+  margin-bottom: 20px;
   gap: 20px;
 }
 
@@ -24,191 +25,261 @@
   gap: 16px;
 }
 
-.section-indicator {
-  width: 4px;
-  height: 42px;
-  background-color: #ef4444; /* Rojo para Rechazados */
-  border-radius: 4px;
+.section-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .section-title {
   font-size: 24px;
-  font-weight: 800;
-  color: var(--text);
+  font-weight: 600;
+  color: var(--eu-ink);
   margin: 0;
-  line-height: 1;
+  line-height: 32px;
+  letter-spacing: -0.015em;
 }
 
 .section-subtitle {
   font-size: 14px;
-  color: var(--muted);
+  color: var(--eu-muted);
   margin: 4px 0 0 0;
-  line-height: 1;
+  line-height: 22px;
 }
 
+/* Search como mat-form-field */
 .search-box {
-  position: relative;
   width: 320px;
 }
 
-.search-icon {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--muted);
-  font-size: 14px;
+.search-box .mat-icon {
+  color: var(--eu-muted);
 }
 
-.search-input {
-  width: 100%;
-  padding: 10px 15px 10px 40px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 500;
-  background-color: #ffffff;
-  transition: all 0.2s ease;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.05);
-}
-
+/* Card contenedora blanca radio 16px */
 .data-card {
   background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  border-radius: 16px;
+  border: 1px solid var(--eu-border);
+  box-shadow: 0 1px 3px 0 rgba(45, 90, 70, 0.04), 0 1px 2px -1px rgba(45, 90, 70, 0.04);
   overflow: hidden;
 }
 
+.table-container {
+  overflow-x: auto;
+}
+
+/* Tabla Eucalyptus: header uppercase muted sobre #F5F8F6, solo separadores horizontales */
 .custom-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 760px;
 }
 
 .custom-table th {
-  background-color: #f8fafc;
-  padding: 15px 20px;
+  background-color: #F5F8F6;
+  padding: 12px 16px;
   text-align: left;
   font-size: 11px;
-  font-weight: 700;
-  color: #64748b;
+  font-weight: 600;
+  color: var(--eu-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid var(--border);
+  letter-spacing: 0.04em;
+  line-height: 14px;
+  border-bottom: 1px solid var(--eu-border);
+  white-space: nowrap;
 }
 
 .custom-table td {
-  padding: 16px 20px;
+  padding: 12px 16px;
   font-size: 14px;
-  color: var(--text);
-  border-bottom: 1px solid #f1f5f9;
+  line-height: 22px;
+  color: var(--eu-ink);
+  border-bottom: 1px solid #EDF1EE;
+  vertical-align: middle;
+}
+
+.custom-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.custom-table tbody tr:hover {
+  background-color: #F5F8F6;
+}
+
+.text-center {
+  text-align: center;
 }
 
 .row-id {
-  font-weight: 700;
+  font-weight: 600;
+  color: var(--eu-muted);
+  white-space: nowrap;
 }
 
 .main-text {
   display: block;
-  font-weight: 700;
-  color: #1e293b;
+  font-weight: 600;
+  color: var(--eu-ink);
+}
+
+.user-name-cell {
+  color: var(--eu-ink-soft);
 }
 
 .fecha-text {
-  font-weight: 600;
-  color: #64748b;
+  color: var(--eu-muted);
   font-size: 13px;
   white-space: nowrap;
 }
 
-.status-badge {
-  padding: 5px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.btn-action {
-  background-color: #ffffff;
-  border: 1px solid var(--border);
-  padding: 7px 15px;
-  border-radius: 8px;
+.carrera-tag {
+  color: var(--eu-muted);
   font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s;
 }
 
-.btn-action:hover {
-  background-color: #f8fafc;
-  border-color: #ef4444;
-  color: #ef4444;
+.location-cell {
+  max-width: 220px;
 }
 
+/* Botón Ver sobrio (mat-stroked-button eucalyptus) */
+.btn-ver {
+  white-space: nowrap;
+}
+
+.btn-ver .mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Footer + paginación sobria (lógica intacta) */
 .table-footer {
-  padding: 16px 24px;
+  padding: 12px 16px;
   background-color: #ffffff;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--eu-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: var(--eu-muted);
+}
+
+.pagination-info span {
+  font-weight: 600;
+  color: var(--eu-ink);
 }
 
 .pagination-controls {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 
-.btn-pagination, .page-num {
+.btn-pagination {
   width: 32px;
   height: 32px;
-  border: 1px solid var(--border);
-  background: white;
-  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border: 1px solid var(--eu-border-soft);
+  border-radius: 8px;
   cursor: pointer;
+  color: var(--eu-ink-soft);
+  transition: background-color 0.2s, border-color 0.2s;
+  padding: 0;
+}
+
+.btn-pagination .mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.btn-pagination:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-pagination:hover:not(:disabled) {
+  background-color: #EDF3F0;
+  border-color: var(--eu-secondary);
+}
+
+.page-numbers {
+  display: flex;
+  gap: 6px;
+}
+
+.page-num {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  background: none;
+  border-radius: 8px;
   font-size: 13px;
-  transition: all 0.2s;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--eu-ink-soft);
+}
+
+.page-num:hover:not(.active) {
+  background-color: #F0F4F2;
 }
 
 .page-num.active {
-  background-color: #ef4444; /* Color rojo para la página activa */
-  color: white;
-  border-color: #ef4444;
+  background-color: var(--eu-primary);
+  color: #ffffff;
 }
 
+/* Empty states sobrios */
 .empty-state {
   padding: 60px 20px;
   text-align: center;
-  color: var(--muted);
+}
+
+.empty-state h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--eu-ink);
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--eu-muted);
 }
 
 .empty-icon {
-  font-size: 40px;
-  margin-bottom: 15px;
-  display: block;
-  color: #cbd5e1;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #F0F4F2;
 }
 
-/* --- CORRECCIÓN DE RESPONSIVIDAD --- */
+.empty-icon .mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: #7FA998;
+}
 
 @media (max-width: 992px) {
   .search-box {
     width: 250px;
-  }
-  /* Ocultamos Ubicación en tablets para ganar espacio */
-  .custom-table th:nth-child(7),
-  .custom-table td:nth-child(7) {
-    display: none;
   }
 }
 
@@ -218,52 +289,14 @@
     align-items: flex-start;
     gap: 15px;
   }
-
   .search-box {
     width: 100%;
   }
-
-  .section-title {
-    font-size: 20px;
+  .d-hide-mobile {
+    display: none;
   }
-
-  /* Hacemos que el contenedor de la tabla permita scroll lateral si es necesario */
-  .table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .custom-table {
-    min-width: 600px; /* Evita que las celdas se colapsen demasiado */
-  }
-
-  /* Forzamos ocultar columnas no críticas en móvil */
-  .d-hide-mobile,
-  .carrera-tag,
-  .fecha-text {
-    display: none !important;
-  }
-
-  /* Ajustamos el footer para que no se amontone */
   .table-footer {
     flex-direction: column;
-    gap: 15px;
     text-align: center;
-  }
-}
-
-@media (max-width: 480px) {
-  /* En pantallas muy pequeñas, reducimos el padding de las celdas */
-  .custom-table td, .custom-table th {
-    padding: 10px 8px;
-    font-size: 12px;
-  }
-
-  .btn-action span {
-    display: none; /* Solo dejamos el ícono en móviles muy pequeños */
-  }
-
-  .btn-action {
-    padding: 8px;
   }
 }
