@@ -3,6 +3,11 @@ const path = require('path');
 const fs = require('fs');
 const db = require('../config/database');
 
+// Carpeta donde se guardan las fotos (configurable por .env;
+// por defecto, dentro del proyecto: C:\Reportes_UNU\Reportes_UNU_IMG\...)
+const UPLOAD_DIR = process.env.UPLOAD_DIR
+  || path.join(__dirname, '..', '..', 'Reportes_UNU_IMG', 'uploads', 'reportes');
+
 function generarCodigoSeguro() {
   const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const L = "abcdefghijklmnopqrstuvwxyz";
@@ -17,7 +22,7 @@ function generarCodigoSeguro() {
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadPath = path.join('C:', 'Reportes_UNU_IMG', 'uploads', 'reportes');
+    const uploadPath = UPLOAD_DIR;
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
@@ -128,7 +133,7 @@ const actualizarReporte = async (req, res) => {
       const [rowsFoto] = await db.query("SELECT foto_url FROM reporte WHERE id_reporte = ?", [id]);
       if (rowsFoto.length > 0 && rowsFoto[0].foto_url) {
         const filenameActual = path.basename(rowsFoto[0].foto_url);
-        const uploadDir = path.join('C:', 'Reportes_UNU_IMG', 'uploads', 'reportes');
+        const uploadDir = UPLOAD_DIR;
         targetPath = path.join(uploadDir, filenameActual);
         if (fs.existsSync(targetPath)) {
           backupPath = `${targetPath}.bak_${Date.now()}`;

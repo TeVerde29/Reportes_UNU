@@ -38,7 +38,10 @@ app.use(session({
     }
 }));
 
-app.use('/uploads/reportes', express.static(path.join('C:', 'Reportes_UNU_IMG', 'uploads', 'reportes')));
+// Sirve las fotos de reportes (misma carpeta donde multer guarda)
+const REPORTES_IMG_DIR = process.env.UPLOAD_DIR
+    || path.join(__dirname, '..', 'Reportes_UNU_IMG', 'uploads', 'reportes');
+app.use('/uploads/reportes', express.static(REPORTES_IMG_DIR));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/', (req, res) => {
@@ -113,6 +116,7 @@ app.listen(PORT, () => {
     console.log(`URL: http://localhost:${PORT}`);
     console.log(`Base de datos: ${process.env.DB_NAME || 'reporte_incidencias'}`);
     console.log(`FRONTEND_ORIGIN: ${process.env.FRONTEND_ORIGIN || 'http://localhost:4200'}`);
+    console.log(`IMAGENES: ${REPORTES_IMG_DIR}`);
     console.log('COOKIE: sid (httpOnly, sameSite=lax, secure=false)');
     console.log('═══════════════════════════════════════════');
 });
