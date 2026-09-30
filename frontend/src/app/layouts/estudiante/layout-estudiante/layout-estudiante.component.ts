@@ -6,10 +6,13 @@ import { EstudianteService } from '../../../services/estudiante.service';
 import { Estudiante } from '../../../models/estudiante.interface';
 import { Usuario } from '../../../models/usuario.interface';
 
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
 @Component({
   selector: 'app-layout-estudiante',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, CommonModule],
+  imports: [RouterOutlet, RouterLink, CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './layout-estudiante.component.html',
   styleUrls: ['./layout-estudiante.component.css']
 })

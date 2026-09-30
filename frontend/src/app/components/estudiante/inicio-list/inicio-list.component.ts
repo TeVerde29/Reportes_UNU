@@ -10,10 +10,14 @@ import { ReaccionService } from '../../../services/reaccion.service';
 import { Reporte } from '../../../models/reporte.interface';
 import { Reaccion } from '../../../models/reaccion.interface';
 
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
 @Component({
   selector: 'app-inicio-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, MatCardModule, MatButtonModule, MatIconModule],
   templateUrl: './inicio-list.component.html',
   styleUrl: './inicio-list.component.css',
 })

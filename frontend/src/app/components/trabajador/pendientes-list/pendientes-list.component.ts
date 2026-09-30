@@ -5,6 +5,10 @@ import { Reporte } from '../../../models/reporte.interface';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { PendientesFormComponent } from '../pendientes-form/pendientes-form.component';
 
 @Component({
@@ -13,6 +17,10 @@ import { PendientesFormComponent } from '../pendientes-form/pendientes-form.comp
   imports: [
     CommonModule,
     FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
     PendientesFormComponent
   ],
   templateUrl: './pendientes-list.component.html',

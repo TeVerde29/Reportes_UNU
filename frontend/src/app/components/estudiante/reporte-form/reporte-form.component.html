@@ -1,90 +1,101 @@
 <div class="form-container">
 
   <!-- Mensajes de error/éxito -->
-  <div *ngIf="error" class="alert alert-error"> {{ error }} </div>
-  <div *ngIf="successMessage" class="alert alert-success"> {{ successMessage }} </div>
+  <div *ngIf="error" class="alert alert-error" role="alert">{{ error }}</div>
+  <div *ngIf="successMessage" class="alert alert-success" role="status">{{ successMessage }}</div>
 
-  <form [formGroup]="reporteForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="reporteForm" (ngSubmit)="onSubmit()" class="eu-form-card">
     <h2>{{ isEditMode ? 'Editar Reporte de Incidencia' : 'Nuevo Reporte de Incidencia' }}</h2>
+    <p class="form-subtitle">Completa los datos y marca la ubicación en el croquis del campus.</p>
 
     <!-- TÍTULO -->
     <div class="form-group">
-      <label for="titulo">Título *</label>
-      <input 
-        type="text" 
-        id="titulo"
-        formControlName="titulo"
-        placeholder="Ej: Puerta del aula desajustada"
-        [class.invalid]="reporteForm.get('titulo')?.invalid && reporteForm.get('titulo')?.touched">
-      <small *ngIf="reporteForm.get('titulo')?.invalid && reporteForm.get('titulo')?.touched" class="error-text">
-        El título es obligatorio (mínimo 5 caracteres)
-      </small>
+      <mat-form-field appearance="outline" class="eu-field">
+        <mat-label>Título</mat-label>
+        <input
+          matInput
+          type="text"
+          id="titulo"
+          formControlName="titulo"
+          placeholder="Ej: Puerta del aula desajustada">
+        <mat-error *ngIf="reporteForm.get('titulo')?.invalid && reporteForm.get('titulo')?.touched">
+          El título es obligatorio (mínimo 5 caracteres)
+        </mat-error>
+      </mat-form-field>
     </div>
 
     <!-- DESCRIPCIÓN -->
     <div class="form-group">
-      <label for="descripcion">Descripción</label>
-      <textarea 
-        id="descripcion"
-        formControlName="descripcion"
-        rows="3"
-        placeholder="Describe con más detalle el problema..."></textarea>
-    </div>
-
-    <!-- FOTO -->
-    <div class="form-group">
-      <label for="foto">Foto Evidencia *</label>
-      <input 
-        #fotoInput
-        type="file" 
-        id="foto" 
-        name="foto" 
-        accept="image/jpeg,image/png,image/gif,image/webp"
-        (change)="onFileSelected($event)"
-      >
-      <small class="help-text">Formatos: JPG, PNG, GIF, WEBP. Máximo 5MB</small>
-      
-      <div *ngIf="fotoError" class="error-text"> {{ fotoError }} </div>
-      
-      <div *ngIf="previewUrl" class="image-preview">
-        <img [src]="getFormattedPreviewUrl()" alt="Vista previa" style="max-height: 500px; width: auto; display: block; margin-top: 10px;">
-      </div>
+      <mat-form-field appearance="outline" class="eu-field">
+        <mat-label>Descripción</mat-label>
+        <textarea
+          matInput
+          id="descripcion"
+          formControlName="descripcion"
+          rows="3"
+          placeholder="Describe con más detalle el problema..."></textarea>
+      </mat-form-field>
     </div>
 
     <!-- TIPO DE PROBLEMA -->
     <div class="form-group">
-      <label for="tipo_problema">Tipo de Problema *</label>
-      <select 
-        id="tipo_problema"
-        formControlName="id_tipo_problema"
-        [class.invalid]="reporteForm.get('id_tipo_problema')?.invalid && reporteForm.get('id_tipo_problema')?.touched">
-        <option [ngValue]="null">Seleccione un tipo de problema</option>
-        <option *ngFor="let tipo of tipoProblemas" [ngValue]="tipo.id_tipo_problema">
-          {{ tipo.nombre }}
-        </option>
-      </select>
-      <small *ngIf="reporteForm.get('id_tipo_problema')?.invalid && reporteForm.get('id_tipo_problema')?.touched" class="error-text">
-        Debes seleccionar un tipo de problema
-      </small>
+      <mat-form-field appearance="outline" class="eu-field">
+        <mat-label>Tipo de Problema</mat-label>
+        <mat-select id="tipo_problema" formControlName="id_tipo_problema" placeholder="Seleccione un tipo de problema">
+          <mat-option [value]="null">Seleccione un tipo de problema</mat-option>
+          <mat-option *ngFor="let tipo of tipoProblemas" [value]="tipo.id_tipo_problema">
+            {{ tipo.nombre }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="reporteForm.get('id_tipo_problema')?.invalid && reporteForm.get('id_tipo_problema')?.touched">
+          Debes seleccionar un tipo de problema
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- FOTO -->
+    <div class="form-group">
+      <span class="eu-label">Foto Evidencia *</span>
+      <input
+        #fotoInput
+        type="file"
+        id="foto"
+        name="foto"
+        class="eu-file-hidden"
+        accept="image/jpeg,image/png,image/gif,image/webp"
+        (change)="onFileSelected($event)"
+      >
+      <div class="upload-zone" (click)="fotoInput.click()" (keyup.enter)="fotoInput.click()" tabindex="0" role="button" aria-label="Subir foto evidencia">
+        <span class="material-icons upload-icon">cloud_upload</span>
+        <p class="upload-title">Arrastra o <strong>selecciona una imagen</strong></p>
+        <small class="help-text">Formatos: JPG, PNG, GIF, WEBP. Máximo 5MB</small>
+      </div>
+
+      <mat-error *ngIf="fotoError" class="eu-foto-error">{{ fotoError }}</mat-error>
+
+      <div *ngIf="previewUrl" class="image-preview">
+        <img [src]="getFormattedPreviewUrl()" alt="Vista previa">
+      </div>
     </div>
 
     <!-- UBICACIÓN -->
     <div class="form-group">
-      <label>Ubicación *</label>
-      
+      <span class="eu-label">Ubicación *</span>
+
       <!-- Campo oculto con el ID -->
       <input type="hidden" formControlName="id_ubicacion">
-      
+
       <!-- Mostrar nombre seleccionado -->
       <div class="selected-box" [class.empty]="!ubicacionSeleccionadaNombre">
-        {{ ubicacionSeleccionadaNombre || 'Selecciona una ubicación en el mapa' }}
+        <span class="material-icons selected-icon">place</span>
+        <span>{{ ubicacionSeleccionadaNombre || 'Selecciona una ubicación en el mapa' }}</span>
       </div>
-      
-      <small *ngIf="reporteForm.get('id_ubicacion')?.invalid && reporteForm.get('id_ubicacion')?.touched" class="error-text">
-        Debes seleccionar una ubicación
-      </small>
 
-      <!-- MAPA SVG -->
+      <mat-error *ngIf="reporteForm.get('id_ubicacion')?.invalid && reporteForm.get('id_ubicacion')?.touched">
+        Debes seleccionar una ubicación
+      </mat-error>
+
+      <!-- MAPA SVG (estructura e interacción intactas) -->
       <div class="map-area">
         <svg #mapaSvg viewBox="0 0 618 2040" aria-label="Croquis UNU">
 
@@ -377,13 +388,12 @@
 
     <!-- BOTONES -->
     <div class="form-actions">
-      <button type="button" routerLink="/inicio" class="btn-secondary" [disabled]="enviando">
+      <button mat-stroked-button type="button" routerLink="/inicio" class="btn-cancel" [disabled]="enviando">
         Cancelar
       </button>
-      <button type="submit" class="btn-primary" [disabled]="enviando">
+      <button mat-flat-button type="submit" class="btn-save" [disabled]="enviando">
         {{ enviando ? 'Guardando...' : 'Guardar Reporte' }}
       </button>
     </div>
   </form>
 </div>
-

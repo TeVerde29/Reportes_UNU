@@ -1,13 +1,12 @@
 /* Contenedor Principal */
 .dashboard {
   padding: 2rem;
-  background-color: #f4f7f6;
+  background-color: var(--eu-canvas, #f4f7f6);
   min-height: 100vh;
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .dashboard h2 {
-  color: #2c3e50;
+  color: var(--eu-ink, #2c3e50);
   font-weight: 700;
   margin-bottom: 2rem;
   font-size: 1.75rem;
@@ -24,12 +23,9 @@
 }
 
 .kpi-card {
-  background: #ffffff;
   padding: 1.5rem;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease;
-  border: 1px solid rgba(0,0,0,0.02);
 }
 
 .kpi-card:hover {
@@ -39,7 +35,7 @@
 .kpi-card h4 {
   margin: 0;
   font-size: 0.8rem;
-  color: #7f8c8d;
+  color: var(--eu-ink-soft, #7f8c8d);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -48,12 +44,12 @@
   margin: 10px 0 0 0;
   font-size: 2.25rem;
   font-weight: 800;
-  color: #00643f;
+  color: var(--eu-primary, #00643f);
 }
 
 .kpi-text {
   font-size: 1.25rem;
-  color: #34495e;
+  color: var(--eu-ink, #34495e);
   word-break: break-word;
 }
 
@@ -61,16 +57,14 @@
    Secciones de Gráficos
    =============================== */
 .chart-section {
-  background: #ffffff;
   padding: 1.5rem;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   margin-bottom: 1.5rem;
 }
 
 .chart-section h3 {
   font-size: 1.1rem;
-  color: #2c3e50;
+  color: var(--eu-ink, #2c3e50);
   margin-bottom: 1.5rem;
   font-weight: 600;
 }
@@ -103,20 +97,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
   padding: 4rem;
-  color: #7f8c8d;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(46, 125, 50, 0.1);
-  border-left-color: #2e7d32;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
+  color: var(--eu-ink-soft, #7f8c8d);
 }

@@ -1,6 +1,11 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { Reporte } from '../../../models/reporte.interface';
 import { ReporteService } from '../../../services/reporte.service';
 import { EstadoService } from '../../../services/estado.service';
@@ -10,7 +15,7 @@ import { TipoProbelma, TipoProbelmaResponse } from '../../../models/tipoProblema
 @Component({
   selector: 'app-pendientes-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule],
   templateUrl: './pendientes-form.component.html',
   styleUrl: './pendientes-form.component.css'
 })

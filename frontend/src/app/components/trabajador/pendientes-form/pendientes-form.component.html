@@ -1,75 +1,93 @@
-<div class="modal-backdrop fade show" *ngIf="reporte"></div>
+<div class="eu-review-backdrop" *ngIf="reporte" (click)="cancelar()"></div>
 
-<div class="modal d-block" tabindex="-1" *ngIf="reporte">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content custom-modal">
+<div class="eu-review-modal" *ngIf="reporte" role="dialog" aria-modal="true" aria-label="Detalle de incidencia">
+  <div class="eu-review-card">
 
-      <div class="modal-header">
-        <div class="header-content">
-          <div class="header-indicator"></div>
-          <div>
-            <h5 class="modal-title">Detalle de Incidencia</h5>
-            <p class="modal-subtitle">ID Reporte: #{{ reporte.id_reporte }}</p>
-          </div>
-        </div>
-        <button type="button" class="btn-close-custom" (click)="cancelar()">✕</button>
-      </div>
-
-      <div class="modal-body custom-body">
-        <div class="row g-4">
-          <div class="col-12">
-            <label class="custom-label">Título de la Incidencia</label>
-            <input type="text" class="custom-input" [(ngModel)]="form.titulo" [disabled]="tipoEstado !== 'Pendiente'">
-          </div>
-
-          <div class="col-12">
-            <label class="custom-label">Descripción Detallada</label>
-            <textarea class="custom-input" rows="3" [(ngModel)]="form.descripcion" [disabled]="tipoEstado !== 'Pendiente'"></textarea>
-          </div>
-
-          <div class="col-md-6">
-            <label class="custom-label">Categoría de Problema</label>
-            <select class="custom-select" [(ngModel)]="form.id_tipo_problema" [disabled]="tipoEstado !== 'Pendiente'">
-              <option *ngFor="let t of tiposProblema" [ngValue]="t.id_tipo_problema">
-                {{ t.nombre }}
-              </option>
-            </select>
-          </div>
-
-          <div class="col-md-6">
-            <label class="custom-label">Estudiante Solicitante</label>
-            <div class="read-only-box">{{ reporte.estudiante }}</div>
-          </div>
-
-          <div class="col-md-12">
-            <label class="custom-label">Ubicación Reportada</label>
-            <div class="read-only-box location">
-              <i class="bi bi-geo-alt"></i> {{ reporte.ubicacion }}
-            </div>
-          </div>
-
-          <div class="col-12" *ngIf="reporte.foto_url">
-            <label class="custom-label">Evidencia Visual</label>
-            <div class="image-container">
-              <img [src]="'http://localhost:3000' + reporte.foto_url" class="img-evidence">
-            </div>
-          </div>
+    <div class="eu-review-header">
+      <div class="eu-review-header-left">
+        <span class="eu-review-indicator" aria-hidden="true"></span>
+        <div>
+          <h5 class="eu-review-title">Detalle de Incidencia</h5>
+          <p class="eu-review-subtitle">ID Reporte: #{{ reporte.id_reporte }}</p>
+          <span
+            class="eu-badge"
+            *ngIf="tipoEstado"
+            [ngClass]="{
+              'eu-badge-pendiente': tipoEstado === 'Pendiente',
+              'eu-badge-aceptado': tipoEstado === 'Aceptado',
+              'eu-badge-resuelto': tipoEstado === 'Resuelto',
+              'eu-badge-rechazado': tipoEstado === 'Rechazado'
+            }">{{ tipoEstado }}</span>
         </div>
       </div>
-
-      <div class="modal-footer custom-footer">
-        <button class="btn-cancel" (click)="cancelar()">Cerrar</button>
-
-        <div class="action-group" *ngIf="tipoEstado === 'Pendiente'">
-          <button class="btn-reject" (click)="rechazar()">Rechazar Reporte</button>
-          <button class="btn-accept" (click)="aceptar()">Aceptar Reporte</button>
-        </div>
-
-        <button *ngIf="tipoEstado === 'Aceptado'" class="btn-solve" (click)="solucionar()">
-          Marcar como Solucionado
-        </button>
-      </div>
-
+      <button type="button" class="eu-review-close" (click)="cancelar()" aria-label="Cerrar">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
+
+    <div class="eu-review-body">
+      <!-- Columna izquierda: datos -->
+      <section class="eu-review-data">
+        <mat-form-field appearance="outline" class="eu-field">
+          <mat-label>Título de la incidencia</mat-label>
+          <input matInput type="text" [(ngModel)]="form.titulo" [disabled]="tipoEstado !== 'Pendiente'">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="eu-field">
+          <mat-label>Descripción detallada</mat-label>
+          <textarea matInput rows="4" [(ngModel)]="form.descripcion" [disabled]="tipoEstado !== 'Pendiente'"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="eu-field">
+          <mat-label>Categoría de problema</mat-label>
+          <mat-select [(ngModel)]="form.id_tipo_problema" [disabled]="tipoEstado !== 'Pendiente'">
+            <mat-option *ngFor="let t of tiposProblema" [value]="t.id_tipo_problema">
+              {{ t.nombre }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="eu-read-group">
+          <span class="eu-read-label">Estudiante solicitante</span>
+          <div class="read-only-box">{{ reporte.estudiante }}</div>
+        </div>
+
+        <div class="eu-read-group">
+          <span class="eu-read-label">Ubicación reportada</span>
+          <div class="read-only-box location">
+            <mat-icon class="eu-pin">place</mat-icon>
+            <span>{{ reporte.ubicacion }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Columna derecha: evidencia -->
+      <aside class="eu-review-evidence">
+        <span class="eu-read-label">Evidencia visual</span>
+        <div class="eu-evidence-frame" *ngIf="reporte.foto_url; else sinEvidencia">
+          <img [src]="'http://localhost:3000' + reporte.foto_url" alt="Evidencia del reporte" class="eu-evidence-img">
+        </div>
+        <ng-template #sinEvidencia>
+          <div class="eu-evidence-empty">
+            <mat-icon>image_not_supported</mat-icon>
+            <p>Sin evidencia adjunta</p>
+          </div>
+        </ng-template>
+      </aside>
+    </div>
+
+    <div class="eu-review-footer">
+      <button mat-button class="eu-btn-ghost" (click)="cancelar()">Cerrar</button>
+
+      <div class="eu-review-actions" *ngIf="tipoEstado === 'Pendiente'">
+        <button mat-flat-button class="eu-btn-reject" (click)="rechazar()">Rechazar reporte</button>
+        <button mat-flat-button class="eu-btn-accept" (click)="aceptar()">Aceptar reporte</button>
+      </div>
+
+      <button *ngIf="tipoEstado === 'Aceptado'" mat-flat-button class="eu-btn-resolve" (click)="solucionar()">
+        Marcar como solucionado
+      </button>
+    </div>
+
   </div>
 </div>

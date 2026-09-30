@@ -20,31 +20,24 @@
       <div class="top-actions">
         <!-- Tabs de orden (desktop) -->
         <div class="tabs" role="tablist" aria-label="Orden de reportes">
-          <button type="button" class="tab" [class.active]="activeTab === 'ultimos'" (click)="setActiveTab('ultimos')">
+          <button mat-button type="button" class="eu-tab" [class.active]="activeTab === 'ultimos'" (click)="setActiveTab('ultimos')">
             Últimos
           </button>
-          <button type="button" class="tab" [class.active]="activeTab === 'populares'" (click)="setActiveTab('populares')">
+          <button mat-button type="button" class="eu-tab" [class.active]="activeTab === 'populares'" (click)="setActiveTab('populares')">
             Populares
           </button>
-          <button  type="button"   class="tab" [class.active]="activeTab === 'mis-reportes'" (click)="setActiveTab('mis-reportes')">
+          <button mat-button type="button" class="eu-tab" [class.active]="activeTab === 'mis-reportes'" (click)="setActiveTab('mis-reportes')">
             Mis Reportes
           </button>
         </div>
         <!-- Botones de acción -->
         <div class="actions">
-          <button type="button" class="btn btn-ghost" title="Cerrar sesión" (click)="logout()">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <path d="M16 17l5-5-5-5" />
-              <path d="M21 12H9" />
-            </svg>
+          <button mat-button type="button" class="eu-ghost" title="Cerrar sesión" (click)="logout()">
+            <mat-icon>logout</mat-icon>
             <span class="btn-text">Salir</span>
           </button>
-          <button type="button" class="btn btn-primary" title="Nuevo reporte" routerLink="/estudiante/nuevo-reporte">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 5v14" />
-              <path d="M5 12h14" />
-            </svg>
+          <button mat-button type="button" class="eu-primary" title="Nuevo reporte" routerLink="/estudiante/nuevo-reporte">
+            <mat-icon>add</mat-icon>
             <span class="btn-text">Nuevo</span>
           </button>
         </div>

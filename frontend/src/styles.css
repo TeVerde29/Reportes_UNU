@@ -1,4 +1,121 @@
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: 'Plus Jakarta Sans', Roboto, "Helvetica Neue", sans-serif; }
+
+/* =====================================================================
+   TEMA EUCALYPTUS CIVIC (referencia: diseño Stitch "muted pastel green")
+   Sobrescribe los tokens M3 del tema prebuilt azure-blue.
+   ===================================================================== */
+:root {
+  /* Marca */
+  --eu-primary: #2D5A46;            /* Deep Eucalyptus */
+  --eu-primary-hover: #356852;
+  --eu-primary-deep: #134230;
+  --eu-secondary: #7FA998;          /* Sage Mint */
+  --eu-tertiary: #3B729F;           /* Tempered Slate Blue */
+  --eu-ink: #111e1a;
+  --eu-ink-soft: #414944;
+  --eu-muted: #6C7A74;
+
+  /* Canvas y superficies */
+  --eu-canvas: #F5F8F6;
+  --eu-card: #FFFFFF;
+  --eu-inset: #F0F4F2;
+  --eu-border: #E1E9E4;
+  --eu-border-soft: #D1DCD6;
+
+  /* Tokens M3 (los leen los componentes mat-*) */
+  --mat-sys-primary: #2D5A46;
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: #c0ecd9;
+  --mat-sys-on-primary-container: #224f3c;
+  --mat-sys-secondary: #3e6657;
+  --mat-sys-on-secondary: #ffffff;
+  --mat-sys-secondary-container: #c0ecd9;
+  --mat-sys-on-secondary-container: #446c5d;
+  --mat-sys-tertiary: #165580;
+  --mat-sys-on-tertiary: #ffffff;
+  --mat-sys-tertiary-container: #cde5ff;
+  --mat-sys-on-tertiary-container: #004a75;
+  --mat-sys-surface: #F5F8F6;
+  --mat-sys-on-surface: #111e1a;
+  --mat-sys-surface-variant: #d7e6df;
+  --mat-sys-on-surface-variant: #414944;
+  --mat-sys-surface-container-lowest: #ffffff;
+  --mat-sys-surface-container-low: #e8f7f0;
+  --mat-sys-surface-container: #e2f1ea;
+  --mat-sys-surface-container-high: #ddece4;
+  --mat-sys-surface-container-highest: #d7e6df;
+  --mat-sys-outline: #717973;
+  --mat-sys-outline-variant: #c0c9c2;
+  --mat-sys-error: #ba1a1a;
+  --mat-sys-on-error: #ffffff;
+  --mat-sys-error-container: #ffdad6;
+  --mat-sys-on-error-container: #93000a;
+
+  /* Tipografía M3 -> Plus Jakarta Sans */
+  --mat-sys-brand-font-family: 'Plus Jakarta Sans', Roboto, sans-serif;
+  --mat-sys-plain-font-family: 'Plus Jakarta Sans', Roboto, sans-serif;
+}
+
+body {
+  background-color: var(--eu-canvas);
+  color: var(--eu-ink);
+}
+
+/* mat-card global: superficie blanca, borde sutil, sombra ambiental */
+mat-card.mat-mdc-card {
+  background-color: var(--eu-card);
+  border: 1px solid var(--eu-border);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px 0 rgba(45, 90, 70, 0.04), 0 1px 2px -1px rgba(45, 90, 70, 0.04);
+}
+
+/* =====================================================================
+   Badges de estado (tokens funcionales del diseño de referencia)
+   Uso: <span class="eu-badge eu-badge-pendiente">Pendiente</span>
+   ===================================================================== */
+.eu-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.eu-badge-pendiente { background: #FEF7EA; color: #945610; border-color: #F3D39B; }
+.eu-badge-aceptado  { background: #EDF6F1; color: #235B3C; border-color: #B2DEC2; }
+.eu-badge-resuelto  { background: #EFF6FB; color: #1F5987; border-color: #B9DBF2; }
+.eu-badge-rechazado { background: #FDF2F2; color: #9C2B2B; border-color: #F3BCBC; }
+
+/* Tag de categoría (tipo problema / ubicación) */
+.eu-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #E8EFEA;
+  color: #2D5A46;
+  white-space: nowrap;
+}
+
+/* Botón primario eucalyptus para elementos no-Material que deban igualarlo */
+.eu-btn-primary {
+  background: var(--eu-primary);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 0.625rem 1.25rem;
+  cursor: pointer;
+}
+.eu-btn-primary:hover { background: var(--eu-primary-hover); }
