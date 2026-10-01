@@ -3,10 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const db = require('../config/database');
 
-// Carpeta donde se guardan las fotos (configurable por .env;
-// por defecto, dentro del proyecto: C:\Reportes_UNU\Reportes_UNU_IMG\...)
-const UPLOAD_DIR = process.env.UPLOAD_DIR
-  || path.join(__dirname, '..', '..', 'Reportes_UNU_IMG', 'uploads', 'reportes');
+const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, '..', '..', 'Reportes_UNU_IMG', 'uploads', 'reportes');
 
 function generarCodigoSeguro() {
   const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

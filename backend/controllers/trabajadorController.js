@@ -27,8 +27,6 @@ const obtenerTrabajadorPorId = async (req, res) => {
     }
 };
 
-
-
 module.exports = {
     obtenerTrabajadorPorId
 };
