@@ -38,9 +38,7 @@ app.use(session({
     }
 }));
 
-// Sirve las fotos de reportes (misma carpeta donde multer guarda)
-const REPORTES_IMG_DIR = process.env.UPLOAD_DIR
-    || path.join(__dirname, '..', 'Reportes_UNU_IMG', 'uploads', 'reportes');
+const REPORTES_IMG_DIR = process.env.UPLOAD_DIR || path.join(__dirname, '..', 'Reportes_UNU_IMG', 'uploads', 'reportes');
 app.use('/uploads/reportes', express.static(REPORTES_IMG_DIR));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
