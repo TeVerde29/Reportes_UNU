@@ -17,6 +17,12 @@ function generarCodigoSeguro() {
   return codigo;
 }
 
+// ============================================================
+// SUBIDA DE FOTOS (multer)
+// Guía: solo imágenes de 5MB máx. El nombre se cambia por uno
+// al azar de 32 letras (no guardo tu nombre original) para que
+// nadie adivine rutas ni suba archivos .exe/.php disfrazados.
+// ============================================================
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadPath = UPLOAD_DIR;

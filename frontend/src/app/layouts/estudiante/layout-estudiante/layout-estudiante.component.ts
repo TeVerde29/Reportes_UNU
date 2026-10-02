@@ -77,6 +77,8 @@ export class LayoutEstudianteComponent implements OnInit {
     return (partes[0].charAt(0) + partes[partes.length - 1].charAt(0)).toUpperCase();
   }
 
+  // Guía: salir llama a POST /api/auth/logout (borra sesión y cookie)
+  // y te devuelve a /login aunque falle.
   logout(): void {
     this.authService.logout().subscribe({
       next: () => this.router.navigateByUrl('/login'),
