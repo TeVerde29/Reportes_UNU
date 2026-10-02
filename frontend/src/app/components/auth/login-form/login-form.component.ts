@@ -1,3 +1,9 @@
+// ============================================================
+// LOGIN (front)
+// Guía: pide código+clave, si el back dice OK pregunta el rol
+// con me() y te manda a tu zona: rol 3 → /estudiante,
+// roles 1-2 → /trabajador.
+// ============================================================
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';

@@ -1,8 +1,20 @@
+// ============================================================
+// SERVIDOR - Reportes UNU
+// Guía simple: este archivo enciende la API y pone la seguridad.
+// Orden: 1) casco (helmet) 2) permiso front (cors) 3) sesión (cookie sid)
+// ============================================================
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const session = require('express-session');
+
+// Casco: pone cabeceras que frenan ataques comunes (XSS, clickjacking, etc.)
+const helmet = require('helmet');
+// Freno: limita cuántas veces piden login para evitar adivinar claves
+const rateLimit = require('express-rate-limit');
+// Cajón de sesiones: guarda la sesión en MySQL (tabla `sessions`), no en la memoria
+const MySQLStore = require('express-mysql-session')(session);
 
 const auth = require('./routes/authRoute');
 const estado = require('./routes/estadoRoute');
@@ -17,26 +29,62 @@ const usuario = require('./routes/usuarioRoute');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Si despliegas detrás de Nginx/Render/Railway, esto deja que la cookie segura funcione
+app.set('trust proxy', 1);
+
+// 1) Casco de seguridad (cabeceras)
+// OJO imágenes: cross-origin para que el front (4200) pueda mostrar
+// las fotos que sirve el back (3000/uploads). Sin esto el navegador
+// las bloquea con ERR_BLOCKED_BY_RESPONSE.
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' }
+}));
+
+// 2) Permiso: solo tu front puede pedir con cookie
 app.use(cors({
     origin: process.env.FRONTEND_ORIGIN || 'http://localhost:4200',
-    credentials: true
+    credentials: true // deja pasar la cookie `sid`
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// 3) Cajón de sesiones en MySQL (usa la tabla `sessions` que ya creaste con el .sql)
+// Si la tabla no existe y pones createDatabaseTable:true, él la crea solo.
+const sessionStore = new MySQLStore({
+    host: process.env.DB_HOST || 'localhost',
+    port: 3306,
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME || 'reporte_incidencias',
+    createDatabaseTable: true, // crea `sessions` si falta
+    clearExpired: true, // borra sesiones vencidas solo
+    checkExpirationInterval: 900000 // revisa cada 15 min
+});
+
 app.use(session({
     name: 'sid', // nombre de la cookie de sesión
+    store: sessionStore, // aquí se guarda (MySQL), no en la memoria
     secret: process.env.SESSION_SECRET || 'dev_secret_change_me',
-    resave: false,
-    saveUninitialized: false,
+    resave: false, // no guarda si no cambió nada
+    saveUninitialized: false, // no crea sesión vacía
     cookie: {
-        httpOnly: true,
-        sameSite: 'lax',  // para localhost funciona bien
-        secure: false,    // true solo si usas https
-        maxAge: 1000 * 60 * 60 * 8 // 8 horas
+        httpOnly: true, // el JS no la puede leer (frena robo por XSS)
+        sameSite: 'lax', // la cookie viaja en tu misma web (frena CSRF básico)
+        secure: process.env.COOKIE_SECURE === 'true', // true solo con https en despliegue
+        maxAge: 1000 * 60 * 60 * 8 // 8 horas de sesión
     }
 }));
+
+// 4) Freno anti-fuerza bruta: solo para adivinar claves en /api/auth/login
+const loginFreno = rateLimit({
+    windowMs: 15 * 60 * 1000, // ventana de 15 minutos
+    max: 30, // 30 intentos por IP (suficiente para 7000 alumnos, frena robots)
+    message: { success: false, message: 'Demasiados intentos, espera 15 minutos' },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+app.use('/api/auth/login', loginFreno);
 
 const REPORTES_IMG_DIR = process.env.UPLOAD_DIR || path.join(__dirname, '..', 'Reportes_UNU_IMG', 'uploads', 'reportes');
 app.use('/uploads/reportes', express.static(REPORTES_IMG_DIR));
@@ -48,11 +96,11 @@ app.get('/', (req, res) => {
         version: "1.0.0",
         endpoints: { // Falta poner las rutas usadas en cada controlador
             estado: {
-                // obtenerEstados                           -> 
+                // obtenerEstados                           ->
                 // obtenerEstadoPorNombre                   -> USADO
             },
             estudiante: {
-                // obtenerEstudiantePorId                   ->  
+                // obtenerEstudiantePorId                   ->
             },
             reaccion: {
                 // LikesActivosPorIdEstudiante              -> USADO
@@ -74,7 +122,7 @@ app.get('/', (req, res) => {
             },
             ubicacion: {
                 // obtenerUbicaciones                       -> USADO
-                // obtenerUbicacionesPorId                  -> 
+                // obtenerUbicacionesPorId                  ->
             },
             usuario: {
             }
@@ -116,5 +164,6 @@ app.listen(PORT, () => {
     console.log(`FRONTEND_ORIGIN: ${process.env.FRONTEND_ORIGIN || 'http://localhost:4200'}`);
     console.log(`IMAGENES: ${REPORTES_IMG_DIR}`);
     console.log('COOKIE: sid (httpOnly, sameSite=lax, secure=false)');
+    console.log('SESIONES: tabla `sessions` en MySQL');
     console.log('═══════════════════════════════════════════');
 });

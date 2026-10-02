@@ -31,6 +31,8 @@ export class LayoutTrabajadorComponent {
     this.cargarTrabajador();
   }
 
+  // Guía: salir llama a POST /api/auth/logout (borra sesión y cookie)
+  // y te devuelve a /login aunque falle.
   logout(): void {
     this.authService.logout().subscribe({
       next: () => this.router.navigateByUrl('/login'),
