@@ -79,16 +79,16 @@
 .post {
   background: #FFFFFF;
   border: 1px solid #E4ECE7;
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 16px;
   box-shadow: 0 1px 3px 0 rgba(45, 90, 70, 0.04), 0 1px 2px -1px rgba(45, 90, 70, 0.04);
 }
 
 .post-head {
   display: flex;
   gap: 12px;
-  align-items: flex-start;
-  margin-bottom: 12px;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 /* Avatar circular 40px verde eucalipto con iniciales */
@@ -115,32 +115,63 @@
 
 .post-meta-top {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  margin-bottom: 0;
+  min-width: 0;
 }
 
 .post-student {
   font-size: 15px;
   font-weight: 600;
   color: #111e1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.post-subline {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  line-height: 1.4;
 }
 
 .post-career {
-  font-size: 13px;
+  font-size: 12px;
   color: #6C7A74;
   font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .dot {
   color: #c0c9c2;
+  flex-shrink: 0;
 }
 
 .post-date {
   font-size: 12px;
   color: #6C7A74;
   font-weight: 400;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.post-date-exact {
+  font-size: 11px;
+  color: #9AA6A0;
+  font-weight: 400;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .post-meta-bottom {
@@ -148,6 +179,7 @@
   gap: 8px;
   flex-wrap: wrap;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 /* Tags de categoría y badge de estado usan .eu-tag / .eu-badge globales de styles.css */
@@ -158,36 +190,34 @@
 }
 
 .post-title {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   font-size: 18px;
-  font-weight: 600;
-  line-height: 26px;
+  font-weight: 700;
+  line-height: 24px;
   color: #111e1a;
 }
 
 .post-text {
   margin: 0 0 12px;
-  color: #414944;
-  line-height: 22px;
+  color: #4b5563;
+  line-height: 20px;
   font-size: 14px;
   white-space: pre-wrap;
 }
 
-/* ===== Media 16:9 ===== */
+/* ===== Media (imagen a ancho completo, alto natural) ===== */
 .post-media {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   background: #F0F4F2;
-  border: 1px solid #E4ECE7;
   margin-top: 12px;
-  aspect-ratio: 16 / 9;
   display: block;
 }
 
 .post-image {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: block;
   object-fit: cover;
 }
@@ -212,12 +242,12 @@
 .like-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: 6px;
+  padding: 7px 14px;
   border-radius: 9999px;
   border: 1px solid transparent;
-  background: #F0F4F2;
-  color: #4A5E54;
+  background: #2D5A46;
+  color: #ffffff;
   cursor: pointer;
   font-weight: 600;
   font-size: 13px;
@@ -226,14 +256,14 @@
 }
 
 .like-btn .like-icon {
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
 }
 
 .like-btn:hover:not(:disabled) {
-  background: #E2ECE7;
-  color: #2D5A46;
+  background: #356852;
+  color: #ffffff;
 }
 
 .like-btn.liked {

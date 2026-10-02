@@ -24,25 +24,37 @@
       <div class="post-meta">
         <div class="post-meta-top">
           <strong class="post-student">{{ r.estudiante || 'Usuario' }}</strong>
-          <span class="post-career">{{ r.carrera || 'Sin carrera' }}</span>
-          <span class="dot" aria-hidden="true">•</span>
-          <span class="post-date">{{ timeAgo(r.fecha_edicion) }}</span>
-        </div>
-        <div class="post-meta-bottom">
-          <span class="eu-tag">{{ r.tipo_problema }}</span>
-          <span class="eu-tag">{{ r.ubicacion }}</span>
-          <span *ngIf="activeTab === 'mis-reportes'"
-                class="eu-badge"
-                [ngClass]="{
-                  'eu-badge-pendiente': r.estado === 'Pendiente',
-                  'eu-badge-aceptado': r.estado === 'Aceptado',
-                  'eu-badge-resuelto': r.estado === 'Resuelto',
-                  'eu-badge-rechazado': r.estado === 'Rechazado'
-                }">
-            {{ r.estado }}
+          <span class="post-subline">
+            <span class="post-career">• {{ r.carrera || 'Sin carrera' }}</span>
+            <span class="dot" aria-hidden="true">•</span>
+            <span
+              class="post-date"
+              [title]="(r.fecha_reporte || r.fecha_edicion) | date : 'dd/MM/yyyy HH:mm'"
+              >{{ timeAgo(r.fecha_edicion || r.fecha_reporte) }}</span
+            >
+            <span class="dot" aria-hidden="true">•</span>
+            <span
+              *ngIf="r.fecha_reporte || r.fecha_edicion"
+              class="post-date-exact"
+              >{{ (r.fecha_reporte || r.fecha_edicion) | date : 'dd/MM/yyyy HH:mm' }}</span
+            >
           </span>
         </div>
       </div>
+    </div>
+    <div class="post-meta-bottom">
+      <span class="eu-tag">{{ r.tipo_problema }}</span>
+      <span class="eu-tag">{{ r.ubicacion }}</span>
+      <span *ngIf="activeTab === 'mis-reportes'"
+            class="eu-badge"
+            [ngClass]="{
+              'eu-badge-pendiente': r.estado === 'Pendiente',
+              'eu-badge-aceptado': r.estado === 'Aceptado',
+              'eu-badge-resuelto': r.estado === 'Resuelto',
+              'eu-badge-rechazado': r.estado === 'Rechazado'
+            }">
+        {{ r.estado }}
+      </span>
     </div>
     <!-- Cuerpo del post -->
     <div class="post-body">

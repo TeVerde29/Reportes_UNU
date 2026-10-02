@@ -21,13 +21,16 @@
         <!-- Tabs de orden (desktop) -->
         <div class="tabs" role="tablist" aria-label="Orden de reportes">
           <button mat-button type="button" class="eu-tab" [class.active]="activeTab === 'ultimos'" (click)="setActiveTab('ultimos')">
-            Últimos
+            <mat-icon>history</mat-icon>
+            <span>Últimos</span>
           </button>
           <button mat-button type="button" class="eu-tab" [class.active]="activeTab === 'populares'" (click)="setActiveTab('populares')">
-            Populares
+            <mat-icon>trending_up</mat-icon>
+            <span>Populares</span>
           </button>
           <button mat-button type="button" class="eu-tab" [class.active]="activeTab === 'mis-reportes'" (click)="setActiveTab('mis-reportes')">
-            Mis Reportes
+            <mat-icon>folder_shared</mat-icon>
+            <span>Mis Reportes</span>
           </button>
         </div>
         <!-- Botones de acción -->
@@ -35,10 +38,6 @@
           <button mat-button type="button" class="eu-ghost" title="Cerrar sesión" (click)="logout()">
             <mat-icon>logout</mat-icon>
             <span class="btn-text">Salir</span>
-          </button>
-          <button mat-button type="button" class="eu-primary" title="Nuevo reporte" routerLink="/estudiante/nuevo-reporte">
-            <mat-icon>add</mat-icon>
-            <span class="btn-text">Nuevo</span>
           </button>
         </div>
         <!-- Usuario chip -->

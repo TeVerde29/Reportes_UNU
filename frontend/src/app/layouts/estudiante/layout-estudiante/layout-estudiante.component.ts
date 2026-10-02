@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterOutlet, RouterLink, ActivatedRoute } from '@angular/router';
+import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth.service';
 import { EstudianteService } from '../../../services/estudiante.service';
@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-layout-estudiante',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, CommonModule, MatButtonModule, MatIconModule],
+  imports: [RouterOutlet, CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './layout-estudiante.component.html',
   styleUrls: ['./layout-estudiante.component.css']
 })
