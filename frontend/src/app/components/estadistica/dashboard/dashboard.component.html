@@ -2,32 +2,32 @@
   <h2>Dashboard de Reportes</h2>
 
   <div class="kpi-container">
-    <div class="kpi-card">
+    <mat-card class="kpi-card">
       <h4>Total de Reportes</h4>
       <p class="kpi-value">{{ totalReportes }}</p>
-    </div>
-    <div class="kpi-card">
+    </mat-card>
+    <mat-card class="kpi-card">
       <h4>Reportes Mes Actual</h4>
       <p class="kpi-value">{{ reportesMesActual }}</p>
-    </div>
-    <div class="kpi-card">
+    </mat-card>
+    <mat-card class="kpi-card">
       <h4>Problema Más Frecuente</h4>
       <p class="kpi-value kpi-text">{{ tipoProblemaTop || '—' }}</p>
-    </div>
-    <div class="kpi-card">
+    </mat-card>
+    <mat-card class="kpi-card">
       <h4>Ubicación Más Crítica</h4>
       <p class="kpi-value kpi-text">{{ ubicacionTop || '—' }}</p>
-    </div>
+    </mat-card>
   </div>
 
   <div *ngIf="loading" class="loading-overlay">
-    <div class="spinner"></div>
+    <mat-spinner diameter="48"></mat-spinner>
     <p>Cargando estadísticas...</p>
   </div>
 
   <ng-container *ngIf="!loading">
 
-    <section class="chart-section main-chart">
+    <mat-card class="chart-section main-chart">
       <h3>Tendencia Mensual de Reportes</h3>
       <div class="chart-wrapper">
         <canvas baseChart
@@ -36,11 +36,11 @@
           [options]="lineChartOptions">
         </canvas>
       </div>
-    </section>
+    </mat-card>
 
     <div class="charts-grid">
 
-      <section class="chart-section">
+      <mat-card class="chart-section">
         <h3>Distribución por Tipo de Problema</h3>
         <div class="chart-wrapper">
           <canvas baseChart
@@ -49,9 +49,9 @@
             [options]="doughnutChartOptions">
           </canvas>
         </div>
-      </section>
+      </mat-card>
 
-      <section class="chart-section">
+      <mat-card class="chart-section">
         <h3>Top 5 Ubicaciones con más Reportes</h3>
         <div class="chart-wrapper">
           <canvas baseChart
@@ -60,7 +60,7 @@
             [options]="barChartOptions">
           </canvas>
         </div>
-      </section>
+      </mat-card>
 
     </div>
   </ng-container>

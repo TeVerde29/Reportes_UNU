@@ -1,3 +1,12 @@
+// ============================================================
+// RUTAS DEL FRONT
+// Guía:
+//  - /login es público.
+//  - /estudiante/... solo rol 3 (Estudiante)
+//  - /trabajador/... solo roles 1 y 2 (Supervisor y Administrador)
+//  AuthGuard = ¿logueado?  RoleGuard = ¿rol correcto?
+//  Si fallan, vuelves a /login.
+// ============================================================
 import { Routes } from '@angular/router';
 
 // COMPONENTES
@@ -8,6 +17,7 @@ import { PendientesListComponent } from './components/trabajador/pendientes-list
 import { PendientesFormComponent } from './components/trabajador/pendientes-form/pendientes-form.component';
 
 import { AuthGuard } from './guards/auth.guard';
+import { RoleGuard } from './guards/role.guard';
 import { LayoutEstudianteComponent } from './layouts/estudiante/layout-estudiante/layout-estudiante.component';
 import { LayoutTrabajadorComponent } from './layouts/trabajador/layout-trabajador/layout-trabajador.component';
 import { SolucionadoListComponent } from './components/trabajador/solucionado-list/solucionado-list.component';
@@ -22,12 +32,13 @@ export const routes: Routes = [
   { path: 'login', component: LoginFormComponent },
 
   // ============================
-  // ESTUDIANTE
+  // ESTUDIANTE (rol 3)
   // ============================
   {
     path: 'estudiante',
     component: LayoutEstudianteComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: [3] },
     children: [
       { path: 'inicio', component: InicioListComponent },
       { path: 'nuevo-reporte', component: ReporteFormComponent },
@@ -37,12 +48,13 @@ export const routes: Routes = [
   },
 
   // ============================
-  //  TRABAJADOR
+  //  TRABAJADOR (roles 1 y 2)
   // ============================
   {
     path: 'trabajador',
     component: LayoutTrabajadorComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: [1, 2] },
     children: [
       { path: 'reportes-pendientes', component: PendientesListComponent },
       { path: 'reportes-solucionados', component: SolucionadoListComponent },

@@ -6,10 +6,13 @@ import { Trabajador } from '../../../models/trabajador.interface';
 import { TrabajadorService } from '../../../services/trabajador.service';
 import { Usuario } from '../../../models/usuario.interface';
 
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
 @Component({
   selector: 'app-layout-trabajador',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, MatButtonModule, MatIconModule],
   templateUrl: './layout-trabajador.component.html',
   styleUrl: './layout-trabajador.component.css'
 })
@@ -28,6 +31,8 @@ export class LayoutTrabajadorComponent {
     this.cargarTrabajador();
   }
 
+  // Guía: salir llama a POST /api/auth/logout (borra sesión y cookie)
+  // y te devuelve a /login aunque falle.
   logout(): void {
     this.authService.logout().subscribe({
       next: () => this.router.navigateByUrl('/login'),

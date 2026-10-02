@@ -1,22 +1,24 @@
 <div class="content-container">
   <header class="section-header">
     <div class="section-title-wrapper">
-      <div class="section-indicator"></div>
       <div>
-        <h2 class="section-title">Reportes Aceptados</h2>
+        <div class="section-title-row">
+          <h2 class="section-title">Reportes Aceptados</h2>
+          <span class="eu-badge eu-badge-aceptado">Aceptado</span>
+        </div>
         <p class="section-subtitle">Incidencias validadas en proceso de solución</p>
       </div>
     </div>
 
-    <div class="search-box">
-      <i class="bi bi-search search-icon"></i>
+    <mat-form-field class="search-box" appearance="outline" subscriptSizing="dynamic">
+      <mat-icon matPrefix>search</mat-icon>
       <input
+        matInput
         type="text"
         [(ngModel)]="filtroTexto"
         (ngModelChange)="onSearchChange()"
-        placeholder="Buscar por título, estudiante..."
-        class="search-input">
-    </div>
+        placeholder="Buscar por título, estudiante...">
+    </mat-form-field>
   </header>
 
   <div class="data-card">
@@ -52,16 +54,16 @@
               <span class="carrera-tag">{{ r.carrera }}</span>
             </td>
             <td class="text-center">
-              <span class="status-badge">{{ r.tipo_problema }}</span>
+              <span class="eu-tag">{{ r.tipo_problema }}</span>
             </td>
             <td>
               <div class="location-cell">
-                <span>{{ r.ubicacion }}</span>
+                <span class="eu-tag">{{ r.ubicacion }}</span>
               </div>
             </td>
             <td class="text-center">
-              <button class="btn-action" (click)="abrirModal(r)">
-                <i class="bi bi-eye-fill"></i>
+              <button mat-stroked-button color="primary" class="btn-ver" (click)="abrirModal(r)">
+                <mat-icon>visibility</mat-icon>
                 <span>Ver</span>
               </button>
             </td>
@@ -72,7 +74,7 @@
 
     <div *ngIf="!error && reportes.length === 0" class="empty-state">
       <div class="empty-icon">
-        <i class="bi bi-clipboard-check"></i>
+        <mat-icon>inbox</mat-icon>
       </div>
       <h3>Sin reportes aceptados</h3>
       <p>No hay incidencias marcadas como aceptadas por el momento.</p>
@@ -80,7 +82,7 @@
 
     <div *ngIf="!error && reportes.length > 0 && reportesFiltrados.length === 0" class="empty-state">
       <div class="empty-icon">
-        <i class="bi bi-search"></i>
+        <mat-icon>search_off</mat-icon>
       </div>
       <h3>Sin coincidencias</h3>
       <p>No se encontraron resultados para "<strong>{{ filtroTexto }}</strong>".</p>
@@ -94,16 +96,16 @@
       </div>
 
       <div class="pagination-controls">
-        <button class="btn-pagination" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)">
-          <i class="bi bi-chevron-left"></i>
+        <button class="btn-pagination" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)" aria-label="Anterior">
+          <mat-icon>chevron_left</mat-icon>
         </button>
         <div class="page-numbers">
           <button *ngFor="let p of paginas" class="page-num" [class.active]="p === paginaActual" (click)="cambiarPagina(p)">
             {{ p }}
           </button>
         </div>
-        <button class="btn-pagination" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)">
-          <i class="bi bi-chevron-right"></i>
+        <button class="btn-pagination" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)" aria-label="Siguiente">
+          <mat-icon>chevron_right</mat-icon>
         </button>
       </div>
     </div>

@@ -1,3 +1,8 @@
+// ============================================================
+// SERVICIO ESTUDIANTE (front)
+// Guía: pide el perfil del alumno. Lleva la cookie `sid` con
+// withCredentials o el back responde 401 (no autenticado).
+// ============================================================
 import { Injectable } from '@angular/core';
 import { environment } from '../environment/environment';
 import { HttpClient } from '@angular/common/http';
@@ -12,7 +17,7 @@ export class EstudianteService {
   constructor(private http: HttpClient) { }
 
   obtenerEstudiantePorId(id: number): Observable<EstudianteResponse> {
-    return this.http.get<EstudianteResponse>(`${this.apiUrl}/${id}`);
+    return this.http.get<EstudianteResponse>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 /*
   obtenerEstudiantePorIdUsuario(id: number): Observable<EstudianteResponse> {

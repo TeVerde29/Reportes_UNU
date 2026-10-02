@@ -1,10 +1,18 @@
 const db = require('../config/database');
 
+// ============================================================
+// PERFIL DE ESTUDIANTE
+// Guía: devuelve datos para mostrar (nombre, escuela...).
+// NUNCA devuelvo la `clave` (ni el hash), solo sirve para validar
+// en el login, no para mostrar.
+// ============================================================
 const obtenerEstudiantePorId = async (req, res) => {
     try {
         const { id } = req.params;
         const [estudiante] = await db.query(`
-            SELECT * FROM estudiante WHERE id_estudiante = ?
+            SELECT id_estudiante, nombres, apellido_paterno, apellido_materno,
+                   dni, telefono, correo, escuela, facultad, codigo
+            FROM estudiante WHERE id_estudiante = ?
             `, [id]
         );
         if (estudiante.length === 0) {

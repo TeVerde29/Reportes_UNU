@@ -9,36 +9,32 @@
         </div>
         <div class="brand-text">
           <h1 class="brand-title">UNU Incidencias</h1>
-          <p class="brand-subtitle">PANEL TRABAJADOR</p>
+          <p class="brand-subtitle">Panel trabajador</p>
         </div>
       </div>
 
       <div class="top-actions">
         <div class="tabs" role="tablist">
-          <button type="button" class="tab" routerLink="/trabajador/reportes-pendientes" routerLinkActive="active">
+          <button mat-button type="button" class="eu-tab" routerLink="/trabajador/reportes-pendientes" routerLinkActive="active">
             Pendientes
           </button>
-          <button type="button" class="tab" routerLink="/trabajador/reportes-aceptados" routerLinkActive="active">
+          <button mat-button type="button" class="eu-tab" routerLink="/trabajador/reportes-aceptados" routerLinkActive="active">
             Aceptados
           </button>
-          <button type="button" class="tab" routerLink="/trabajador/reportes-solucionados" routerLinkActive="active">
+          <button mat-button type="button" class="eu-tab" routerLink="/trabajador/reportes-solucionados" routerLinkActive="active">
             Solucionados
           </button>
-          <button type="button" class="tab" routerLink="/trabajador/reportes-rechazados" routerLinkActive="active">
+          <button mat-button type="button" class="eu-tab" routerLink="/trabajador/reportes-rechazados" routerLinkActive="active">
             Rechazados
           </button>
-          <button type="button" class="tab" routerLink="/trabajador/estadisticas" routerLinkActive="active">
+          <button mat-button type="button" class="eu-tab" routerLink="/trabajador/estadisticas" routerLinkActive="active">
             Estadísticas
           </button>
         </div>
 
         <div class="actions">
-          <button type="button" class="btn btn-ghost" title="Cerrar sesión" (click)="logout()">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <path d="M16 17l5-5-5-5" />
-              <path d="M21 12H9" />
-            </svg>
+          <button mat-button type="button" class="eu-ghost" title="Cerrar sesión" (click)="logout()">
+            <mat-icon>logout</mat-icon>
             <span class="btn-text">Salir</span>
           </button>
         </div>

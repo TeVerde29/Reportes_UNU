@@ -1,8 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `reporte_incidencias` /*!40100 DEFAULT CHARACTER SET utf8mb3 */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `reporte_incidencias`;
+CREATE DATABASE  IF NOT EXISTS `reporte_incidencia` /*!40100 DEFAULT CHARACTER SET utf8mb3 */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `reporte_incidencia`;
 -- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: reporte_incidencias
+-- Host: 127.0.0.1    Database: reporte_incidencia
 -- ------------------------------------------------------
 -- Server version	9.1.0
 
@@ -283,4 +283,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-09 23:59:27
+-- Dump completed on 2026-10-01 23:55:10

@@ -1,6 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { Subscription } from 'rxjs';
 import { Reporte } from '../../../models/reporte.interface';
 import { ReporteService } from '../../../services/reporte.service';
@@ -13,6 +17,10 @@ import { PendientesFormComponent } from '../pendientes-form/pendientes-form.comp
   imports: [
     CommonModule,
     FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
     PendientesFormComponent
   ],
   templateUrl: './rechazados-list.component.html',
