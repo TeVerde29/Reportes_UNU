@@ -1,3 +1,12 @@
+// ============================================================
+// SERVICIO DE SESIÓN (front)
+// Guía: el front NO guarda token ni clave.
+// Solo pide al back y la cookie `sid` viaja sola.
+//  - login() manda código+clave, el back crea la sesión
+//  - me() pregunta "¿quién está logueado?" (lo usan los guards)
+//  - logout() borra la sesión en el back
+// OJO: todo lleva { withCredentials: true } o la cookie no viaja.
+// ============================================================
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';

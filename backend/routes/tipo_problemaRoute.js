@@ -1,3 +1,7 @@
+// ============================================================
+// CATÁLOGO PÚBLICO: tipos de problema (Infraestructura, etc.)
+// Guía: lista simple, se deja pública como los otros catálogos.
+// ============================================================
 const express = require('express');
 const router = express.Router();
 

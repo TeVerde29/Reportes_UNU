@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChildren, QueryList, ChangeDetectorRef } from '@
 import { CommonModule } from '@angular/common';
 import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { forkJoin } from 'rxjs';
 
 import { ReporteEstadisticaService } from '../../../services/reporte-estadistica.service';
@@ -15,7 +17,7 @@ import {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, BaseChartDirective, MatCardModule, MatProgressSpinnerModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })
@@ -42,14 +44,14 @@ export class DashboardComponent implements OnInit {
       data: [],
       tension: 0.35,
       fill: true,
-      borderColor: '#2e7d32',
+      borderColor: '#2D5A46',
       backgroundColor: (ctx) => {
         const chart = ctx.chart;
         const { ctx: canvasCtx, chartArea } = chart;
-        if (!chartArea) return 'rgba(46, 125, 50, 0.2)';
+        if (!chartArea) return 'rgba(45, 90, 70, 0.2)';
         const gradient = canvasCtx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-        gradient.addColorStop(0, 'rgba(46, 125, 50, 0.35)');
-        gradient.addColorStop(1, 'rgba(46, 125, 50, 0.05)');
+        gradient.addColorStop(0, 'rgba(45, 90, 70, 0.35)');
+        gradient.addColorStop(1, 'rgba(45, 90, 70, 0.05)');
         return gradient;
       },
       pointRadius: 2,
@@ -85,8 +87,8 @@ export class DashboardComponent implements OnInit {
     datasets: [{
       data: [],
       backgroundColor: [
-        '#1976d2', '#2e7d32', '#ed6c02', '#d32f2f',
-        '#9c27b0', '#00bcd4', '#795548', '#607d8b'
+        '#2D5A46', '#3B729F', '#7FA998', '#134230',
+        '#B9DBF2', '#F3D39B', '#9C2B2B', '#717973'
       ],
       hoverOffset: 10
     }]
@@ -107,7 +109,7 @@ export class DashboardComponent implements OnInit {
     datasets: [{
       label: 'Reportes',
       data: [],
-      backgroundColor: '#1976d2',
+      backgroundColor: '#2D5A46',
       borderRadius: 4
     }]
   };
