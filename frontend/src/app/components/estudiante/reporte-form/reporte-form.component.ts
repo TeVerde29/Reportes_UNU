@@ -63,8 +63,8 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     private authService: AuthService
   ) {
     this.reporteForm = this.fb.group({
-      titulo: ['', [Validators.required, Validators.minLength(5)]],
-      descripcion: ['', [Validators.required]],
+      titulo: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(150)]],
+      descripcion: ['', [Validators.required, Validators.maxLength(1000)]],
       id_tipo_problema: [null, [Validators.required]],
       id_ubicacion: [null, [Validators.required]],
     });
@@ -194,11 +194,7 @@ onSubmit(): void {
       }
     });
   } else {
-    // MODO CREACIÓN
-    // Aquí asegúrate de enviar también el id_estudiante
-    if (this.estudiante?.id_estudiante) {
-      formData.append('id_estudiante', String(this.estudiante.id_estudiante));
-    }
+    // MODO CREACIÓN: el dueño sale de la sesión, no se manda id
     this.reporteService.crearReporte(formData).subscribe({
       next: (res) => {
         if (res.success) {

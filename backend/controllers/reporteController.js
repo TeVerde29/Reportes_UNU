@@ -59,20 +59,44 @@ const upload = multer({
 const crearReporte = async (req, res) => {
     try {
         const estado = 'Pendiente';
-        const { titulo, descripcion, id_estudiante, id_tipo_problema, id_ubicacion } = req.body;
+        // El dueño sale de la sesión (API simulada), nunca del body
+        const codigo_estudiante = req.session.auth.codigo_estudiante;
+        const { titulo, descripcion, id_tipo_problema, id_ubicacion } = req.body;
         if (!req.file) {
             return res.status(400).json({
                 success: false,
                 message: 'No se recibió ninguna imagen'
             });
         }
-        if (!titulo || !descripcion || id_estudiante == null || id_tipo_problema == null || id_ubicacion == null) {
+        const tituloLimpio = typeof titulo === 'string' ? titulo.trim() : '';
+        const descripcionLimpia = typeof descripcion === 'string' ? descripcion.trim() : '';
+        const idTipo = Number(id_tipo_problema);
+        const idUbi = Number(id_ubicacion);
+        if (!tituloLimpio || !descripcionLimpia || !Number.isInteger(idTipo) || idTipo <= 0 || !Number.isInteger(idUbi) || idUbi <= 0) {
             if (req.file && req.file.path) {
                 fs.unlinkSync(req.file.path);
             }
             return res.status(400).json({
                 success: false,
                 message: 'Faltan datos obligatorios'
+            });
+        }
+        if (tituloLimpio.length < 5 || tituloLimpio.length > 150) {
+            if (req.file && req.file.path) {
+                fs.unlinkSync(req.file.path);
+            }
+            return res.status(400).json({
+                success: false,
+                message: 'Título de 5 a 150 caracteres'
+            });
+        }
+        if (descripcionLimpia.length > 1000) {
+            if (req.file && req.file.path) {
+                fs.unlinkSync(req.file.path);
+            }
+            return res.status(400).json({
+                success: false,
+                message: 'Descripción de máximo 1000 caracteres'
             });
         }
         const [estadoRows] = await db.query(
@@ -89,9 +113,9 @@ const crearReporte = async (req, res) => {
         const id_estado = estadoRows[0].id_estado;
         const fotoUrl = `/uploads/reportes/${req.file.filename}`;
         const [reporte] = await db.query(`
-            INSERT INTO reporte(titulo, descripcion, foto_url, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, id_estudiante, id_tipo_problema, id_ubicacion) 
-            VALUES (?, ?, ?, NOW(), NOW(), 0, ?, ?, ?, ?)`, 
-            [titulo, descripcion, fotoUrl, id_estado, id_estudiante, id_tipo_problema, id_ubicacion]
+            INSERT INTO reporte(titulo, descripcion, foto_url, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, codigo_estudiante, id_tipo_problema, id_ubicacion)
+            VALUES (?, ?, ?, NOW(), NOW(), 0, ?, ?, ?, ?)`,
+            [tituloLimpio, descripcionLimpia, fotoUrl, id_estado, codigo_estudiante, idTipo, idUbi]
         );
         const [rows] = await db.query(
             `SELECT * FROM reporte WHERE id_reporte = ?`,
@@ -126,14 +150,49 @@ const actualizarReporte = async (req, res) => {
   };
   try {
     const { id } = req.params;
-    const { titulo, descripcion, id_estado, id_tipo_problema, id_ubicacion, id_usuario } = req.body;
-    if (!titulo || !id_tipo_problema || !id_ubicacion) {
+    const idReporte = Number(id);
+    if (!Number.isInteger(idReporte) || idReporte <= 0) {
+      if (req.file) safeUnlink(req.file.path);
+      return res.status(400).json({ success: false, message: 'Id inválido' });
+    }
+    const { titulo, descripcion, id_estado, id_tipo_problema, id_ubicacion } = req.body;
+    const tituloLimpio = typeof titulo === 'string' ? titulo.trim() : '';
+    const idTipo = Number(id_tipo_problema);
+    const idUbi = Number(id_ubicacion);
+    if (!tituloLimpio || !Number.isInteger(idTipo) || idTipo <= 0 || !Number.isInteger(idUbi) || idUbi <= 0) {
       if (req.file) safeUnlink(req.file.path);
       return res.status(400).json({ success: false, message: 'Faltan campos obligatorios (titulo, tipo o ubicación)' });
     }
+    if (tituloLimpio.length < 5 || tituloLimpio.length > 150) {
+      if (req.file) safeUnlink(req.file.path);
+      return res.status(400).json({ success: false, message: 'Título de 5 a 150 caracteres' });
+    }
+    const descripcionLimpia = typeof descripcion === 'string' ? descripcion.trim() : '';
+    if (descripcionLimpia.length > 1000) {
+      if (req.file) safeUnlink(req.file.path);
+      return res.status(400).json({ success: false, message: 'Descripción de máximo 1000 caracteres' });
+    }
+    const idEstado = id_estado == null || id_estado === '' ? null : Number(id_estado);
+    if (idEstado !== null && ![1, 2, 3].includes(idEstado)) {
+      if (req.file) safeUnlink(req.file.path);
+      return res.status(400).json({ success: false, message: 'Estado inválido (solo 1, 2 o 3)' });
+    }
+    // Solo el dueño edita su reporte (código del API, sale de la sesión)
+    const [propio] = await db.query(
+      'SELECT codigo_estudiante FROM reporte WHERE id_reporte = ?',
+      [idReporte]
+    );
+    if (propio.length === 0) {
+      if (req.file) safeUnlink(req.file.path);
+      return res.status(404).json({ success: false, message: 'Reporte no encontrado' });
+    }
+    if (propio[0].codigo_estudiante !== req.session.auth.codigo_estudiante) {
+      if (req.file) safeUnlink(req.file.path);
+      return res.status(403).json({ success: false, message: 'No es tu reporte' });
+    }
     const fecha_edicion = new Date();
     if (req.file && req.file.path) {
-      const [rowsFoto] = await db.query("SELECT foto_url FROM reporte WHERE id_reporte = ?", [id]);
+      const [rowsFoto] = await db.query("SELECT foto_url FROM reporte WHERE id_reporte = ?", [idReporte]);
       if (rowsFoto.length > 0 && rowsFoto[0].foto_url) {
         const filenameActual = path.basename(rowsFoto[0].foto_url);
         const uploadDir = UPLOAD_DIR;
@@ -144,14 +203,14 @@ const actualizarReporte = async (req, res) => {
         }
         fs.renameSync(req.file.path, targetPath);
       } else {
-        safeUnlink(req.file.path); 
+        safeUnlink(req.file.path);
       }
     }
     await db.query(`
-      UPDATE reporte 
-      SET titulo = ?, descripcion = ?, fecha_edicion = ?, id_estado = ?, id_tipo_problema = ?, id_ubicacion = ?, id_usuario = ?
+      UPDATE reporte
+      SET titulo = ?, descripcion = ?, fecha_edicion = ?, id_estado = COALESCE(?, id_estado), id_tipo_problema = ?, id_ubicacion = ?
       WHERE id_reporte = ?
-    `, [titulo, descripcion, fecha_edicion, id_estado, id_tipo_problema, id_ubicacion, id_usuario, id]);
+    `, [tituloLimpio, descripcionLimpia, fecha_edicion, idEstado, idTipo, idUbi, idReporte]);
     if (backupPath) safeUnlink(backupPath);
     return res.status(200).json({
       success: true,
@@ -167,10 +226,17 @@ const actualizarReporte = async (req, res) => {
 const revisarReporte = async (req, res) => {
     try {
         const { id } = req.params;
+        const idReporte = Number(id);
+        if (!Number.isInteger(idReporte) || idReporte <= 0) {
+          return res.status(400).json({
+            success: false,
+            message: 'Id inválido'
+          });
+        }
         const { titulo, descripcion, id_tipo_problema, id_estado } = req.body;
     const [existe] = await db.query(
         `SELECT id_reporte FROM reporte WHERE id_reporte = ?`,
-        [id]
+        [idReporte]
     );
     if (existe.length === 0) {
       return res.status(404).json({
@@ -178,12 +244,30 @@ const revisarReporte = async (req, res) => {
         message: 'Reporte no encontrado'
       });
     }
-    if (!titulo || !id_tipo_problema || !id_estado) {
+    const tituloLimpio = typeof titulo === 'string' ? titulo.trim() : '';
+    const idTipo = Number(id_tipo_problema);
+    const idEstado = Number(id_estado);
+    if (!tituloLimpio || !Number.isInteger(idTipo) || idTipo <= 0 || ![1, 2, 3].includes(idEstado)) {
       return res.status(400).json({
         success: false,
-        message: 'Datos obligatorios incompletos'
+        message: 'Datos obligatorios incompletos (estado solo 1, 2 o 3)'
       });
     }
+    if (tituloLimpio.length > 150) {
+      return res.status(400).json({
+        success: false,
+        message: 'Título de máximo 150 caracteres'
+      });
+    }
+    const descripcionLimpia = typeof descripcion === 'string' ? descripcion.trim() : '';
+    if (descripcionLimpia.length > 1000) {
+      return res.status(400).json({
+        success: false,
+        message: 'Descripción de máximo 1000 caracteres'
+      });
+    }
+    // El personal atiende: queda registrado quién lo hizo
+    const idUsuario = req.session.auth.id_usuario;
     await db.query(
       `
       UPDATE reporte
@@ -192,15 +276,17 @@ const revisarReporte = async (req, res) => {
         descripcion = ?,
         id_tipo_problema = ?,
         id_estado = ?,
+        id_usuario = ?,
         fecha_edicion = NOW()
       WHERE id_reporte = ?
       `,
       [
-        titulo.trim(),
-        descripcion?.trim() || null,
-        id_tipo_problema,
-        id_estado,
-        id
+        tituloLimpio,
+        descripcionLimpia || null,
+        idTipo,
+        idEstado,
+        idUsuario,
+        idReporte
       ]
     );
     res.status(200).json({
@@ -216,6 +302,36 @@ const revisarReporte = async (req, res) => {
   }
 };
 
+// ============================================================
+// ELIMINAR REPORTE (rechazo del personal: se borra todo)
+// Guía: observaciones punto 1. Borra reacciones (CASCADE),
+// fila e imagen. Solo personal (roles 1 y 2).
+// ============================================================
+const eliminarReporte = async (req, res) => {
+  try {
+    const idReporte = Number(req.params.id);
+    if (!Number.isInteger(idReporte) || idReporte <= 0) {
+      return res.status(400).json({ success: false, message: 'Id inválido' });
+    }
+    const [rows] = await db.query(
+      'SELECT foto_url FROM reporte WHERE id_reporte = ?',
+      [idReporte]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Reporte no encontrado' });
+    }
+    await db.query('DELETE FROM reporte WHERE id_reporte = ?', [idReporte]);
+    if (rows[0].foto_url) {
+      const fotoPath = path.join(UPLOAD_DIR, path.basename(rows[0].foto_url));
+      try { if (fs.existsSync(fotoPath)) fs.unlinkSync(fotoPath); } catch (e) { console.error('Error al eliminar foto:', e); }
+    }
+    return res.status(200).json({ success: true, message: 'Reporte eliminado correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar reporte:', error);
+    return res.status(500).json({ success: false, message: 'Error al eliminar reporte' });
+  }
+};
+
 const obtenerReportePorId = async (req, res) => {
   try {
     const { id } = req.params;
@@ -228,7 +344,7 @@ const obtenerReportePorId = async (req, res) => {
         tp.nombre AS tipo_problema,
         u.nombre AS ubicacion
       FROM reporte r
-      INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
+      INNER JOIN estudiante e ON r.codigo_estudiante = e.codigo
       INNER JOIN estado es ON r.id_estado = es.id_estado
       INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
       INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
@@ -261,7 +377,7 @@ const obtenerReportesPorIdEstado = async (req, res) => {
         tp.nombre AS tipo_problema,
         u.nombre AS ubicacion
       FROM reporte r
-      INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
+      INNER JOIN estudiante e ON r.codigo_estudiante = e.codigo
       INNER JOIN estado es ON r.id_estado = es.id_estado
       INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
       INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
@@ -294,7 +410,7 @@ const obtenerReportesPorCantidadReacciones = async (req, res) => {
         tp.nombre AS tipo_problema,
         u.nombre AS ubicacion
       FROM reporte r
-      INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
+      INNER JOIN estudiante e ON r.codigo_estudiante = e.codigo
       INNER JOIN estado es ON r.id_estado = es.id_estado
       INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
       INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
@@ -323,7 +439,8 @@ const obtenerReportesPorCantidadReacciones = async (req, res) => {
 
 const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
   try {
-    const { id } = req.params;
+    // El alumno sale de la sesión (sin :id en la ruta, evita ver lo ajeno)
+    const codigo_estudiante = req.session.auth.codigo_estudiante;
     const estado = 'Pendiente';
     const [reportes] = await db.query(`
       SELECT
@@ -334,13 +451,13 @@ const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
         tp.nombre AS tipo_problema,
         u.nombre AS ubicacion
       FROM reporte r
-      INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
+      INNER JOIN estudiante e ON r.codigo_estudiante = e.codigo
       INNER JOIN estado es ON r.id_estado = es.id_estado
       INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
       INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
-      WHERE es.nombre = ? AND r.id_estudiante = ?
+      WHERE es.nombre = ? AND r.codigo_estudiante = ?
       ORDER BY r.fecha_reporte DESC
-    `, [estado, id]);
+    `, [estado, codigo_estudiante]);
     if (reportes.length === 0) {
       return res.status(404).json({
         success: false,
@@ -361,7 +478,8 @@ const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
 
 const obtenerReportesPorIdEstudiante = async (req, res) => {
   try {
-    const { id } = req.params;
+    // El alumno sale de la sesión (sin :id en la ruta, evita ver lo ajeno)
+    const codigo_estudiante = req.session.auth.codigo_estudiante;
     const [reportes] = await db.query(`
       SELECT
         r.*,
@@ -371,13 +489,13 @@ const obtenerReportesPorIdEstudiante = async (req, res) => {
         tp.nombre AS tipo_problema,
         u.nombre AS ubicacion
       FROM reporte r
-      INNER JOIN estudiante e ON r.id_estudiante = e.id_estudiante
+      INNER JOIN estudiante e ON r.codigo_estudiante = e.codigo
       INNER JOIN estado es ON r.id_estado = es.id_estado
       INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
       INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
-      WHERE r.id_estudiante = ?
+      WHERE r.codigo_estudiante = ?
       ORDER BY r.fecha_reporte DESC
-    `, [id]);
+    `, [codigo_estudiante]);
     if (reportes.length === 0) {
       return res.status(200).json({
         success: false,
@@ -540,6 +658,7 @@ module.exports = {
   obtenerReportesPendientesPorIdEstudiante,
   obtenerReportesPorIdEstudiante,
   revisarReporte,
+  eliminarReporte,
   obtenerReportesPorTipoProblema,
   obtenerReportesPorUbicacion,
   obtenerReportesPorTipoYUbicacion,

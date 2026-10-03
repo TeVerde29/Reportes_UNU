@@ -11,8 +11,8 @@ export class ReaccionService {
   private apiUrl = `${environment.apiUrl}/reaccion`;
   constructor(private http: HttpClient) { }
 
-  likesActivosPorIdEstudiante(id: number) {
-    return this.http.get<ReaccionResponse>(`${this.apiUrl}/${id}`, { withCredentials: true });
+  likesActivosPorIdEstudiante() {
+    return this.http.get<ReaccionResponse>(`${this.apiUrl}/activos/mios`, { withCredentials: true });
   }
 
   darLike(reaccion: Reaccion): Observable<ReaccionResponse> {

@@ -28,8 +28,8 @@ export class InicioListComponent implements OnInit, OnDestroy {
   likeLoading: Record<number, boolean> = {};
   activeTab: 'ultimos' | 'populares' | 'mis-reportes' = 'ultimos';
   private querySubscription?: Subscription;
-  private idEstudiante: number = 0;
-  private idEstudianteListo = false;
+  private codigoEstudiante: string = '';
+  private sesionLista = false;
 
   constructor(
     private reporteService: ReporteService,
@@ -41,7 +41,7 @@ export class InicioListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.cargarIdEstudiante();
+    this.cargarSesion();
     this.querySubscription = this.route.queryParams.subscribe(params => {
       const tab = params['tab'];
       this.activeTab = (tab === 'populares' || tab === 'mis-reportes') ? tab : 'ultimos';
@@ -61,8 +61,8 @@ export class InicioListComponent implements OnInit, OnDestroy {
     }
 
     // mis-reportes
-    if (!this.idEstudianteListo || !this.idEstudiante) {
-      // Aún no está el id, no dispares la petición
+    if (!this.sesionLista || !this.codigoEstudiante) {
+      // Aún no está la sesión, no dispares la petición
       return;
     }
 
@@ -83,12 +83,12 @@ export class InicioListComponent implements OnInit, OnDestroy {
     });
   }
 
-  cargarIdEstudiante(): void {
+  cargarSesion(): void {
     this.authService.me().subscribe({
       next: (response) => {
-        this.idEstudiante = response.data?.id_estudiante ?? 0;
-        this.idEstudianteListo = true;
-        this.cargarLikesActivos(this.idEstudiante);
+        this.codigoEstudiante = response.data?.codigo_estudiante ?? '';
+        this.sesionLista = true;
+        this.cargarLikesActivos();
         this.cargarSegunTab();
       },
       error: (err) => {
@@ -98,8 +98,8 @@ export class InicioListComponent implements OnInit, OnDestroy {
     });
   }
 
-  private cargarLikesActivos(idEstudiante: number): void {
-    this.reaccionService.likesActivosPorIdEstudiante(idEstudiante).subscribe({
+  private cargarLikesActivos(): void {
+    this.reaccionService.likesActivosPorIdEstudiante().subscribe({
       next: (resp) => {
         if (!resp?.success) {
           this.likedByMe = {};
@@ -180,7 +180,7 @@ cargarReportesConMasLikes(): void {
 
   cargarMisReportes(): void {
     this.error = ''; 
-    this.reporteService.obtenerReportesPorIdEstudiante(this.idEstudiante).subscribe({
+    this.reporteService.obtenerReportesPorIdEstudiante().subscribe({
       next: (resp) => {
         if (resp.success && Array.isArray(resp.data)) {
           this.reportes = resp.data;
@@ -200,11 +200,10 @@ cargarReportesConMasLikes(): void {
 
   gestionarLike(r: Reporte): void {
     const idReporte = r.id_reporte;
-    if (!idReporte || !this.idEstudiante) return;
+    if (!idReporte || !this.codigoEstudiante) return;
     if (this.likeLoading[idReporte]) return;
     const payload: Reaccion = {
-      id_reporte: idReporte,
-      id_estudiante: this.idEstudiante
+      id_reporte: idReporte
     };
     const yaTieneLike = !!this.likedByMe[idReporte];
     this.likeLoading[idReporte] = true;

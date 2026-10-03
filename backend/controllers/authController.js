@@ -1,12 +1,13 @@
 // ============================================================
 // LOGIN CON SESIÓN - Reportes UNU
-// Guía simple de cómo entra un alumno (lee de arriba a abajo):
+// Guía simple (lee de arriba a abajo):
 //  1) Front manda {codigo, clave}
-//  2) Busco en tabla `usuario` (los que ya tienen cuenta)
+//  2) Busco en tabla `usuario` (SOLO personal: roles 1 y 2)
 //  3) Si no está, busco en tabla `estudiante` (la "API" de la UNU)
-//     y le creo su `usuario` con rol 3 = Estudiante
+//     y creo SOLO sesión, sin fila en `usuario`
 //  4) Comparo la clave con bcrypt (nunca guardo clave normal)
 //  5) Creo la sesión: req.session.auth = {quién es + qué rol tiene}
+//     Alumno: {id_rol: 3, codigo_estudiante} (rol 3 solo vive en sesión)
 //     La cookie `sid` viaja sola, el front no guarda nada.
 // ============================================================
 const db = require('../config/database');
@@ -38,10 +39,10 @@ const login = async (req, res) => {
       });
     }
     // ==================================================
-    // 1) BUSCAR EN TABLA USUARIO (PRIORIDAD ABSOLUTA)
+    // 1) BUSCAR EN TABLA USUARIO (SOLO PERSONAL: roles 1 y 2)
     // ==================================================
     const [usuarios] = await db.query(`
-      SELECT id_usuario, codigo, clave, id_rol, id_estudiante, id_trabajador
+      SELECT id_usuario, codigo, clave, id_rol, id_trabajador
       FROM usuario
       WHERE codigo = ?
       LIMIT 1
@@ -61,7 +62,8 @@ const login = async (req, res) => {
       await crearSesionNueva(req, {
         id_usuario: usuario.id_usuario,
         id_rol: usuario.id_rol,
-        id_estudiante: usuario.id_estudiante,
+        id_estudiante: null,
+        codigo_estudiante: null,
         id_trabajador: usuario.id_trabajador
       });
 
@@ -72,9 +74,9 @@ const login = async (req, res) => {
       });
     }
     // ==================================================
-    // 2) NO EXISTE EN USUARIO → BUSCAR EN ESTUDIANTE (API)
-    // La tabla `estudiante` simula la API de alumnos: no tiene llaves
-    // hacia otras tablas, solo se lee de aquí.
+    // 2) NO ES PERSONAL → BUSCAR EN ESTUDIANTE (API SIMULADA)
+    // La tabla `estudiante` simula la API de alumnos: solo se lee,
+    // no se crea fila en `usuario` (el rol 3 solo vive en la sesión).
     // ==================================================
     const [estudiantes] = await db.query(`
       SELECT id_estudiante, codigo, clave
@@ -97,42 +99,13 @@ const login = async (req, res) => {
       });
     }
     // ==================================================
-    // 3) VER SI EL ESTUDIANTE YA TIENE USUARIO
-    // Si es su primer login, le creo su usuario con rol 3.
-    // ==================================================
-    const [usuariosEst] = await db.query(`
-      SELECT id_usuario, id_rol
-      FROM usuario
-      WHERE id_estudiante = ?
-      LIMIT 1
-    `, [estudiante.id_estudiante]);
-    const claveHash = await bcrypt.hash(clave, 10);
-    let id_usuario;
-    let id_rol;
-    if (usuariosEst.length > 0) {
-      id_usuario = usuariosEst[0].id_usuario;
-      id_rol = usuariosEst[0].id_rol;
-      await db.query(`
-        UPDATE usuario
-        SET clave = ?
-        WHERE id_usuario = ?
-      `, [claveHash, id_usuario]);
-    } else {
-      const ID_ROL_ESTUDIANTE = 3;
-      const [insert] = await db.query(`
-        INSERT INTO usuario (codigo, clave, id_rol, id_estudiante, id_trabajador)
-        VALUES (?, ?, ?, ?, NULL)
-      `, [codigo, claveHash, ID_ROL_ESTUDIANTE, estudiante.id_estudiante]);
-      id_usuario = insert.insertId;
-      id_rol = ID_ROL_ESTUDIANTE;
-    }
-    // ==================================================
-    // 4) CREAR SESIÓN
+    // 3) CREAR SESIÓN DE ALUMNO (sin tocar `usuario`)
     // ==================================================
     await crearSesionNueva(req, {
-      id_usuario,
-      id_rol,
+      id_usuario: null,
+      id_rol: 3,
       id_estudiante: estudiante.id_estudiante,
+      codigo_estudiante: estudiante.codigo,
       id_trabajador: null
     });
     return res.json({
