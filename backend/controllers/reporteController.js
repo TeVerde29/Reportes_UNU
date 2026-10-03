@@ -47,7 +47,7 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024},
   fileFilter: function (req, file, cb) {
-    const allowedMimes = ['image/jpg', 'image/jpeg', 'image/png', 'image/webp'];
+    const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);
     } else {
@@ -332,6 +332,38 @@ const eliminarReporte = async (req, res) => {
   }
 };
 
+// ============================================================
+// FILTROS + PAGINACIÓN (?page=&limit=&id_tipo_problema=&id_ubicacion=&q=)
+// Guía: los 3 listados del inicio traían el 100%. Ahora por páginas
+// de 10 y con filtros, para que aguante miles de reportes.
+// ============================================================
+function leerPaginacion(query) {
+  const page = Math.max(1, Number(query.page) || 1);
+  const limit = Math.min(50, Math.max(1, Number(query.limit) || 10));
+  return { page, limit, offset: (page - 1) * limit };
+}
+
+function leerFiltros(query) {
+  const conds = [];
+  const vals = [];
+  const idTipo = Number(query.id_tipo_problema);
+  if (Number.isInteger(idTipo) && idTipo > 0) {
+    conds.push('r.id_tipo_problema = ?');
+    vals.push(idTipo);
+  }
+  const idUbi = Number(query.id_ubicacion);
+  if (Number.isInteger(idUbi) && idUbi > 0) {
+    conds.push('r.id_ubicacion = ?');
+    vals.push(idUbi);
+  }
+  const q = typeof query.q === 'string' ? query.q.trim() : '';
+  if (q) {
+    conds.push('r.titulo LIKE ?');
+    vals.push(`%${q}%`);
+  }
+  return { extraWhere: conds.length ? ' AND ' + conds.join(' AND ') : '', vals };
+}
+
 const obtenerReportePorId = async (req, res) => {
   try {
     const { id } = req.params;
@@ -368,6 +400,16 @@ const obtenerReportePorId = async (req, res) => {
 const obtenerReportesPorIdEstado = async (req, res) => {
   try {
     const { id } = req.params;
+    const idEstado = Number(id);
+    if (!Number.isInteger(idEstado) || idEstado <= 0) {
+      return res.status(400).json({ success: false, message: 'Estado inválido' });
+    }
+    const { page, limit, offset } = leerPaginacion(req.query);
+    const { extraWhere, vals } = leerFiltros(req.query);
+    const [totalRows] = await db.query(
+      `SELECT COUNT(*) AS total FROM reporte r WHERE r.id_estado = ?${extraWhere}`,
+      [idEstado, ...vals]
+    );
     const [reporte] = await db.query(`
       SELECT
         r.*,
@@ -381,12 +423,16 @@ const obtenerReportesPorIdEstado = async (req, res) => {
       INNER JOIN estado es ON r.id_estado = es.id_estado
       INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
       INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
-      WHERE r.id_estado = ?
+      WHERE r.id_estado = ?${extraWhere}
       ORDER BY r.fecha_edicion DESC
-    `, [id]);
+      LIMIT ? OFFSET ?
+    `, [idEstado, ...vals, limit, offset]);
     return res.status(200).json({
       success: true,
       count: reporte.length,
+      total: totalRows[0].total,
+      page,
+      limit,
       data: reporte
     });
   } catch (error) {
@@ -401,6 +447,15 @@ const obtenerReportesPorIdEstado = async (req, res) => {
 const obtenerReportesPorCantidadReacciones = async (req, res) => {
   try {
     const estado = 'Aceptado';
+    const { page, limit, offset } = leerPaginacion(req.query);
+    const { extraWhere, vals } = leerFiltros(req.query);
+    const [totalRows] = await db.query(
+      `SELECT COUNT(*) AS total
+       FROM reporte r
+       INNER JOIN estado es ON r.id_estado = es.id_estado
+       WHERE es.nombre = ?${extraWhere}`,
+      [estado, ...vals]
+    );
     const [reportes] = await db.query(`
       SELECT
         r.*,
@@ -414,14 +469,18 @@ const obtenerReportesPorCantidadReacciones = async (req, res) => {
       INNER JOIN estado es ON r.id_estado = es.id_estado
       INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
       INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
-      WHERE es.nombre = ?
+      WHERE es.nombre = ?${extraWhere}
       ORDER BY r.cantidad_reacciones DESC, r.fecha_edicion DESC
-    `, [estado]);
+      LIMIT ? OFFSET ?
+    `, [estado, ...vals, limit, offset]);
     if (reportes.length === 0) {
       return res.status(200).json({
         success: false,
         message: 'No se encontraron reportes',
         count: 0,
+        total: totalRows[0].total,
+        page,
+        limit,
         data: []
       });
     }
@@ -429,6 +488,9 @@ const obtenerReportesPorCantidadReacciones = async (req, res) => {
       success: true,
       message: 'Ranking de reportes por reacciones obtenido correctamente',
       count: reportes.length,
+      total: totalRows[0].total,
+      page,
+      limit,
       data: reportes
     });
   } catch (error) {
@@ -442,6 +504,15 @@ const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
     // El alumno sale de la sesión (sin :id en la ruta, evita ver lo ajeno)
     const codigo_estudiante = req.session.auth.codigo_estudiante;
     const estado = 'Pendiente';
+    const { page, limit, offset } = leerPaginacion(req.query);
+    const { extraWhere, vals } = leerFiltros(req.query);
+    const [totalRows] = await db.query(
+      `SELECT COUNT(*) AS total
+       FROM reporte r
+       INNER JOIN estado es ON r.id_estado = es.id_estado
+       WHERE es.nombre = ? AND r.codigo_estudiante = ?${extraWhere}`,
+      [estado, codigo_estudiante, ...vals]
+    );
     const [reportes] = await db.query(`
       SELECT
         r.*,
@@ -455,9 +526,10 @@ const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
       INNER JOIN estado es ON r.id_estado = es.id_estado
       INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
       INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
-      WHERE es.nombre = ? AND r.codigo_estudiante = ?
+      WHERE es.nombre = ? AND r.codigo_estudiante = ?${extraWhere}
       ORDER BY r.fecha_reporte DESC
-    `, [estado, codigo_estudiante]);
+      LIMIT ? OFFSET ?
+    `, [estado, codigo_estudiante, ...vals, limit, offset]);
     if (reportes.length === 0) {
       return res.status(404).json({
         success: false,
@@ -468,6 +540,9 @@ const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
       success: true,
       message: 'Reportes pendientes obtenidos correctamente',
       count: reportes.length,
+      total: totalRows[0].total,
+      page,
+      limit,
       data: reportes
     });
   } catch (error) {
@@ -480,6 +555,12 @@ const obtenerReportesPorIdEstudiante = async (req, res) => {
   try {
     // El alumno sale de la sesión (sin :id en la ruta, evita ver lo ajeno)
     const codigo_estudiante = req.session.auth.codigo_estudiante;
+    const { page, limit, offset } = leerPaginacion(req.query);
+    const { extraWhere, vals } = leerFiltros(req.query);
+    const [totalRows] = await db.query(
+      `SELECT COUNT(*) AS total FROM reporte r WHERE r.codigo_estudiante = ?${extraWhere}`,
+      [codigo_estudiante, ...vals]
+    );
     const [reportes] = await db.query(`
       SELECT
         r.*,
@@ -493,13 +574,17 @@ const obtenerReportesPorIdEstudiante = async (req, res) => {
       INNER JOIN estado es ON r.id_estado = es.id_estado
       INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
       INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
-      WHERE r.codigo_estudiante = ?
+      WHERE r.codigo_estudiante = ?${extraWhere}
       ORDER BY r.fecha_reporte DESC
-    `, [codigo_estudiante]);
+      LIMIT ? OFFSET ?
+    `, [codigo_estudiante, ...vals, limit, offset]);
     if (reportes.length === 0) {
       return res.status(200).json({
         success: false,
         message: 'No se encontraron reportes para el estudiante',
+        total: totalRows[0].total,
+        page,
+        limit,
         data: []
       });
     }
@@ -507,6 +592,9 @@ const obtenerReportesPorIdEstudiante = async (req, res) => {
       success: true,
       message: 'Reportes obtenidos correctamente',
       count: reportes.length,
+      total: totalRows[0].total,
+      page,
+      limit,
       data: reportes
     });
   } catch (error) {

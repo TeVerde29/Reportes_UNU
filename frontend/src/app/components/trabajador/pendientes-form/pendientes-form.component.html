@@ -39,7 +39,7 @@
 
         <mat-form-field appearance="outline" class="eu-field">
           <mat-label>Categoría de problema</mat-label>
-          <mat-select [(ngModel)]="form.id_tipo_problema" [disabled]="tipoEstado !== 'Pendiente'">
+          <mat-select [(ngModel)]="form.id_tipo_problema">
             <mat-option *ngFor="let t of tiposProblema" [value]="t.id_tipo_problema">
               {{ t.nombre }}
             </mat-option>
