@@ -124,9 +124,9 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     const file = input.files[0];
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      this.fotoError = 'Solo se permiten imágenes (JPEG, PNG, GIF, WEBP)';
+      this.fotoError = 'Solo se permiten imágenes (JPEG, PNG, WEBP)';
       this.fotoFile = null;
       this.previewUrl = null;
       input.value = '';
@@ -141,12 +141,50 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.fotoError = '';
-    this.fotoFile = file;
-    const reader = new FileReader();
-    reader.onload = (e: ProgressEvent<FileReader>) => {
-      this.previewUrl = e.target?.result as string;
-    };
-    reader.readAsDataURL(file);
+    // Comprime sola: baja a 1280px y JPEG 0.82 para pesar menos al subir
+    this.comprimirImagen(file).then((reducida) => {
+      this.fotoFile = reducida;
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        this.previewUrl = e.target?.result as string;
+      };
+      reader.readAsDataURL(reducida);
+    }).catch(() => {
+      this.fotoError = 'No se pudo procesar la imagen';
+      this.fotoFile = null;
+      this.previewUrl = null;
+      input.value = '';
+    });
+  }
+
+  // Baja la foto a máximo 1280px por lado y la pasa a JPEG liviano
+  private comprimirImagen(file: File): Promise<File> {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const maxLado = 1280;
+        const escala = Math.min(1, maxLado / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * escala);
+        canvas.height = Math.round(img.height * escala);
+        canvas.getContext('2d')?.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            resolve(file);
+            return;
+          }
+          const nombre = file.name.replace(/\.[^.]+$/, '') + '.jpg';
+          resolve(new File([blob], nombre, { type: 'image/jpeg' }));
+        }, 'image/jpeg', 0.82);
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Imagen inválida'));
+      };
+      img.src = url;
+    });
   }
 
 onSubmit(): void {
@@ -159,6 +197,12 @@ onSubmit(): void {
     return;
   }
   this.enviando = true;
+  // La foto es obligatoria al crear (en edición se conserva la anterior)
+  if (!this.isEditMode && !this.fotoFile) {
+    this.error = 'La foto evidencia es obligatoria.';
+    this.enviando = false;
+    return;
+  }
   const formData = new FormData();
   // Campos básicos (extraídos del formulario)
   formData.append('titulo', this.reporteForm.get('titulo')?.value);

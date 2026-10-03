@@ -13,6 +13,30 @@
   <p>Cuando se creen nuevos reportes, aparecerán aquí.</p>
 </div>
 
+<!-- Filtros + buscador -->
+<div class="filter-bar">
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Categoría</mat-label>
+    <mat-select [(ngModel)]="filtroTipo" (selectionChange)="aplicarFiltros()">
+      <mat-option [value]="null">Todas</mat-option>
+      <mat-option *ngFor="let t of tipos" [value]="t.id_tipo_problema">{{ t.nombre }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Ubicación</mat-label>
+    <mat-select [(ngModel)]="filtroUbi" (selectionChange)="aplicarFiltros()">
+      <mat-option [value]="null">Todas</mat-option>
+      <mat-option *ngFor="let u of ubicaciones" [value]="u.id_ubicacion">{{ u.nombre }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="filter-field filter-search">
+    <mat-label>Buscar por título</mat-label>
+    <input matInput type="text" [(ngModel)]="textoQ" (keyup.enter)="aplicarFiltros()" placeholder="Ej: puerta">
+  </mat-form-field>
+  <button mat-stroked-button type="button" class="filter-btn" (click)="aplicarFiltros()">Filtrar</button>
+  <button mat-button type="button" class="filter-clear" (click)="limpiarFiltros()">Limpiar</button>
+</div>
+
 <!-- Feed de reportes -->
 <section *ngIf="!error && reportes.length > 0" class="feed">
   <mat-card *ngFor="let r of reportes; trackBy: trackByIdReporte" class="post">
@@ -65,6 +89,7 @@
           [alt]="r.titulo || 'Imagen del reporte'"
           loading="lazy"
           class="post-image"
+          (error)="imgRota($event)"
         />
       </div>
     </div>
@@ -85,6 +110,14 @@
     </div>
   </mat-card>
 </section>
+
+<!-- Ver más (paginación) -->
+<div *ngIf="!error && reportes.length > 0" class="more-wrap">
+  <p *ngIf="total > 0" class="more-count">Mostrando {{ reportes.length }} de {{ total }}</p>
+  <button *ngIf="hayMas" mat-stroked-button type="button" class="more-btn" (click)="verMas()" [disabled]="cargandoMas">
+    {{ cargandoMas ? 'Cargando...' : 'Ver más' }}
+  </button>
+</div>
 
 <!-- FAB para nuevo reporte -->
 <a mat-fab class="fab" routerLink="/estudiante/nuevo-reporte" aria-label="Nuevo reporte" title="Nuevo reporte">

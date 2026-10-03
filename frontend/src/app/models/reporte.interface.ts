@@ -22,5 +22,16 @@ export interface ReporteResponse {
     success: boolean;
     message: string;
     count?: number;
+    total?: number;
+    page?: number;
+    limit?: number;
     data?: Reporte | Reporte [];
+}
+
+export interface FiltrosReporte {
+  page?: number;
+  limit?: number;
+  id_tipo_problema?: number | null;
+  id_ubicacion?: number | null;
+  q?: string;
 }

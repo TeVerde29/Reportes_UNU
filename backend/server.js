@@ -176,6 +176,18 @@ app.use((req, res) => {
     });
 });
 
+// 5) Errores de subida: multer tira HTML por defecto, el front espera JSON
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+    if (err && (err.code === 'LIMIT_FILE_SIZE' || (err.message && err.message.includes('Solo se permiten imágenes')) || err.message === 'Tipo de archivo no permitido')) {
+        return res.status(400).json({
+            success: false,
+            message: err.code === 'LIMIT_FILE_SIZE' ? 'Foto de máximo 5MB' : err.message
+        });
+    }
+    next(err);
+});
+
 app.listen(PORT, () => {
     console.log('═══════════════════════════════════════════');
     console.log('Servidor con AUTENTICACIÓN POR SESIÓN iniciado');

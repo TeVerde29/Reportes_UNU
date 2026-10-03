@@ -7,17 +7,24 @@ import { ReporteService } from '../../../services/reporte.service';
 import { EstadoService } from '../../../services/estado.service';
 import { AuthService } from '../../../services/auth.service';
 import { ReaccionService } from '../../../services/reaccion.service';
-import { Reporte } from '../../../models/reporte.interface';
+import { UbicacionService } from '../../../services/ubicacion.service';
+import { TipoProblemaService } from '../../../services/tipo-problema.service';
+import { Reporte, FiltrosReporte } from '../../../models/reporte.interface';
 import { Reaccion } from '../../../models/reaccion.interface';
+import { Ubicacion } from '../../../models/ubicacion.interface';
+import { TipoProbelma } from '../../../models/tipoProblema.interface';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-inicio-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, MatCardModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, FormsModule, RouterLink, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   templateUrl: './inicio-list.component.html',
   styleUrl: './inicio-list.component.css',
 })
@@ -30,18 +37,31 @@ export class InicioListComponent implements OnInit, OnDestroy {
   private querySubscription?: Subscription;
   private codigoEstudiante: string = '';
   private sesionLista = false;
+  // Filtros + paginación (no traer el 100%)
+  tipos: TipoProbelma[] = [];
+  ubicaciones: Ubicacion[] = [];
+  filtroTipo: number | null = null;
+  filtroUbi: number | null = null;
+  textoQ: string = '';
+  pagina: number = 1;
+  porPagina: number = 10;
+  total: number = 0;
+  cargandoMas: boolean = false;
 
   constructor(
     private reporteService: ReporteService,
     private estadoService: EstadoService,
     private authService: AuthService,
     private reaccionService: ReaccionService,
+    private ubicacionService: UbicacionService,
+    private tipoProblemaService: TipoProblemaService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.cargarSesion();
+    this.cargarCatalogos();
     this.querySubscription = this.route.queryParams.subscribe(params => {
       const tab = params['tab'];
       this.activeTab = (tab === 'populares' || tab === 'mis-reportes') ? tab : 'ultimos';
@@ -49,14 +69,15 @@ export class InicioListComponent implements OnInit, OnDestroy {
     });
   }
 
-  private cargarSegunTab(): void {
+  private cargarSegunTab(desdeCero: boolean = true): void {
+    if (desdeCero) this.pagina = 1;
     if (this.activeTab === 'ultimos') {
-      this.cargarReportesPorFecha();
+      this.cargarReportesPorFecha(!desdeCero);
       return;
     }
 
     if (this.activeTab === 'populares') {
-      this.cargarReportesConMasLikes();
+      this.cargarReportesConMasLikes(!desdeCero);
       return;
     }
 
@@ -66,7 +87,7 @@ export class InicioListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.cargarMisReportes();
+    this.cargarMisReportes(!desdeCero);
   }
 
 
@@ -76,11 +97,66 @@ export class InicioListComponent implements OnInit, OnDestroy {
 
   setActiveTab(tab: 'ultimos' | 'populares' | 'mis-reportes'): void {
     this.activeTab = tab;
+    this.pagina = 1;
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab: tab },
       queryParamsHandling: 'merge'
     });
+  }
+
+  // Catálogos para los filtros
+  private cargarCatalogos(): void {
+    this.tipoProblemaService.obtenerTiposProblema().subscribe({
+      next: (res) => { this.tipos = Array.isArray(res.data) ? res.data : []; },
+      error: () => { this.tipos = []; }
+    });
+    this.ubicacionService.obtenerUbicaciones().subscribe({
+      next: (res) => { this.ubicaciones = Array.isArray(res.data) ? res.data : []; },
+      error: () => { this.ubicaciones = []; }
+    });
+  }
+
+  // Filtros actuales como query del back
+  private filtrosActuales(): FiltrosReporte {
+    return {
+      page: this.pagina,
+      limit: this.porPagina,
+      id_tipo_problema: this.filtroTipo,
+      id_ubicacion: this.filtroUbi,
+      q: this.textoQ
+    };
+  }
+
+  aplicarFiltros(): void {
+    this.pagina = 1;
+    this.cargarSegunTab();
+  }
+
+  limpiarFiltros(): void {
+    this.filtroTipo = null;
+    this.filtroUbi = null;
+    this.textoQ = '';
+    this.pagina = 1;
+    this.cargarSegunTab();
+  }
+
+  verMas(): void {
+    if (this.cargandoMas || !this.hayMas) return;
+    this.pagina++;
+    this.cargarSegunTab(false);
+  }
+
+  get hayMas(): boolean {
+    return this.reportes.length < this.total;
+  }
+
+  // Guarda la página y suma si es "Ver más"
+  private pintar(reportes: Reporte[], total: number, esMas: boolean): void {
+    this.total = total ?? 0;
+    this.reportes = esMas ? [...this.reportes, ...reportes] : reportes;
+    this.error = '';
+    this.cargandoMas = false;
   }
 
   cargarSesion(): void {
@@ -128,8 +204,9 @@ export class InicioListComponent implements OnInit, OnDestroy {
     });
   }
 
-  cargarReportesPorFecha(): void {
+  cargarReportesPorFecha(esMas: boolean = false): void {
     this.error = '';
+    if (esMas) this.cargandoMas = true;
     this.estadoService.obtenerEstadoPorNombre('Aceptado').subscribe({
       next: (response) => {
         const estadoAceptado = Array.isArray(response.data) ? response.data[0] : response.data;
@@ -137,17 +214,20 @@ export class InicioListComponent implements OnInit, OnDestroy {
           this.error = 'No se encontró el estado Aceptado';
           return;
         }
-        this.reporteService.obtenerReportesPorIdEstado(estadoAceptado.id_estado).subscribe({
+        this.reporteService.obtenerReportesPorIdEstado(estadoAceptado.id_estado, this.filtrosActuales()).subscribe({
           next: (resp) => {
             if (resp.success && Array.isArray(resp.data)) {
-              this.reportes = resp.data;
+              this.pintar(resp.data, resp.total ?? resp.data.length, esMas);
             } else {
-              this.error = 'No se pudieron cargar los reportes';
+              this.reportes = esMas ? this.reportes : [];
+              this.error = esMas ? '' : 'No se pudieron cargar los reportes';
+              this.cargandoMas = false;
             }
           },
           error: (er) => {
             console.error('Error al obtener los reportes:', er);
             this.error = 'Error al cargar los reportes';
+            this.cargandoMas = false;
           },
         });
       },
@@ -158,42 +238,46 @@ export class InicioListComponent implements OnInit, OnDestroy {
     });
   }
 
-cargarReportesConMasLikes(): void {
+cargarReportesConMasLikes(esMas: boolean = false): void {
   this.error = '';
-  this.reporteService.obtenerReportesPorMayorReacciones().subscribe({
+  if (esMas) this.cargandoMas = true;
+  this.reporteService.obtenerReportesPorMayorReacciones(this.filtrosActuales()).subscribe({
     next: (resp) => {
       if (resp.success && Array.isArray(resp.data)) {
-        this.reportes = resp.data;
-        this.error = '';
+        this.pintar(resp.data, resp.total ?? resp.data.length, esMas);
       } else {
-        this.reportes = [];
+        this.reportes = esMas ? this.reportes : [];
         this.error = '';
+        this.cargandoMas = false;
       }
     },
     error: (er) => {
       console.error('Error al obtener los reportes:', er);
-      this.reportes = [];
+      this.reportes = esMas ? this.reportes : [];
       this.error = 'Error al cargar los reportes';
+      this.cargandoMas = false;
     },
   });
 }
 
-  cargarMisReportes(): void {
-    this.error = ''; 
-    this.reporteService.obtenerReportesPorIdEstudiante().subscribe({
+  cargarMisReportes(esMas: boolean = false): void {
+    this.error = '';
+    if (esMas) this.cargandoMas = true;
+    this.reporteService.obtenerReportesPorIdEstudiante(this.filtrosActuales()).subscribe({
       next: (resp) => {
         if (resp.success && Array.isArray(resp.data)) {
-          this.reportes = resp.data;
-          this.error = ''; 
+          this.pintar(resp.data, resp.total ?? resp.data.length, esMas);
         } else {
-          this.reportes = [];
-          this.error = 'No se pudieron cargar los reportes';
+          this.reportes = esMas ? this.reportes : [];
+          this.error = esMas ? '' : 'No se pudieron cargar los reportes';
+          this.cargandoMas = false;
         }
       },
       error: (er) => {
         console.error('Error al obtener los reportes:', er);
-        this.reportes = [];
+        this.reportes = esMas ? this.reportes : [];
         this.error = 'Error al cargar los reportes';
+        this.cargandoMas = false;
       },
     });
   }
@@ -248,6 +332,15 @@ cargarReportesConMasLikes(): void {
 
   trackByIdReporte(index: number, item: Reporte): number {
     return item.id_reporte ?? index;
+  }
+
+  // Si la foto no carga (back caído o archivo borrado), muestra aviso
+  imgRota(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.onerror = null;
+    img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="680" height="300"><rect width="100%" height="100%" fill="#F0F4F2"/><text x="50%" y="50%" fill="#6C7A74" font-size="18" text-anchor="middle" font-family="sans-serif">Imagen no disponible</text></svg>`
+    );
   }
 
   obtenerIniciales(nombre: string): string {
