@@ -6,7 +6,7 @@ export interface Reporte {
     fecha_reporte?: string;
     fecha_edicion?: string;
     cantidad_reacciones?: number;
-    id_estudiante?: number;
+    codigo_estudiante?: string;
     id_estado?: number;
     id_tipo_problema?: number;
     id_ubicacion?: number;

@@ -44,12 +44,16 @@ export class ReporteService {
     return this.http.get<ReporteResponse>(`${this.apiUrl}/top/reacciones`, { withCredentials: true });
   }
 
-  obtenerReportesPendientesPorIdEstudiante(id: number): Observable<ReporteResponse> {
-    return this.http.get<ReporteResponse>(`${this.apiUrl}/pendientes/estudiante/${id}`, { withCredentials: true });
+  obtenerReportesPendientesPorIdEstudiante(): Observable<ReporteResponse> {
+    return this.http.get<ReporteResponse>(`${this.apiUrl}/pendientes/estudiante`, { withCredentials: true });
   }
 
-  obtenerReportesPorIdEstudiante(id: number): Observable<ReporteResponse> {
-    return this.http.get<ReporteResponse>(`${this.apiUrl}/mis-reportes/${id}`, { withCredentials: true });
+  obtenerReportesPorIdEstudiante(): Observable<ReporteResponse> {
+    return this.http.get<ReporteResponse>(`${this.apiUrl}/mis-reportes`, { withCredentials: true });
+  }
+
+  eliminarReporte(id: number): Observable<ReporteResponse> {
+    return this.http.delete<ReporteResponse>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
 }

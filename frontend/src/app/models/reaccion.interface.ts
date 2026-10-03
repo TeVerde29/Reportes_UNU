@@ -1,6 +1,6 @@
 export interface Reaccion {
     id_reaccion?: number;
-    id_estudiante: number;
+    codigo_estudiante?: string;
     id_reporte: number;
     like?: number;
 }

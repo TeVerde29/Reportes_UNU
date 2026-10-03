@@ -64,16 +64,10 @@ export class PendientesFormComponent implements OnInit {
   }
 
   rechazar(): void {
-    this.estadoService.obtenerEstadoPorNombre('Rechazado').subscribe(res => {
-      const estado = Array.isArray(res.data) ? res.data[0] : res.data;
-      if (!estado) return;
-      this.reporteService.revisarReporte(this.reporte.id_reporte, {
-        titulo: this.form.titulo,
-        descripcion: this.form.descripcion,
-        id_tipo_problema: this.form.id_tipo_problema,
-        id_estado: estado.id_estado
-      }).subscribe(() => this.cerrar.emit());
-    });
+    // Rechazo = borrado total (registro + foto), sin estado Rechazado
+    if (!this.reporte.id_reporte) return;
+    this.reporteService.eliminarReporte(this.reporte.id_reporte)
+      .subscribe(() => this.cerrar.emit());
   }
 
   solucionar(): void {
