@@ -2,12 +2,13 @@ const db = require('../config/database');
 
 const likesActivosPorIdEstudiante = async (req, res) => {
   try {
-    const { id } = req.params;
+    // El alumno sale de la sesión (sin :id en la ruta, evita ver lo ajeno)
+    const codigo_estudiante = req.session.auth.codigo_estudiante;
     const [rows] = await db.query(
       `SELECT id_reporte
        FROM reaccion
-       WHERE id_estudiante = ? AND \`like\` = 1`,
-      [id]
+       WHERE codigo_estudiante = ? AND \`like\` = 1`,
+      [codigo_estudiante]
     );
     return res.status(200).json({
       success: true,
@@ -21,8 +22,11 @@ const likesActivosPorIdEstudiante = async (req, res) => {
 };
 
 const darLike = async (req, res) => {
-  const { id_estudiante, id_reporte } = req.body;
-  if (!id_estudiante || !id_reporte) {
+  const { id_reporte } = req.body;
+  // El alumno sale de la sesión, nunca del body (evita votar como otro)
+  const codigo_estudiante = req.session.auth.codigo_estudiante;
+  const idReporte = Number(id_reporte);
+  if (!Number.isInteger(idReporte) || idReporte <= 0) {
     return res.status(400).json({
       success: false,
       message: 'Datos incompletos'
@@ -35,21 +39,21 @@ const darLike = async (req, res) => {
     const [rows] = await conn.query(
       `SELECT id_reaccion, \`like\`
        FROM reaccion
-       WHERE id_estudiante = ? AND id_reporte = ?
+       WHERE codigo_estudiante = ? AND id_reporte = ?
        FOR UPDATE`,
-      [id_estudiante, id_reporte]
+      [codigo_estudiante, idReporte]
     );
     if (rows.length === 0) {
       await conn.query(
-        `INSERT INTO reaccion (id_estudiante, id_reporte, \`like\`)
+        `INSERT INTO reaccion (codigo_estudiante, id_reporte, \`like\`)
          VALUES (?, ?, 1)`,
-        [id_estudiante, id_reporte]
+        [codigo_estudiante, idReporte]
       );
       const [upd] = await conn.query(
         `UPDATE reporte
          SET cantidad_reacciones = IFNULL(cantidad_reacciones, 0) + 1
          WHERE id_reporte = ?`,
-        [id_reporte]
+        [idReporte]
       );
       if (upd.affectedRows === 0) {
         await conn.rollback();
@@ -82,7 +86,7 @@ const darLike = async (req, res) => {
       `UPDATE reporte
        SET cantidad_reacciones = IFNULL(cantidad_reacciones, 0) + 1
        WHERE id_reporte = ?`,
-      [id_reporte]
+      [idReporte]
     );
     if (upd2.affectedRows === 0) {
       await conn.rollback();
@@ -109,8 +113,11 @@ const darLike = async (req, res) => {
 };
 
 const quitarLike = async (req, res) => {
-  const { id_estudiante, id_reporte } = req.body;
-  if (!id_estudiante || !id_reporte) {
+  const { id_reporte } = req.body;
+  // El alumno sale de la sesión, nunca del body (evita votar como otro)
+  const codigo_estudiante = req.session.auth.codigo_estudiante;
+  const idReporte = Number(id_reporte);
+  if (!Number.isInteger(idReporte) || idReporte <= 0) {
     return res.status(400).json({
       success: false,
       message: 'Datos incompletos'
@@ -123,9 +130,9 @@ const quitarLike = async (req, res) => {
     const [rows] = await conn.query(
       `SELECT id_reaccion, \`like\`
        FROM reaccion
-       WHERE id_estudiante = ? AND id_reporte = ?
+       WHERE codigo_estudiante = ? AND id_reporte = ?
        FOR UPDATE`,
-      [id_estudiante, id_reporte]
+      [codigo_estudiante, idReporte]
     );
     if (rows.length === 0) {
       await conn.rollback();
@@ -152,7 +159,7 @@ const quitarLike = async (req, res) => {
       `UPDATE reporte
        SET cantidad_reacciones = GREATEST(0, IFNULL(cantidad_reacciones, 0) - 1)
        WHERE id_reporte = ?`,
-      [id_reporte]
+      [idReporte]
     );
     if (upd.affectedRows === 0) {
       await conn.rollback();

@@ -16,13 +16,14 @@
   color: var(--eu-ink);
 }
 
-/* ===== Topbar ===== */
+/* ===== Topbar institucional (franja verde selva profunda) ===== */
 .topbar {
   position: sticky;
   top: 0;
   z-index: 50;
-  background-color: #ffffff;
-  border-bottom: 1px solid var(--eu-border);
+  background: linear-gradient(180deg, #123F2A 0%, #0E3524 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 12px rgba(10, 30, 20, 0.25);
 }
 
 .topbar-inner {
@@ -47,30 +48,38 @@
 .brand-logo {
   width: 40px;
   height: 40px;
-  border-radius: 12px;
-  background-color: var(--eu-primary);
-  color: #ffffff;
+  border-radius: 50%;
+  background-color: #ffffff;
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+.brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .brand-title {
   margin: 0;
-  font-size: 16px;
+  font-family: var(--eu-serif);
+  font-size: 19px;
   font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--eu-ink);
+  letter-spacing: 0;
+  color: #ffffff;
   line-height: 1.2;
 }
 
 .brand-subtitle {
   margin: 2px 0 0;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--eu-muted);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 /* ===== Top Actions ===== */
@@ -88,14 +97,14 @@
 .tabs {
   display: inline-flex;
   align-items: center;
-  background-color: var(--eu-inset);
-  border: 1px solid var(--eu-border);
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 9999px;
   padding: 4px;
   gap: 2px;
 }
 
-/* Tabs pill (botones mat-button): inactivo = texto tinta suave; activo = pill #2D5A46 + texto blanco */
+/* Tabs pill (botones mat-button): inactivo = texto tinta suave; activo = pill #256B45 + texto blanco */
 .tabs .eu-tab.mat-mdc-button {
   border-radius: 9999px;
   min-height: 36px;
@@ -103,18 +112,40 @@
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0;
-  color: var(--eu-ink-soft);
+  color: rgba(255, 255, 255, 0.78);
   background-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  line-height: 1;
+}
+
+.tabs .eu-tab.mat-mdc-button .mat-icon,
+.tabs .eu-tab.mat-mdc-button mat-icon {
+  font-size: 19px;
+  width: 19px;
+  height: 19px;
+  line-height: 19px;
+  color: currentColor;
+  margin: 0;
+}
+
+.tabs .eu-tab.mat-mdc-button .mdc-button__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
 }
 
 .tabs .eu-tab.mat-mdc-button:hover {
-  background-color: #e2ece7;
-  color: var(--eu-ink);
+  background-color: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
 }
 
 .tabs .eu-tab.mat-mdc-button.active {
-  background-color: #2D5A46;
-  color: #ffffff;
+  background-color: #ffffff;
+  border-color: #ffffff;
+  color: #123F2A;
 }
 
 /* ===== Acciones ===== */
@@ -124,20 +155,20 @@
   align-items: center;
 }
 
-/* Salir: ghost eucalyptus */
+/* Salir: ghost translúcido sobre franja oscura */
 .actions .eu-ghost.mat-mdc-button {
-  border: 1px solid var(--eu-border-soft);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 8px;
   min-height: 40px;
   padding: 0 14px;
   font-size: 13px;
   font-weight: 600;
-  color: var(--eu-primary);
-  background-color: transparent;
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .actions .eu-ghost.mat-mdc-button:hover {
-  background-color: #EDF3F0;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .actions .eu-ghost.mat-mdc-button mat-icon {
@@ -146,23 +177,23 @@
   height: 18px;
 }
 
-/* ===== User Chip ===== */
+/* ===== User Chip sobre franja oscura ===== */
 .user-chip {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 4px 14px 4px 4px;
   border-radius: 9999px;
-  border: 1px solid var(--eu-border);
-  background-color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .user-avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: var(--eu-primary);
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #123F2A;
   display: grid;
   place-items: center;
   font-size: 12px;
@@ -175,7 +206,7 @@
   font-size: 13px;
   font-weight: 600;
   line-height: 1.2;
-  color: var(--eu-ink);
+  color: #ffffff;
   white-space: nowrap;
 }
 
@@ -185,7 +216,7 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--eu-muted);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 /* ===== Layout (operativo ancho completo referencia: max 1240px) ===== */
@@ -200,7 +231,7 @@
 }
 
 /* ===== Responsive ===== */
-@media (max-width: 900px) {
+@media (max-width: 1008px) {
   .topbar-inner {
     padding: 12px 16px;
     flex-wrap: wrap;
@@ -208,8 +239,44 @@
 
   .tabs {
     max-width: 100%;
-    overflow-x: auto;
+    flex-wrap: wrap;
   }
+
+  /* Al angostar, Salir queda solo icono redondo y centrado */
+  .actions .btn-text {
+    display: none;
+  }
+
+  .actions .eu-ghost.mat-mdc-button {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+  }
+
+  .actions .eu-ghost.mat-mdc-button mat-icon {
+    margin: 0;
+    transform: translateX(1px);
+  }
+}
+
+/* A 747px el chip queda solo con iniciales */
+@media (max-width: 747px) {
+  .user-chip .user-info {
+    display: none;
+  }
+
+  .user-chip {
+    padding: 4px;
+  }
+}
+
+/* ===== Navegación inferior móvil (oculta en desktop) ===== */
+.bottom-nav {
+  display: none;
 }
 
 @media (max-width: 640px) {
@@ -217,20 +284,58 @@
     display: none;
   }
 
-  .actions .eu-ghost.mat-mdc-button {
-    padding: 0 10px;
-    min-width: 40px;
-  }
-
-  .user-info {
+  /* En móvil los tabs viven abajo: topbar de una sola fila limpia */
+  .top-actions .tabs {
     display: none;
   }
 
-  .user-chip {
-    padding: 4px;
+  /* En móvil Salir vive abajo */
+  .actions {
+    display: none;
   }
 
   .layout {
-    padding: 16px 12px 32px;
+    padding: 16px 12px 96px;
+  }
+
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    background: #123F2A;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+    box-shadow: 0 -2px 12px rgba(10, 30, 20, 0.25);
+  }
+
+  .bn-item {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 4px;
+    border: none;
+    background: none;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    min-height: 48px;
+    justify-content: center;
+  }
+
+  .bn-item.active {
+    color: #ffffff;
+  }
+
+  .bn-item .mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
   }
 }

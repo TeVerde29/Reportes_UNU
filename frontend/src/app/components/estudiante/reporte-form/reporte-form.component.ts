@@ -16,6 +16,7 @@ import { EstadoService } from '../../../services/estado.service';
 import { Estado, EstadoResponse } from '../../../models/estado.interface';
 import { AuthService } from '../../../services/auth.service';
 import { ReporteResponse } from '../../../models/reporte.interface';
+import { environment } from '../../../environment/environment';
 import { Usuario } from '../../../models/usuario.interface';
 import { EstudianteService } from '../../../services/estudiante.service';
 
@@ -63,8 +64,8 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     private authService: AuthService
   ) {
     this.reporteForm = this.fb.group({
-      titulo: ['', [Validators.required, Validators.minLength(5)]],
-      descripcion: ['', [Validators.required]],
+      titulo: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(150)]],
+      descripcion: ['', [Validators.required, Validators.maxLength(1000)]],
       id_tipo_problema: [null, [Validators.required]],
       id_ubicacion: [null, [Validators.required]],
     });
@@ -124,9 +125,9 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     const file = input.files[0];
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      this.fotoError = 'Solo se permiten imágenes (JPEG, PNG, GIF, WEBP)';
+      this.fotoError = 'Solo se permiten imágenes (JPEG, PNG, WEBP)';
       this.fotoFile = null;
       this.previewUrl = null;
       input.value = '';
@@ -141,12 +142,50 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.fotoError = '';
-    this.fotoFile = file;
-    const reader = new FileReader();
-    reader.onload = (e: ProgressEvent<FileReader>) => {
-      this.previewUrl = e.target?.result as string;
-    };
-    reader.readAsDataURL(file);
+    // Comprime sola: baja a 1280px y JPEG 0.82 para pesar menos al subir
+    this.comprimirImagen(file).then((reducida) => {
+      this.fotoFile = reducida;
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        this.previewUrl = e.target?.result as string;
+      };
+      reader.readAsDataURL(reducida);
+    }).catch(() => {
+      this.fotoError = 'No se pudo procesar la imagen';
+      this.fotoFile = null;
+      this.previewUrl = null;
+      input.value = '';
+    });
+  }
+
+  // Baja la foto a máximo 1280px por lado y la pasa a JPEG liviano
+  private comprimirImagen(file: File): Promise<File> {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const maxLado = 1280;
+        const escala = Math.min(1, maxLado / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * escala);
+        canvas.height = Math.round(img.height * escala);
+        canvas.getContext('2d')?.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            resolve(file);
+            return;
+          }
+          const nombre = file.name.replace(/\.[^.]+$/, '') + '.jpg';
+          resolve(new File([blob], nombre, { type: 'image/jpeg' }));
+        }, 'image/jpeg', 0.82);
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Imagen inválida'));
+      };
+      img.src = url;
+    });
   }
 
 onSubmit(): void {
@@ -159,6 +198,12 @@ onSubmit(): void {
     return;
   }
   this.enviando = true;
+  // La foto es obligatoria al crear (en edición se conserva la anterior)
+  if (!this.isEditMode && !this.fotoFile) {
+    this.error = 'La foto evidencia es obligatoria.';
+    this.enviando = false;
+    return;
+  }
   const formData = new FormData();
   // Campos básicos (extraídos del formulario)
   formData.append('titulo', this.reporteForm.get('titulo')?.value);
@@ -181,8 +226,8 @@ onSubmit(): void {
     this.reporteService.actualizarReporte(this.id_reporte, formData).subscribe({
       next: (res) => {
         if (res.success) {
-          this.successMessage = '¡Reporte actualizado con éxito!';
-          setTimeout(() => this.router.navigate(['/mis-reportes']), 500);
+          this.successMessage = 'Reporte actualizado con éxito';
+          setTimeout(() => this.router.navigate(['/estudiante/inicio'], { queryParams: { tab: 'mis-reportes' } }), 500);
         } else {
           this.error = res.message;
           this.enviando = false;
@@ -194,16 +239,12 @@ onSubmit(): void {
       }
     });
   } else {
-    // MODO CREACIÓN
-    // Aquí asegúrate de enviar también el id_estudiante
-    if (this.estudiante?.id_estudiante) {
-      formData.append('id_estudiante', String(this.estudiante.id_estudiante));
-    }
+    // MODO CREACIÓN: el dueño sale de la sesión, no se manda id
     this.reporteService.crearReporte(formData).subscribe({
       next: (res) => {
         if (res.success) {
-          this.successMessage = '¡Reporte creado con éxito!';
-          setTimeout(() => this.router.navigate(['/inicio']), 500);
+          this.successMessage = 'Reporte creado con éxito';
+          setTimeout(() => this.router.navigate(['/estudiante/inicio']), 500);
         } else {
           this.error = res.message;
           this.enviando = false;
@@ -223,7 +264,7 @@ onSubmit(): void {
     if (response.success) {
       this.successMessage = mensajeExito;
       setTimeout(() => {
-        this.router.navigateByUrl('/mis-reportes'); // O '/mis-reportes'
+        this.router.navigate(['/estudiante/inicio'], { queryParams: { tab: 'mis-reportes' } });
       }, 500);
     } else {
       this.error = response.message || 'Error en la operación';
@@ -245,7 +286,7 @@ onSubmit(): void {
         this.reporteForm.patchValue(data);
         // MOSTRAR IMAGEN: Si el reporte tiene foto, armamos la URL del servidor
         if (data.foto_url) {
-          this.previewUrl = `http://localhost:3000${data.foto_url}`;
+          this.previewUrl = `${environment.baseUrl}${data.foto_url}`;
         }
       }
     }

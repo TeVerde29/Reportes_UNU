@@ -8,7 +8,7 @@ const verificarUsuario = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Datos incompletos' });
     }
     const [rows] = await db.query(`
-      SELECT id_usuario, id_rol, clave, id_estudiante
+      SELECT id_usuario, id_rol, clave, id_trabajador
       FROM usuario
       WHERE codigo = ?
       `,[codigo]
@@ -27,7 +27,7 @@ const verificarUsuario = async (req, res) => {
       data: {
         id_usuario: usuario.id_usuario,
         id_rol: usuario.id_rol,
-        id_estudiante: usuario.id_estudiante
+        id_trabajador: usuario.id_trabajador
       }
     });
   } catch (error) {

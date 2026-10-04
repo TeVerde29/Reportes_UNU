@@ -1,9 +1,10 @@
 // ============================================================
 // PUERTA 2: ¿tienes el rol permitido? (qué puedes hacer)
 // Guía: se pone DESPUÉS de requireSession.
-// Roles: 1 = Supervisor, 2 = Administrador, 3 = Estudiante.
-// Ejemplo: requireRole([3]) solo estudiantes,
-//          requireRole([1, 2]) solo personal.
+// Roles: 1 = Supervisor, 2 = Administrador (en tabla `usuario`),
+//        3 = Estudiante (solo vive en sesión, sin fila en `usuario`).
+// Ejemplo: requireRole([1, 2]) solo personal.
+// Para alumno se usa requireEstudiante (revisa su código, no su rol).
 // ============================================================
 const requireRole = (rolesPermitidos = []) => {
     return (req, res, next) => {

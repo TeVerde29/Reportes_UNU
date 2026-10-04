@@ -1,55 +1,55 @@
-# Reportes_UNU
+# Reportes_UNU — Sistema de Reportes de Averías e Incidencias
 
-Sistema de reportes de averías e incidencias del campus de la Universidad Nacional de Ucayali (UNU).
-Los estudiantes crean reportes con foto, les dan "like" a los de sus compañeros y el personal de
-mantenimiento los revisa (acepta / resuelve / rechaza) y consulta estadísticas.
+Aplicación web para reportar incidencias dentro de la UNU (infraestructura, mobiliario,
+equipos electrónicos, instalaciones eléctricas y sanitarias, áreas verdes, seguridad y limpieza).
+
+Los estudiantes crean reportes con foto, les dan like a los reportes aceptados y hacen
+seguimiento a los suyos. El personal (supervisor/administrador) revisa los pendientes,
+los acepta, resuelve o los elimina (rechazo = borrado total), y consulta estadísticas
+por tipo de problema, ubicación, mes y estado.
 
 ## Stack
 
-| Capa | Tecnología |
-|---|---|
-| Frontend | Angular 19 (standalone), Angular Material 19, `ng2-charts` + Chart.js |
-| Backend | Node.js + Express 5, sesiones con `express-session` guardadas en MySQL, `helmet`, `express-rate-limit`, `multer` |
-| Base de datos | MySQL (`database/bd_reporte_incidencias.sql`, 9 tablas) |
-| Auth | Sesión con cookie `sid` (httpOnly, 8 h), roles por `id_rol`, hash con `bcrypt` |
+| Capa      | Tecnología                                                                |
+|-----------|---------------------------------------------------------------------------|
+| Backend   | Node.js v22 + Express 5 + `mysql2` + `multer`                             |
+| Auth      | `express-session` + `express-mysql-session` (cookie `sid`, 8h) + `bcrypt` |
+| Seguridad | `helmet`, `cors`, `express-rate-limit` (login)                            |
+| Frontend  | Angular 19 standalone + Angular Material + Chart.js (`ng2-charts`)        |
+| BD        | MySQL 8 (`utf8mb4`) — script en `database/bd_reporte_incidencias.sql`     |
 
-Roles: `1` Supervisor, `2` Administrador (zona `/trabajador`), `3` Estudiante (zona `/estudiante`).
-
-## Estructura
+## Arquitectura
 
 ```
-Reportes_UNU/
-├── frontend/        # App Angular (puerto dev 4200)
-│   └── src/app/     # components/ (auth, estudiante, trabajador, estadistica)
-│                    # layouts/, guards/ (AuthGuard, RoleGuard), services/, models/
-├── backend/         # API Express (puerto 3000)
-│   ├── server.js    # Entrada: helmet → cors → sesión MySQL → rate-limit → rutas → /uploads
-│   ├── routes/      # auth, reporte, reaccion, estado, estudiante, trabajador,
-│   │                # tipo_problema, ubicacion, usuario
-│   ├── controllers/ # Lógica de cada recurso
-│   ├── middleware/  # requireSession, requireRole, upload (multer)
-│   └── config/      # Conexión MySQL
-├── database/        # bd_reporte_incidencias.sql (estado, estudiante, reaccion,
-│                    # reporte, rol, tipo_problema, trabajador, ubicacion, usuario)
-├── Reportes_UNU_IMG/ # Fotos subidas (uploads/reportes)
-├── documentation/   # Informes del proyecto (.docx)
-├── Apuntes.md / Observaciones-Completo.md  # Acuerdos y pendientes del equipo
-└── Documentacion_Seguridad.md              # Medidas de seguridad del backend
+┌──────────┐  cookie sid  ┌──────────┐  SQL   ┌────────┐
+│ Angular  │ ◄──────────► │ Express  │ ◄────► │ MySQL  │
+│  :4200   │  JSON + CORS │  :3000   │        │        │
+└──────────┘              └────┬─────┘        └────────┘
+                               │ sugestão
+                        disco local (fotos)
 ```
 
-## Requisitos
+- **Sesiones, no tokens.** `POST /api/auth/login` crea `req.session.auth`;
+  `requireSession` + `requireRole([1,2])` / `requireEstudiante` protegen rutas.
+- **Alumnos vía API simulada.** La tabla `estudiante` simula el API externo de la UNU:
+  sin FK hacia ni desde ella; `reporte`/`reaccion` guardan `codigo_estudiante`
+  (referencia lógica). El rol 3 (estudiante) solo vive en sesión, no hay fila
+  `usuario` para alumnos. `usuario` es solo personal interno.
+- **Estados:** `1 Pendiente`, `2 Aceptado`, `3 Resuelto` (sin Rechazado: rechazar borra
+  fila + reacciones en cascada + foto con `fs.unlink`).
+- **Likes:** `like` 0/1 con `UNIQUE(codigo_estudiante, id_reporte)` + transacción que
+  mantiene `cantidad_reacciones`.
+- **Job diario (03:00):** `backend/jobs/limpiarPendientes.js` borra pendientes con
+  más de 7 días (fila + foto), programado con `setInterval` en `server.js`.
+- **Fotos:** `multer` (5MB, jpg/jpeg/png/webp, nombre aleatorio 32 chars) en
+  `UPLOAD_DIR`; errores devueltos como JSON.
 
-- Node.js 20 LTS o superior (lo exige Angular 19) + Angular CLI (`npm i -g @angular/cli`)
-- MySQL en ejecución (local o remoto)
-
-## Instalación
+## Puesta en marcha
 
 ### 1. Base de datos
 
-Importa el script (crea las tablas; la tabla `sessions` la crea sola la API al arrancar):
-
-```bash
-mysql -u root -p < database/bd_reporte_incidencias.sql
+```sql
+SOURCE database/bd_reporte_incidencias.sql;  -- crea reporte_incidencias + sessions (vacía)
 ```
 
 ### 2. Backend
@@ -59,72 +59,96 @@ cd backend
 npm install
 ```
 
-Crea `backend/.env` (nombres de variables requeridas):
+Crea `backend/.env` (local, no se commitea):
 
 ```env
 PORT=3000
 DB_HOST=localhost
 DB_USER=root
-DB_PASSWORD=tu_clave
+DB_PASSWORD=tu_password
 DB_NAME=reporte_incidencias
 BCRYPT_ROUNDS=10
-SESSION_SECRET=un_secreto_largo
+SESSION_SECRET=una_clave_larga_y_secreta
 FRONTEND_ORIGIN=http://localhost:4200
-COOKIE_SECURE=false   # true solo con https en producción
-UPLOAD_DIR=../Reportes_UNU_IMG/uploads/reportes
+COOKIE_SECURE=false
+UPLOAD_DIR=C:/Reportes_UNU/Reportes_UNU_IMG/uploads/reportes
 ```
-
-Arranca la API (no hay script `start`; se ejecuta directo):
 
 ```bash
-node server.js
-# o en desarrollo:
-npx nodemon server.js
+node server.js   # http://localhost:3000
 ```
-
-Verifica en `http://localhost:3000` (responde JSON con endpoints y estado de sesión).
 
 ### 3. Frontend
 
 ```bash
 cd frontend
 npm install
-ng serve
+npm start        # http://localhost:4200 (ng serve)
+npm run build    # prod: usa environment.prod.ts (fileReplacements)
 ```
 
-Abre `http://localhost:4200` (redirige a `/login`). La API base está en
-`src/app/environment/environment.ts` → `http://localhost:3000/api`.
+## Estructura
 
-## Rutas principales
+```
+Reportes_UNU/
+├── backend/        # API Express: controllers/, routes/, middleware/,
+│                   # jobs/limpiarPendientes.js, config/, server.js
+├── frontend/       # App Angular: components/{auth,estudiante,trabajador,
+│                   # estadistica}, layouts/, guards/, services/, models/
+├── database/       # bd_reporte_incidencias.sql (script canónico limpio)
+├── documentation/  # Informes del proyecto
+├── Reportes_UNU_IMG/uploads/reportes/  # Fotos (no se commitea el contenido)
+├── observaciones.md
+└── README.md
+```
 
-Frontend (`src/app/app.routes.ts`):
+## Funcionalidades
 
-| Ruta | Acceso |
-|---|---|
-| `/login` | Pública |
-| `/estudiante/inicio`, `/nuevo-reporte`, `/editar-reporte/:id` | Rol 3 (guards Auth + Role) |
-| `/trabajador/reportes-pendientes|aceptados|solucionados|rechazados`, `/ver-reporte/:id`, `/estadisticas` | Roles 1–2 |
+- **Estudiante:** feed Últimos/Populares/Mis reportes (grid 2 col, filtros por
+  categoría/ubicación/búsqueda, `?page=&limit=`, visor de foto, likes), crear/editar
+  con foto comprimida en front, fechas estilo red social, bottom-nav en móvil.
+- **Trabajador:** tablas Pendientes/Aceptados/Solucionados (búsqueda, sin Carrera),
+  modal de revisión (aceptar/resolver/actualizar/eliminar), dashboard con KPIs,
+  tendencia mensual, dona por tipo y estado, top ubicaciones.
+- **Sistema:** login por sesión, 404 propio, `environment.prod.ts` para despliegue.
 
-API (`http://localhost:3000/api`):
+## API principal
 
-| Método | Endpoint | Descripción |
-|---|---|---|
-| POST / GET `/auth/login`, `/auth/me`, `/auth/logout` | Login, sesión actual, salir (login con rate-limit: 30 intentos / 15 min) |
-| GET | `/estado`, `/estado/:nombre` | Estados de reporte |
-| GET | `/estudiante/:id` | Datos del estudiante (requiere sesión) |
-| GET / POST / PUT | `/reaccion/:id`, `/reaccion` | Likes activos, dar / quitar like (rol 3) |
-| POST / PUT | `/reporte`, `/reporte/:id` | Crear / editar reporte con foto (rol 3) |
-| GET | `/reporte/mis-reportes/:id`, `/reporte/pendientes/estudiante/:id` | Reportes del alumno |
-| PUT | `/reporte/revisar/:id` | Aceptar / resolver / rechazar (roles 1–2) |
-| GET | `/reporte/estado/:id`, `/reporte/top/reacciones`, `/reporte/:id` | Feed por estado, populares, detalle |
-| GET | `/reporte/estadisticas/...` | Por tipo-problema, ubicación, ambos y por mes (dashboard) |
-| GET | `/tipoProblema`, `/ubicacion`, `/ubicacion/:id`, `/trabajador/:id` | Catálogos y trabajador |
+```
+POST /api/auth/login | GET /api/auth/me | POST /api/auth/logout
+POST /api/reporte (alumno, foto) | PUT /api/reporte/:id (dueño)
+PUT  /api/reporte/revisar/:id (personal 1,2) | DELETE /api/reporte/:id (personal)
+GET  /api/reporte/mis-reportes | GET /api/reporte/pendientes/estudiante
+GET  /api/reporte/estado/:id?page=&limit=&id_tipo_problema=&id_ubicacion=&q=
+GET  /api/reporte/top/reacciones | GET /api/reporte/estadisticas/{tipo-problema,ubicacion,por-mes,por-estado,...}
+POST|PUT /api/reaccion (alumno, {id_reporte}) | GET /api/reaccion/activos/mios
+```
 
-Las fotos se sirven en `/uploads/reportes/...`.
+## Convenciones
 
-## Notas y riesgos conocidos
+- Comentarios guía en español al inicio de cada módulo (`// Guía: …`).
+- Front: servicios con `{ withCredentials: true }`; identidad de alumno siempre de sesión.
+- Validaciones: título 5–150, descripción ≤1000, `id_estado` ∈ {1,2,3}, `like` ∈ {0,1}.
+- Paleta amazónica en tokens `--eu-*` (`styles.css`); serif `Fraunces` solo en marca.
 
-- El backend no tiene script `start`/`dev` en `package.json`; se arranca con `node server.js`.
-- `auth.service.ts` lleva la URL `http://localhost:3000/api/auth` fija; el resto de servicios usa `environment.apiUrl`. En despliegue hay que alinear ambas.
-- `COOKIE_SECURE=false` solo vale para desarrollo en http; en producción con https debe ser `true`.
-- Hay decisiones pendientes del equipo en `Apuntes.md` (puntos 1–5: borrado de rechazados, purga de pendientes, rol Estudiante, paginación, validación de fotos).
+## Testing
+
+Sin runner automatizado; verificación por capas:
+
+1. `node --check` en backend y `npm run build` en frontend.
+2. E2E manual contra API: login alumno/trabajador, crear → like/unlike → revisar
+   (aceptar/actualizar/estado inválido 400) → eliminar (fila + foto), 401/403,
+   rutas viejas 404, job `limpiarPendientesAntiguos()` con fila de prueba.
+3. Humo en navegador: login, feed, mis reportes, modal trabajador, dashboard,
+   consola sin errores.
+
+## Notas
+
+- Proyecto académico UNU: imágenes en disco local y carpeta única responden a
+  requisitos de entrega.
+- Para despliegue free: ver bloqueos conocidos (MySQL→Postgres, disco efímero→
+  storage externo, sesiones, CORS/`secure`, SPA rewrite, cold starts).
+
+## Licencia
+
+Ver `LICENSE`.
