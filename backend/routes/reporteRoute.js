@@ -28,7 +28,8 @@ const {
   obtenerReportesPorTipoProblema,
   obtenerReportesPorUbicacion,
   obtenerReportesPorTipoYUbicacion,
-  obtenerReportesPorMes
+  obtenerReportesPorMes,
+  obtenerReportesPorEstado
 } = require('../controllers/reporteController');
 
 // RUTAS QUE ESCRIBEN (protegidas)
@@ -53,5 +54,6 @@ router.get('/estadisticas/tipo-problema', obtenerReportesPorTipoProblema);
 router.get('/estadisticas/ubicacion', obtenerReportesPorUbicacion);
 router.get('/estadisticas/tipo-problema-ubicacion', obtenerReportesPorTipoYUbicacion);
 router.get('/estadisticas/por-mes', obtenerReportesPorMes);
+router.get('/estadisticas/por-estado', obtenerReportesPorEstado);
 
 module.exports = router;

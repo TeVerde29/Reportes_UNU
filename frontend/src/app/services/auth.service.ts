@@ -8,13 +8,14 @@
 // OJO: todo lleva { withCredentials: true } o la cookie no viaja.
 // ============================================================
 import { Injectable } from '@angular/core';
+import { environment } from '../environment/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private API = 'http://localhost:3000/api/auth';
+  private API = `${environment.apiUrl}/auth`;
 
   constructor(private http: HttpClient) {}
 

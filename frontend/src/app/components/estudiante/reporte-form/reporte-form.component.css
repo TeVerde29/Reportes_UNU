@@ -1,14 +1,14 @@
 :host {
   display: block;
-  --eu-primary: #2D5A46;
-  --eu-primary-hover: #356852;
-  --eu-focus-ring: #7FA998;
-  --eu-canvas: #F5F8F6;
+  --eu-primary: #256B45;
+  --eu-primary-hover: #1C5537;
+  --eu-focus-ring: #1F8A70;
+  --eu-canvas: #F6F7F3;
   --eu-card: #FFFFFF;
-  --eu-inset: #F0F4F2;
-  --eu-border: #E1E9E4;
-  --eu-border-soft: #D1DCD6;
-  --eu-ink: #111e1a;
+  --eu-inset: #EFF3EA;
+  --eu-border: #E4E8D8;
+  --eu-border-soft: #D5DCC8;
+  --eu-ink: #14201B;
   --eu-ink-soft: #414944;
   --eu-muted: #6C7A74;
   --eu-upload-bg: #F7FAF8;
@@ -40,7 +40,7 @@
   border: 1px solid var(--eu-border);
   border-radius: 16px;
   padding: 32px;
-  box-shadow: 0 1px 3px 0 rgba(45, 90, 70, 0.04), 0 1px 2px -1px rgba(45, 90, 70, 0.04);
+  box-shadow: 0 1px 3px 0 rgba(37, 107, 69, 0.04), 0 1px 2px -1px rgba(37, 107, 69, 0.04);
 }
 
 .eu-form-card h2 {

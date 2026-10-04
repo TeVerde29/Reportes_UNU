@@ -8,6 +8,7 @@ import {
   EstadisticaPorUbicacion,
   EstadisticaTipoProblemaUbicacion,
   EstadisticaPorMes,
+  EstadisticaPorEstado,
   ApiResponse,
 } from '../models/estadistica.interface';
 
@@ -50,6 +51,14 @@ export class ReporteEstadisticaService {
   obtenerPorMes(): Observable<EstadisticaPorMes[]> {
     return this.http
       .get<ApiResponse<EstadisticaPorMes[]>>(`${this.apiUrl}/por-mes`, {
+        withCredentials: true,
+      })
+      .pipe(map((resp) => resp.data ?? []));
+  }
+
+  obtenerPorEstado(): Observable<EstadisticaPorEstado[]> {
+    return this.http
+      .get<ApiResponse<EstadisticaPorEstado[]>>(`${this.apiUrl}/por-estado`, {
         withCredentials: true,
       })
       .pipe(map((resp) => resp.data ?? []));

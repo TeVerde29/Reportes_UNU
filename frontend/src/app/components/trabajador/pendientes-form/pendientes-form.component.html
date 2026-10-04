@@ -7,7 +7,7 @@
       <div class="eu-review-header-left">
         <span class="eu-review-indicator" aria-hidden="true"></span>
         <div>
-          <h5 class="eu-review-title">Detalle de Incidencia</h5>
+          <h5 class="eu-review-title">Detalle de incidencia</h5>
           <p class="eu-review-subtitle">ID Reporte: #{{ reporte.id_reporte }}</p>
           <span
             class="eu-badge"
@@ -29,12 +29,12 @@
       <section class="eu-review-data">
         <mat-form-field appearance="outline" class="eu-field">
           <mat-label>Título de la incidencia</mat-label>
-          <input matInput type="text" [(ngModel)]="form.titulo" [disabled]="tipoEstado !== 'Pendiente'">
+          <input matInput type="text" [(ngModel)]="form.titulo" [disabled]="!esEditable">
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="eu-field">
           <mat-label>Descripción detallada</mat-label>
-          <textarea matInput rows="4" [(ngModel)]="form.descripcion" [disabled]="tipoEstado !== 'Pendiente'"></textarea>
+          <textarea matInput rows="4" [(ngModel)]="form.descripcion" [disabled]="!esEditable"></textarea>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="eu-field">
@@ -64,7 +64,7 @@
       <aside class="eu-review-evidence">
         <span class="eu-read-label">Evidencia visual</span>
         <div class="eu-evidence-frame" *ngIf="reporte.foto_url; else sinEvidencia">
-          <img [src]="'http://localhost:3000' + reporte.foto_url" alt="Evidencia del reporte" class="eu-evidence-img">
+          <img [src]="baseUrl + reporte.foto_url" alt="Evidencia del reporte" class="eu-evidence-img">
         </div>
         <ng-template #sinEvidencia>
           <div class="eu-evidence-empty">
@@ -85,6 +85,12 @@
 
       <button *ngIf="tipoEstado === 'Aceptado'" mat-flat-button class="eu-btn-resolve" (click)="solucionar()">
         Marcar como solucionado
+      </button>
+      <button *ngIf="tipoEstado === 'Aceptado'" mat-flat-button class="eu-btn-accept" (click)="actualizar()">
+        Actualizar
+      </button>
+      <button *ngIf="tipoEstado === 'Aceptado' || tipoEstado === 'Resuelto'" mat-flat-button class="eu-btn-reject" (click)="eliminar()">
+        Eliminar reporte
       </button>
     </div>
 

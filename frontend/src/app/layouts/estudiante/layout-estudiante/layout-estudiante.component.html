@@ -5,11 +5,7 @@
       <!-- Brand -->
       <div class="brand">
         <div class="brand-logo" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 19h16" />
-            <path d="M6 19V7l6-3 6 3v12" />
-            <path d="M9 19v-6h6v6" />
-          </svg>
+          <img src="/img/unu-logo.png" alt="" width="40" height="40">
         </div>
         <div class="brand-text">
           <h1 class="brand-title">UNU Incidencias</h1>
@@ -30,7 +26,7 @@
           </button>
           <button mat-button type="button" class="eu-tab" [class.active]="activeTab === 'mis-reportes'" (click)="setActiveTab('mis-reportes')">
             <mat-icon>folder_shared</mat-icon>
-            <span>Mis Reportes</span>
+            <span>Mis reportes</span>
           </button>
         </div>
         <!-- Botones de acción -->
@@ -60,4 +56,27 @@
       <router-outlet></router-outlet>
     </main>
   </div>
+
+  <!-- Navegación inferior móvil (estilo Twitter/IG: solo ≤640px) -->
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <button type="button" class="bn-item" [class.active]="activeTab === 'ultimos'" (click)="setActiveTab('ultimos')">
+      <mat-icon>history</mat-icon>
+      <span>Últimos</span>
+    </button>
+    <button type="button" class="bn-item" [class.active]="activeTab === 'populares'" (click)="setActiveTab('populares')">
+      <mat-icon>trending_up</mat-icon>
+      <span>Populares</span>
+    </button>
+    <button type="button" class="bn-item bn-new" (click)="irNuevo()" aria-label="Nuevo reporte">
+      <mat-icon>add</mat-icon>
+    </button>
+    <button type="button" class="bn-item" [class.active]="activeTab === 'mis-reportes'" (click)="setActiveTab('mis-reportes')">
+      <mat-icon>folder_shared</mat-icon>
+      <span>Mis reportes</span>
+    </button>
+    <button type="button" class="bn-item" (click)="logout()" aria-label="Cerrar sesión">
+      <mat-icon>logout</mat-icon>
+      <span>Salir</span>
+    </button>
+  </nav>
 </div>
