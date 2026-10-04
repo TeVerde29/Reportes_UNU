@@ -1,4 +1,4 @@
 export const environment = {
-    apiUrl: 'https://TU-BACK.onrender.com/api',
-    baseUrl: 'https://TU-BACK.onrender.com'
+    apiUrl: 'https://reportes-unu.onrender.com/api',
+    baseUrl: 'https://reportes-unu.onrender.com'
 }
