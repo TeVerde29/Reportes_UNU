@@ -1,0 +1,37 @@
+# Render: back + BD gestionadas aparte (TiDB) + fotos (Cloudinary).
+# Guía: conecta este repo en dashboard.render.com → New → Web Service.
+services:
+  - type: web
+    name: reportes-unu-back
+    runtime: node
+    plan: free
+    buildCommand: npm install --prefix backend
+    startCommand: npm start --prefix backend
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 4000
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        value: reporte_incidencias
+      - key: DB_SSL
+        value: true
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: COOKIE_SECURE
+        value: true
+      - key: COOKIE_SAMESITE
+        value: none
+      - key: CLOUDINARY_URL
+        sync: false
+      - key: CLOUDINARY_FOLDER
+        value: reportes_unu

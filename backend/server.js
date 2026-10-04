@@ -70,7 +70,9 @@ app.use(session({
     saveUninitialized: false, // no crea sesión vacía
     cookie: {
         httpOnly: true, // el JS no la puede leer (frena robo por XSS)
-        sameSite: 'lax', // la cookie viaja en tu misma web (frena CSRF básico)
+        // En despliegue front y back están en dominios distintos:
+        // COOKIE_SAMESITE=none + COOKIE_SECURE=true (solo https)
+        sameSite: process.env.COOKIE_SAMESITE === 'none' ? 'none' : 'lax',
         secure: process.env.COOKIE_SECURE === 'true', // true solo con https en despliegue
         maxAge: 1000 * 60 * 60 * 8 // 8 horas de sesión
     }

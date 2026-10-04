@@ -28,6 +28,7 @@ Sistema web de la UNU para reportar averías e incidencias del campus
 8. **Toda subida exige foto real** (jpg/jpeg/png/webp, máx 5MB); el front la
    comprime antes de enviar.
 9. **Las fotos viven en disco local** (`UPLOAD_DIR`); en BD solo la ruta.
+   En nube (`CLOUDINARY_URL`) viven en Cloudinary; el código decide solo.
 10. **Estados válidos: 1 Pendiente, 2 Aceptado, 3 Resuelto.** Nada más.
 
 ## Mapa de estados
