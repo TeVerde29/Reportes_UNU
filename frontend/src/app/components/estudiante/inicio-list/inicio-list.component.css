@@ -399,6 +399,18 @@
   background: #0e1512;
   border-radius: 12px;
   overflow: hidden;
+  animation: modalIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .visor-img {
@@ -436,6 +448,29 @@
 
 .visor-close:hover {
   background: rgba(255, 255, 255, 0.3);
+}
+
+/* ===== Entrada escalonada (cascada suave al aparecer) ===== */
+.feed .post {
+  animation: cardIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.feed .feed-col:nth-child(1) .post:nth-child(1) { animation-delay: 0.02s; }
+.feed .feed-col:nth-child(1) .post:nth-child(2) { animation-delay: 0.08s; }
+.feed .feed-col:nth-child(1) .post:nth-child(3) { animation-delay: 0.14s; }
+.feed .feed-col:nth-child(2) .post:nth-child(1) { animation-delay: 0.05s; }
+.feed .feed-col:nth-child(2) .post:nth-child(2) { animation-delay: 0.11s; }
+.feed .feed-col:nth-child(2) .post:nth-child(3) { animation-delay: 0.17s; }
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .fab {
   position: fixed;

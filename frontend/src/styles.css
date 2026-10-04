@@ -122,6 +122,55 @@ mat-card.mat-mdc-card {
 }
 .eu-btn-primary:hover { background: var(--eu-primary-hover); }
 
+/* ===== Motion estilo Apple: respuesta inmediata, resortes suaves ===== */
+/* Feedback al presionar: empieza en el dedo, sin espera */
+button:active,
+a:active {
+  transition: transform 100ms ease-out;
+}
+
+button:not(:disabled):active,
+a:not([aria-disabled="true"]):active {
+  transform: scale(0.97);
+}
+
+/* Transiciones suaves en todo lo interactivo (200-300ms) */
+button,
+a,
+mat-card,
+input,
+select,
+textarea {
+  transition: background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* Scroll suave */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Foco visible para teclado (accesibilidad, no se quita) */
+:focus-visible {
+  outline: 2px solid var(--eu-primary, #256B45);
+  outline-offset: 2px;
+}
+
+/* Movimiento reducido: fundidos cortos, sin desplazamientos */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Los tabs quedan solo icono bajo 941px. OJO: .mdc-button__label lo rinde
    Angular Material sin el scope del componente, por eso va aquí global. */
 @media (max-width: 941px) {
