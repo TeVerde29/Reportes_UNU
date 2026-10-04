@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "outputDirectory": "dist/front",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
