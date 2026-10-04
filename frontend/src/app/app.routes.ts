@@ -18,6 +18,7 @@ import { PendientesFormComponent } from './components/trabajador/pendientes-form
 
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LayoutEstudianteComponent } from './layouts/estudiante/layout-estudiante/layout-estudiante.component';
 import { LayoutTrabajadorComponent } from './layouts/trabajador/layout-trabajador/layout-trabajador.component';
 import { SolucionadoListComponent } from './components/trabajador/solucionado-list/solucionado-list.component';
@@ -65,5 +66,5 @@ export const routes: Routes = [
     ]
   },
 
-  { path: '**', redirectTo: 'login' }
+  { path: '**', component: NotFoundComponent }
 ];

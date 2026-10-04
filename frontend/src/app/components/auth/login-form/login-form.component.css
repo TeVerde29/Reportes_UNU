@@ -20,9 +20,9 @@
 
 .login-card {
   position: relative;
-  width: 90%;
-  max-width: 500px;
-  padding: 35px 35px;
+  width: min(92%, 380px);
+  max-width: 380px;
+  padding: 32px 28px;
   background: rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(20px) saturate(180%);
   border-radius: 20px;
@@ -49,7 +49,7 @@
   font-size: 32px;
   font-weight: 700;
   text-align: center;
-  letter-spacing: 1px;
+  letter-spacing: -0.5px;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
@@ -186,19 +186,20 @@
 /* Responsive */
 @media (max-width: 480px) {
   .login-card {
-    padding: 30px 25px;
+    width: 66%;
+    padding: 20px 20px;
   }
   
   .unu-logo {
-    width: 85px;
-    height: 100px;
+    width: 75px;
+    height: 90px;
   }
 
   .login-title {
-    font-size: 32px;
+    font-size: 24px;
   }
 
   .login-subtitle {
-    font-size: 14px;
+    font-size: 13.5px;
   }
 }

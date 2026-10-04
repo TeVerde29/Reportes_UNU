@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subscription, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ReporteService } from '../../../services/reporte.service';
 import { EstadoService } from '../../../services/estado.service';
 import { AuthService } from '../../../services/auth.service';
@@ -10,6 +10,7 @@ import { ReaccionService } from '../../../services/reaccion.service';
 import { UbicacionService } from '../../../services/ubicacion.service';
 import { TipoProblemaService } from '../../../services/tipo-problema.service';
 import { Reporte, FiltrosReporte } from '../../../models/reporte.interface';
+import { environment } from '../../../environment/environment';
 import { Reaccion } from '../../../models/reaccion.interface';
 import { Ubicacion } from '../../../models/ubicacion.interface';
 import { TipoProbelma } from '../../../models/tipoProblema.interface';
@@ -34,19 +35,22 @@ export class InicioListComponent implements OnInit, OnDestroy {
   likedByMe: Record<number, boolean> = {};
   likeLoading: Record<number, boolean> = {};
   activeTab: 'ultimos' | 'populares' | 'mis-reportes' = 'ultimos';
+  readonly baseUrl = environment.baseUrl;
   private querySubscription?: Subscription;
+  private busqueda$ = new Subject<string>();
+  private busquedaSub?: Subscription;
   private codigoEstudiante: string = '';
   private sesionLista = false;
-  // Filtros + paginación (no traer el 100%)
+  // Filtros + se trae todo (sin paginación ni "Ver más")
   tipos: TipoProbelma[] = [];
   ubicaciones: Ubicacion[] = [];
   filtroTipo: number | null = null;
   filtroUbi: number | null = null;
   textoQ: string = '';
-  pagina: number = 1;
-  porPagina: number = 10;
-  total: number = 0;
-  cargandoMas: boolean = false;
+  // Visor de foto completa
+  fotoAmpliada: string | null = null;
+  fotoTitulo: string = '';
+  private indiceAmpliada: number = -1;
 
   constructor(
     private reporteService: ReporteService,
@@ -62,6 +66,10 @@ export class InicioListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.cargarSesion();
     this.cargarCatalogos();
+    this.busquedaSub = this.busqueda$.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(() => this.aplicarFiltros());
     this.querySubscription = this.route.queryParams.subscribe(params => {
       const tab = params['tab'];
       this.activeTab = (tab === 'populares' || tab === 'mis-reportes') ? tab : 'ultimos';
@@ -69,15 +77,14 @@ export class InicioListComponent implements OnInit, OnDestroy {
     });
   }
 
-  private cargarSegunTab(desdeCero: boolean = true): void {
-    if (desdeCero) this.pagina = 1;
+  private cargarSegunTab(): void {
     if (this.activeTab === 'ultimos') {
-      this.cargarReportesPorFecha(!desdeCero);
+      this.cargarReportesPorFecha();
       return;
     }
 
     if (this.activeTab === 'populares') {
-      this.cargarReportesConMasLikes(!desdeCero);
+      this.cargarReportesConMasLikes();
       return;
     }
 
@@ -87,17 +94,17 @@ export class InicioListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.cargarMisReportes(!desdeCero);
+    this.cargarMisReportes();
   }
 
 
   ngOnDestroy(): void {
     this.querySubscription?.unsubscribe();
+    this.busquedaSub?.unsubscribe();
   }
 
   setActiveTab(tab: 'ultimos' | 'populares' | 'mis-reportes'): void {
     this.activeTab = tab;
-    this.pagina = 1;
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab: tab },
@@ -117,11 +124,10 @@ export class InicioListComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Filtros actuales como query del back
+  // Filtros actuales como query del back (se trae todo de una vez)
   private filtrosActuales(): FiltrosReporte {
     return {
-      page: this.pagina,
-      limit: this.porPagina,
+      limit: 500,
       id_tipo_problema: this.filtroTipo,
       id_ubicacion: this.filtroUbi,
       q: this.textoQ
@@ -129,34 +135,25 @@ export class InicioListComponent implements OnInit, OnDestroy {
   }
 
   aplicarFiltros(): void {
-    this.pagina = 1;
     this.cargarSegunTab();
+  }
+
+  // Buscar escribe y filtra solo (con pausa para no saturar)
+  buscarEscribiendo(): void {
+    this.busqueda$.next(this.textoQ);
+  }
+
+  // X dentro del buscador: borra el texto y refiltra sin mover nada
+  limpiarTexto(): void {
+    this.textoQ = '';
+    this.aplicarFiltros();
   }
 
   limpiarFiltros(): void {
     this.filtroTipo = null;
     this.filtroUbi = null;
     this.textoQ = '';
-    this.pagina = 1;
     this.cargarSegunTab();
-  }
-
-  verMas(): void {
-    if (this.cargandoMas || !this.hayMas) return;
-    this.pagina++;
-    this.cargarSegunTab(false);
-  }
-
-  get hayMas(): boolean {
-    return this.reportes.length < this.total;
-  }
-
-  // Guarda la página y suma si es "Ver más"
-  private pintar(reportes: Reporte[], total: number, esMas: boolean): void {
-    this.total = total ?? 0;
-    this.reportes = esMas ? [...this.reportes, ...reportes] : reportes;
-    this.error = '';
-    this.cargandoMas = false;
   }
 
   cargarSesion(): void {
@@ -204,9 +201,8 @@ export class InicioListComponent implements OnInit, OnDestroy {
     });
   }
 
-  cargarReportesPorFecha(esMas: boolean = false): void {
+  cargarReportesPorFecha(): void {
     this.error = '';
-    if (esMas) this.cargandoMas = true;
     this.estadoService.obtenerEstadoPorNombre('Aceptado').subscribe({
       next: (response) => {
         const estadoAceptado = Array.isArray(response.data) ? response.data[0] : response.data;
@@ -217,17 +213,15 @@ export class InicioListComponent implements OnInit, OnDestroy {
         this.reporteService.obtenerReportesPorIdEstado(estadoAceptado.id_estado, this.filtrosActuales()).subscribe({
           next: (resp) => {
             if (resp.success && Array.isArray(resp.data)) {
-              this.pintar(resp.data, resp.total ?? resp.data.length, esMas);
+              this.reportes = resp.data;
             } else {
-              this.reportes = esMas ? this.reportes : [];
-              this.error = esMas ? '' : 'No se pudieron cargar los reportes';
-              this.cargandoMas = false;
+              this.reportes = [];
+              this.error = 'No se pudieron cargar los reportes';
             }
           },
           error: (er) => {
             console.error('Error al obtener los reportes:', er);
             this.error = 'Error al cargar los reportes';
-            this.cargandoMas = false;
           },
         });
       },
@@ -238,46 +232,40 @@ export class InicioListComponent implements OnInit, OnDestroy {
     });
   }
 
-cargarReportesConMasLikes(esMas: boolean = false): void {
+cargarReportesConMasLikes(): void {
   this.error = '';
-  if (esMas) this.cargandoMas = true;
   this.reporteService.obtenerReportesPorMayorReacciones(this.filtrosActuales()).subscribe({
     next: (resp) => {
       if (resp.success && Array.isArray(resp.data)) {
-        this.pintar(resp.data, resp.total ?? resp.data.length, esMas);
+        this.reportes = resp.data;
       } else {
-        this.reportes = esMas ? this.reportes : [];
+        this.reportes = [];
         this.error = '';
-        this.cargandoMas = false;
       }
     },
     error: (er) => {
       console.error('Error al obtener los reportes:', er);
-      this.reportes = esMas ? this.reportes : [];
+      this.reportes = [];
       this.error = 'Error al cargar los reportes';
-      this.cargandoMas = false;
     },
   });
 }
 
-  cargarMisReportes(esMas: boolean = false): void {
+  cargarMisReportes(): void {
     this.error = '';
-    if (esMas) this.cargandoMas = true;
     this.reporteService.obtenerReportesPorIdEstudiante(this.filtrosActuales()).subscribe({
       next: (resp) => {
         if (resp.success && Array.isArray(resp.data)) {
-          this.pintar(resp.data, resp.total ?? resp.data.length, esMas);
+          this.reportes = resp.data;
         } else {
-          this.reportes = esMas ? this.reportes : [];
-          this.error = esMas ? '' : 'No se pudieron cargar los reportes';
-          this.cargandoMas = false;
+          this.reportes = [];
+          this.error = 'No se pudieron cargar los reportes';
         }
       },
       error: (er) => {
         console.error('Error al obtener los reportes:', er);
-        this.reportes = esMas ? this.reportes : [];
+        this.reportes = [];
         this.error = 'Error al cargar los reportes';
-        this.cargandoMas = false;
       },
     });
   }
@@ -334,6 +322,49 @@ cargarReportesConMasLikes(esMas: boolean = false): void {
     return item.id_reporte ?? index;
   }
 
+  // Muestra "FACULTAD DE X" como "Fac. X"
+  tituloCorto(texto: string | undefined): string {
+    if (!texto) return '';
+    const t = texto.toLowerCase().replace(/(^|\s|[-(])\p{L}/gu, m => m.toUpperCase());
+    return t.replace(/^Facultad De /, 'Fac. ');
+  }
+
+  // Columnas para masonry cronológico: pares a la izq, impares a la der
+  get colIzquierda(): Reporte[] {
+    return this.reportes.filter((_, i) => i % 2 === 0);
+  }
+
+  get colDerecha(): Reporte[] {
+    return this.reportes.filter((_, i) => i % 2 === 1);
+  }
+
+  // Visor de foto completa tipo Facebook (fondo, X, Escape, flechas)
+  abrirFoto(r: Reporte): void {
+    if (!r.foto_url) return;
+    this.indiceAmpliada = this.reportes.findIndex(x => x.id_reporte === r.id_reporte);
+    this.mostrarAmpliada();
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarFoto(): void {
+    this.fotoAmpliada = null;
+    this.indiceAmpliada = -1;
+    document.body.style.overflow = '';
+  }
+
+  private mostrarAmpliada(): void {
+    const r = this.reportes[this.indiceAmpliada];
+    if (!r?.foto_url) return;
+    this.fotoAmpliada = this.baseUrl + r.foto_url;
+    this.fotoTitulo = r.titulo || 'Foto del reporte';
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  teclaVisor(event: KeyboardEvent): void {
+    if (!this.fotoAmpliada) return;
+    if (event.key === 'Escape') this.cerrarFoto();
+  }
+
   // Si la foto no carga (back caído o archivo borrado), muestra aviso
   imgRota(event: Event): void {
     const img = event.target as HTMLImageElement;
@@ -352,6 +383,34 @@ cargarReportesConMasLikes(esMas: boolean = false): void {
     return (partes[0].charAt(0) + partes[partes.length - 1].charAt(0)).toUpperCase();
   }
 
+  // Estilo Facebook: relativo hasta 1 semana, luego fecha exacta
+  // Se usa fecha_edicion (igual que el orden): lo recién movido sale primero
+  etiquetaFecha(r: Reporte): string {
+    const value: any = r.fecha_edicion || r.fecha_reporte;
+    if (!value) return '';
+    const date = value instanceof Date ? value : new Date(value);
+    if (isNaN(date.getTime())) return '';
+    const dias = Math.floor(Math.max(0, Date.now() - date.getTime()) / 86400000);
+    if (dias >= 14) {
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      return `${dd}/${mm}/${date.getFullYear()}`;
+    }
+    return this.timeAgo(value);
+  }
+
+  fechaExacta(r: Reporte): string {
+    const value: any = r.fecha_reporte || r.fecha_edicion;
+    if (!value) return '';
+    const date = value instanceof Date ? value : new Date(value);
+    if (isNaN(date.getTime())) return '';
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const hh = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    return `${dd}/${mm}/${date.getFullYear()} ${hh}:${min}`;
+  }
+
   timeAgo(value: string | Date | null | undefined): string {
     if (!value) return '';
     const date = value instanceof Date ? value : new Date(value);
@@ -368,11 +427,6 @@ cargarReportesConMasLikes(esMas: boolean = false): void {
     const day = Math.floor(hr / 24);
     if (day === 1) return 'ayer';
     if (day < 7) return `hace ${day} días`;
-    const week = Math.floor(day / 7);
-    if (week < 5) return `hace ${week} ${week === 1 ? 'semana' : 'semanas'}`;
-    const month = Math.floor(day / 30);
-    if (month < 12) return `hace ${month} ${month === 1 ? 'mes' : 'meses'}`;
-    const year = Math.floor(day / 365);
-    return `hace ${year} ${year === 1 ? 'año' : 'años'}`;
+    return 'hace 1 semana';
   }
 }

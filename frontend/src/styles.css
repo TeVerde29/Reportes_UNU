@@ -8,25 +8,25 @@ body { margin: 0; font-family: 'Plus Jakarta Sans', Roboto, "Helvetica Neue", sa
    Sobrescribe los tokens M3 del tema prebuilt azure-blue.
    ===================================================================== */
 :root {
-  /* Marca */
-  --eu-primary: #2D5A46;            /* Deep Eucalyptus */
-  --eu-primary-hover: #356852;
-  --eu-primary-deep: #134230;
-  --eu-secondary: #7FA998;          /* Sage Mint */
+  /* Marca amazónica */
+  --eu-primary: #256B45;            /* Verde selva */
+  --eu-primary-hover: #1C5537;
+  --eu-primary-deep: #123F2A;
+  --eu-secondary: #1F8A70;          /* Turquesa UNU */
   --eu-tertiary: #3B729F;           /* Tempered Slate Blue */
-  --eu-ink: #111e1a;
+  --eu-ink: #14201B;
   --eu-ink-soft: #414944;
-  --eu-muted: #6C7A74;
+  --eu-muted: #68755F;
 
   /* Canvas y superficies */
-  --eu-canvas: #F5F8F6;
+  --eu-canvas: #F6F7F3;
   --eu-card: #FFFFFF;
-  --eu-inset: #F0F4F2;
-  --eu-border: #E1E9E4;
-  --eu-border-soft: #D1DCD6;
+  --eu-inset: #EFF3EA;
+  --eu-border: #E4E8D8;
+  --eu-border-soft: #D5DCC8;
 
   /* Tokens M3 (los leen los componentes mat-*) */
-  --mat-sys-primary: #2D5A46;
+  --mat-sys-primary: #256B45;
   --mat-sys-on-primary: #ffffff;
   --mat-sys-primary-container: #c0ecd9;
   --mat-sys-on-primary-container: #224f3c;
@@ -57,6 +57,8 @@ body { margin: 0; font-family: 'Plus Jakarta Sans', Roboto, "Helvetica Neue", sa
   /* Tipografía M3 -> Plus Jakarta Sans */
   --mat-sys-brand-font-family: 'Plus Jakarta Sans', Roboto, sans-serif;
   --mat-sys-plain-font-family: 'Plus Jakarta Sans', Roboto, sans-serif;
+  /* Serif institucional solo para marca y titulares */
+  --eu-serif: 'Fraunces', Georgia, 'Times New Roman', serif;
 }
 
 body {
@@ -69,7 +71,7 @@ mat-card.mat-mdc-card {
   background-color: var(--eu-card);
   border: 1px solid var(--eu-border);
   border-radius: 16px;
-  box-shadow: 0 1px 3px 0 rgba(45, 90, 70, 0.04), 0 1px 2px -1px rgba(45, 90, 70, 0.04);
+  box-shadow: 0 1px 3px 0 rgba(37, 107, 69, 0.06), 0 1px 2px -1px rgba(37, 107, 69, 0.06);
 }
 
 /* =====================================================================
@@ -89,9 +91,9 @@ mat-card.mat-mdc-card {
   border: 1px solid transparent;
   white-space: nowrap;
 }
-.eu-badge-pendiente { background: #FEF7EA; color: #945610; border-color: #F3D39B; }
-.eu-badge-aceptado  { background: #EDF6F1; color: #235B3C; border-color: #B2DEC2; }
-.eu-badge-resuelto  { background: #EFF6FB; color: #1F5987; border-color: #B9DBF2; }
+.eu-badge-pendiente { background: #F7E4DC; color: #A03D22; border-color: #EBC4B4; }
+.eu-badge-aceptado  { background: #E6F2E8; color: #256B45; border-color: #B4DCC0; }
+.eu-badge-resuelto  { background: #E4F2F0; color: #14705C; border-color: #B5DCD3; }
 .eu-badge-rechazado { background: #FDF2F2; color: #9C2B2B; border-color: #F3BCBC; }
 
 /* Tag de categoría (tipo problema / ubicación) */
@@ -103,8 +105,8 @@ mat-card.mat-mdc-card {
   border-radius: 9999px;
   font-size: 12px;
   font-weight: 600;
-  background: #E8EFEA;
-  color: #2D5A46;
+  background: #E7EEE2;
+  color: #256B45;
   white-space: nowrap;
 }
 
@@ -119,3 +121,71 @@ mat-card.mat-mdc-card {
   cursor: pointer;
 }
 .eu-btn-primary:hover { background: var(--eu-primary-hover); }
+
+/* Los tabs quedan solo icono bajo 941px. OJO: .mdc-button__label lo rinde
+   Angular Material sin el scope del componente, por eso va aquí global. */
+@media (max-width: 941px) {
+  .tabs .eu-tab.mat-mdc-button .mdc-button__label {
+    display: none;
+  }
+
+  .tabs .eu-tab.mat-mdc-button {
+    min-width: 40px;
+    padding: 0 12px;
+    justify-content: center;
+  }
+}
+
+/* Los internos de Material no llevan scope: los densos van globales */
+.filter-bar .filter-field.mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  height: 34px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.filter-bar .filter-field.mat-mdc-form-field .mat-mdc-form-field-flex {
+  height: 34px;
+  align-items: center;
+}
+
+.filter-bar .filter-field.mat-mdc-form-field .mat-mdc-form-field-infix {
+  min-height: 0;
+  padding: 5px 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Etiqueta quieta centrada (sin flotar) */
+.filter-bar .filter-field.mat-mdc-form-field .mdc-floating-label:not(.mdc-floating-label--float-above) {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.filter-bar .filter-field.mat-mdc-form-field .mat-mdc-floating-label,
+.filter-bar .filter-field.mat-mdc-form-field .mdc-floating-label {
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.filter-bar .filter-field.mat-mdc-form-field input.mat-mdc-input-element,
+.filter-bar .filter-field.mat-mdc-form-field .mat-mdc-select-value {
+  font-size: 13px;
+}
+
+/* Opciones del desplegable (rinden en overlay global, compactas) */
+.cdk-overlay-pane .mat-mdc-option {
+  font-size: 13px;
+  min-height: 36px;
+}
+
+.cdk-overlay-pane .mat-mdc-option .mdc-list-item__primary-text {
+  font-size: 13px;
+}
+
+.filter-bar .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+/* Los paneles de Material (mat-select, etc.) rinden en body con z-1000:
+   subirlos sobre el modal de revisión (1051) o las opciones salen detrás */
+.cdk-overlay-container { z-index: 1060; }

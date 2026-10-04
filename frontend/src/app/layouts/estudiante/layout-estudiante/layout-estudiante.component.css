@@ -16,13 +16,14 @@
   color: var(--eu-ink);
 }
 
-/* ===== Topbar ===== */
+/* ===== Topbar institucional (franja verde selva profunda) ===== */
 .topbar {
   position: sticky;
   top: 0;
   z-index: 50;
-  background-color: #ffffff;
-  border-bottom: 1px solid var(--eu-border);
+  background: linear-gradient(180deg, #123F2A 0%, #0E3524 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 12px rgba(10, 30, 20, 0.25);
 }
 
 .topbar-inner {
@@ -47,30 +48,38 @@
 .brand-logo {
   width: 40px;
   height: 40px;
-  border-radius: 12px;
-  background-color: var(--eu-primary);
-  color: #ffffff;
+  border-radius: 50%;
+  background-color: #ffffff;
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+.brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .brand-title {
   margin: 0;
-  font-size: 16px;
+  font-family: var(--eu-serif);
+  font-size: 19px;
   font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--eu-ink);
+  letter-spacing: 0;
+  color: #ffffff;
   line-height: 1.2;
 }
 
 .brand-subtitle {
   margin: 2px 0 0;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--eu-muted);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 /* ===== Top Actions ===== */
@@ -84,19 +93,19 @@
   min-width: 0;
 }
 
-/* Tabs pill (contenedor estilo segmented control profesional) */
+/* Tabs pill sobre franja oscura: contenedor translúcido */
 .tabs {
   display: inline-flex;
   align-items: center;
-  background-color: #EDF1EE;
-  border: 1px solid #DFE7E1;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 9999px;
   padding: 4px;
   gap: 4px;
-  box-shadow: inset 0 1px 2px rgba(17, 30, 26, 0.05);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
-/* Tabs pill (botones mat-button): inactivo sobrio; activo = pill #2D5A46 + texto blanco */
+/* Tabs pill (botones mat-button): inactivo sobrio; activo = pill #256B45 + texto blanco */
 .tabs .eu-tab.mat-mdc-button {
   border-radius: 9999px;
   min-width: 0;
@@ -106,7 +115,7 @@
   font-size: 12.5px;
   font-weight: 600;
   letter-spacing: 0.01em;
-  color: #5C6D64;
+  color: rgba(255, 255, 255, 0.78);
   background-color: transparent;
   border: 1px solid transparent;
   display: inline-flex;
@@ -134,25 +143,25 @@
 }
 
 .tabs .eu-tab.mat-mdc-button:hover {
-  background-color: #FFFFFF;
-  color: var(--eu-ink);
-  box-shadow: 0 1px 2px rgba(17, 30, 26, 0.08);
+  background-color: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  box-shadow: none;
 }
 
 .tabs .eu-tab.mat-mdc-button.active {
-  background-color: #2D5A46;
-  border-color: #2D5A46;
-  color: #ffffff;
-  box-shadow: 0 1px 2px rgba(45, 90, 70, 0.35);
+  background-color: #ffffff;
+  border-color: #ffffff;
+  color: #123F2A;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .tabs .eu-tab.mat-mdc-button.active:hover {
-  background-color: #356852;
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #123F2A;
 }
 
 .tabs .eu-tab.mat-mdc-button:focus-visible {
-  outline: 2px solid #2D5A46;
+  outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
 
@@ -163,9 +172,9 @@
   align-items: center;
 }
 
-/* Salir: pill profesional a juego con los tabs */
+/* Salir: pill translúcida sobre franja oscura */
 .actions .eu-ghost.mat-mdc-button {
-  border: 1px solid #DFE7E1;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 9999px;
   min-height: 42px;
   height: 42px;
@@ -173,24 +182,24 @@
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.01em;
-  color: var(--eu-primary);
-  background-color: #FFFFFF;
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
   display: inline-flex;
   align-items: center;
   gap: 8px;
   line-height: 1;
-  box-shadow: 0 1px 2px rgba(17, 30, 26, 0.06);
+  box-shadow: none;
   transition: background-color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
 .actions .eu-ghost.mat-mdc-button:hover {
-  background-color: #EDF3F0;
-  border-color: #CBD8D0;
-  box-shadow: 0 1px 3px rgba(17, 30, 26, 0.1);
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: none;
 }
 
 .actions .eu-ghost.mat-mdc-button:focus-visible {
-  outline: 2px solid #2D5A46;
+  outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
 
@@ -221,23 +230,23 @@
   height: 18px;
 }
 
-/* ===== User Chip ===== */
+/* ===== User Chip sobre franja oscura ===== */
 .user-chip {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 4px 14px 4px 4px;
   border-radius: 9999px;
-  border: 1px solid var(--eu-border);
-  background-color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .user-avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: var(--eu-primary);
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #123F2A;
   display: grid;
   place-items: center;
   font-size: 12px;
@@ -250,7 +259,7 @@
   font-size: 13px;
   font-weight: 600;
   line-height: 1.2;
-  color: var(--eu-ink);
+  color: #ffffff;
   white-space: nowrap;
 }
 
@@ -260,12 +269,17 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--eu-muted);
+  color: rgba(255, 255, 255, 0.72);
 }
 
-/* ===== Layout (feed centrado referencia: max 680px) ===== */
+/* ===== Navegación inferior móvil (oculta en desktop) ===== */
+.bottom-nav {
+  display: none;
+}
+
+/* ===== Layout (feed de 2 columnas necesita más aire) ===== */
 .layout {
-  max-width: 680px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 24px 16px 40px;
 }
@@ -275,7 +289,7 @@
 }
 
 /* ===== Responsive ===== */
-@media (max-width: 900px) {
+@media (max-width: 1008px) {
   .topbar-inner {
     padding: 12px 16px;
     flex-wrap: wrap;
@@ -283,12 +297,57 @@
 
   .tabs {
     max-width: 100%;
-    overflow-x: auto;
+    flex-wrap: wrap;
+  }
+
+  /* Al angostar, Salir queda solo icono redondo y centrado */
+  .actions .btn-text {
+    display: none;
+  }
+
+  .actions .eu-ghost.mat-mdc-button {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+  }
+
+  .actions .eu-ghost.mat-mdc-button .mdc-button__label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .actions .eu-ghost.mat-mdc-button mat-icon {
+    margin: 0;
+    transform: translateX(5px);
+  }
+}
+
+/* A 941px los tabs quedan solo icono (regla global en styles.css) */
+
+/* A 747px el chip queda solo con iniciales */
+@media (max-width: 747px) {
+  .user-chip .user-info {
+    display: none;
+  }
+
+  .user-chip {
+    padding: 4px;
   }
 }
 
 @media (max-width: 640px) {
   .btn-text {
+    display: none;
+  }
+
+  /* En móvil Salir vive abajo: fuera el de arriba */
+  .actions {
     display: none;
   }
 
@@ -300,6 +359,70 @@
 
   .user-info {
     display: none;
+  }
+
+  /* En móvil los tabs viven abajo: topbar de una sola fila limpia */
+  .top-actions .tabs {
+    display: none;
+  }
+
+  .layout {
+    padding: 16px 12px 96px;
+  }
+
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    background: #123F2A;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+    box-shadow: 0 -2px 12px rgba(10, 30, 20, 0.25);
+  }
+
+  .bn-item {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 4px;
+    border: none;
+    background: none;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 48px;
+    justify-content: center;
+  }
+
+  .bn-item.active {
+    color: #ffffff;
+  }
+
+  .bn-item .mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+
+  .bn-new {
+    flex: 0 0 auto;
+  }
+
+  .bn-new .mat-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 26px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #123F2A;
+    display: grid;
+    place-items: center;
   }
 
   .user-chip {

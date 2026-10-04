@@ -527,7 +527,7 @@ const obtenerReportesPendientesPorIdEstudiante = async (req, res) => {
       INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
       INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
       WHERE es.nombre = ? AND r.codigo_estudiante = ?${extraWhere}
-      ORDER BY r.fecha_reporte DESC
+      ORDER BY r.fecha_edicion DESC
       LIMIT ? OFFSET ?
     `, [estado, codigo_estudiante, ...vals, limit, offset]);
     if (reportes.length === 0) {
@@ -575,7 +575,7 @@ const obtenerReportesPorIdEstudiante = async (req, res) => {
       INNER JOIN tipo_problema tp ON r.id_tipo_problema = tp.id_tipo_problema
       INNER JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
       WHERE r.codigo_estudiante = ?${extraWhere}
-      ORDER BY r.fecha_reporte DESC
+      ORDER BY r.fecha_edicion DESC
       LIMIT ? OFFSET ?
     `, [codigo_estudiante, ...vals, limit, offset]);
     if (reportes.length === 0) {
@@ -736,6 +736,39 @@ const obtenerReportesPorMes = async (req, res) => {
   }
 };
 
+// ============================================================
+// CONTEO POR ESTADO (para el gráfico de embudo del dashboard)
+// Guía: pendientes vs aceptados vs resueltos de un vistazo.
+// ============================================================
+const obtenerReportesPorEstado = async (req, res) => {
+  try {
+    const [resultados] = await db.query(`
+      SELECT
+        es.id_estado,
+        es.nombre AS estado,
+        COUNT(r.id_reporte) AS total_reportes
+      FROM estado es
+      LEFT JOIN reporte r
+        ON r.id_estado = es.id_estado
+      GROUP BY
+        es.id_estado,
+        es.nombre
+      ORDER BY total_reportes DESC
+    `);
+    return res.status(200).json({
+      success: true,
+      message: 'Estadística de reportes por estado obtenida correctamente',
+      data: resultados
+    });
+  } catch (error) {
+    console.error('Error al obtener estadística por estado:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener la estadística de reportes por estado'
+    });
+  }
+};
+
 module.exports = {
   upload,
   crearReporte,
@@ -750,5 +783,6 @@ module.exports = {
   obtenerReportesPorTipoProblema,
   obtenerReportesPorUbicacion,
   obtenerReportesPorTipoYUbicacion,
-  obtenerReportesPorMes
+  obtenerReportesPorMes,
+  obtenerReportesPorEstado
 };

@@ -1,3 +1,29 @@
+<!-- Filtros compactos sin tarjeta -->
+<div class="filter-bar">
+  <mat-form-field appearance="outline" class="filter-field" subscriptSizing="dynamic">
+    <mat-label>Categoría</mat-label>
+    <mat-select [(ngModel)]="filtroTipo" (selectionChange)="aplicarFiltros()">
+      <mat-option [value]="null">Todas</mat-option>
+      <mat-option *ngFor="let t of tipos" [value]="t.id_tipo_problema">{{ t.nombre }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="filter-field" subscriptSizing="dynamic">
+    <mat-label>Ubicación</mat-label>
+    <mat-select [(ngModel)]="filtroUbi" (selectionChange)="aplicarFiltros()">
+      <mat-option [value]="null">Todas</mat-option>
+      <mat-option *ngFor="let u of ubicaciones" [value]="u.id_ubicacion">{{ u.nombre }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="filter-field filter-search" subscriptSizing="dynamic">
+    <mat-icon matPrefix>search</mat-icon>
+    <mat-label>Buscar</mat-label>
+    <input matInput type="text" [(ngModel)]="textoQ" (ngModelChange)="buscarEscribiendo()" placeholder="Título">
+    <button *ngIf="textoQ" mat-icon-button matSuffix type="button" (click)="limpiarTexto()" aria-label="Limpiar búsqueda">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+
 <!-- Mensaje de error -->
 <div *ngIf="error" class="alert alert-error">
   <span class="alert-dot" aria-hidden="true"></span>
@@ -13,33 +39,9 @@
   <p>Cuando se creen nuevos reportes, aparecerán aquí.</p>
 </div>
 
-<!-- Filtros + buscador -->
-<div class="filter-bar">
-  <mat-form-field appearance="outline" class="filter-field">
-    <mat-label>Categoría</mat-label>
-    <mat-select [(ngModel)]="filtroTipo" (selectionChange)="aplicarFiltros()">
-      <mat-option [value]="null">Todas</mat-option>
-      <mat-option *ngFor="let t of tipos" [value]="t.id_tipo_problema">{{ t.nombre }}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field appearance="outline" class="filter-field">
-    <mat-label>Ubicación</mat-label>
-    <mat-select [(ngModel)]="filtroUbi" (selectionChange)="aplicarFiltros()">
-      <mat-option [value]="null">Todas</mat-option>
-      <mat-option *ngFor="let u of ubicaciones" [value]="u.id_ubicacion">{{ u.nombre }}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field appearance="outline" class="filter-field filter-search">
-    <mat-label>Buscar por título</mat-label>
-    <input matInput type="text" [(ngModel)]="textoQ" (keyup.enter)="aplicarFiltros()" placeholder="Ej: puerta">
-  </mat-form-field>
-  <button mat-stroked-button type="button" class="filter-btn" (click)="aplicarFiltros()">Filtrar</button>
-  <button mat-button type="button" class="filter-clear" (click)="limpiarFiltros()">Limpiar</button>
-</div>
-
-<!-- Feed de reportes -->
-<section *ngIf="!error && reportes.length > 0" class="feed">
-  <mat-card *ngFor="let r of reportes; trackBy: trackByIdReporte" class="post">
+<!-- Feed de reportes (2 columnas: pares izq, impares der = orden cronológico) -->
+<ng-template #tarjeta let-r="reporte">
+  <mat-card class="post">
     <!-- Header del post -->
     <div class="post-head">
       <div class="post-avatar" aria-hidden="true">
@@ -49,18 +51,11 @@
         <div class="post-meta-top">
           <strong class="post-student">{{ r.estudiante || 'Usuario' }}</strong>
           <span class="post-subline">
-            <span class="post-career">• {{ r.carrera || 'Sin carrera' }}</span>
-            <span class="dot" aria-hidden="true">•</span>
+            <span class="post-career">{{ r.carrera || 'Sin carrera' }}</span>
             <span
               class="post-date"
-              [title]="(r.fecha_reporte || r.fecha_edicion) | date : 'dd/MM/yyyy HH:mm'"
-              >{{ timeAgo(r.fecha_edicion || r.fecha_reporte) }}</span
-            >
-            <span class="dot" aria-hidden="true">•</span>
-            <span
-              *ngIf="r.fecha_reporte || r.fecha_edicion"
-              class="post-date-exact"
-              >{{ (r.fecha_reporte || r.fecha_edicion) | date : 'dd/MM/yyyy HH:mm' }}</span
+              [title]="fechaExacta(r)"
+              >{{ etiquetaFecha(r) }}</span
             >
           </span>
         </div>
@@ -68,7 +63,7 @@
     </div>
     <div class="post-meta-bottom">
       <span class="eu-tag">{{ r.tipo_problema }}</span>
-      <span class="eu-tag">{{ r.ubicacion }}</span>
+      <span class="eu-tag tag-ubi" [title]="r.ubicacion">{{ tituloCorto(r.ubicacion) }}</span>
       <span *ngIf="activeTab === 'mis-reportes'"
             class="eu-badge"
             [ngClass]="{
@@ -83,9 +78,9 @@
     <div class="post-body">
       <h3 class="post-title">{{ r.titulo }}</h3>
       <p *ngIf="r.descripcion" class="post-text">{{ r.descripcion }}</p>
-      <div *ngIf="r.foto_url" class="post-media">
+      <div *ngIf="r.foto_url" class="post-media" (click)="abrirFoto(r)" (keyup.enter)="abrirFoto(r)" tabindex="0" role="button" [attr.aria-label]="'Ampliar foto de ' + (r.titulo || 'reporte')">
         <img
-          [src]="'http://localhost:3000' + r.foto_url"
+          [src]="baseUrl + r.foto_url"
           [alt]="r.titulo || 'Imagen del reporte'"
           loading="lazy"
           class="post-image"
@@ -109,17 +104,33 @@
       </div>
     </div>
   </mat-card>
-</section>
+</ng-template>
 
-<!-- Ver más (paginación) -->
-<div *ngIf="!error && reportes.length > 0" class="more-wrap">
-  <p *ngIf="total > 0" class="more-count">Mostrando {{ reportes.length }} de {{ total }}</p>
-  <button *ngIf="hayMas" mat-stroked-button type="button" class="more-btn" (click)="verMas()" [disabled]="cargandoMas">
-    {{ cargandoMas ? 'Cargando...' : 'Ver más' }}
-  </button>
-</div>
+<section *ngIf="!error && reportes.length > 0" class="feed">
+  <div class="feed-col">
+    <ng-container *ngFor="let r of colIzquierda; trackBy: trackByIdReporte">
+      <ng-container *ngTemplateOutlet="tarjeta; context: { reporte: r }"></ng-container>
+    </ng-container>
+  </div>
+  <div class="feed-col">
+    <ng-container *ngFor="let r of colDerecha; trackBy: trackByIdReporte">
+      <ng-container *ngTemplateOutlet="tarjeta; context: { reporte: r }"></ng-container>
+    </ng-container>
+  </div>
+</section>
 
 <!-- FAB para nuevo reporte -->
 <a mat-fab class="fab" routerLink="/estudiante/nuevo-reporte" aria-label="Nuevo reporte" title="Nuevo reporte">
   <mat-icon>add</mat-icon>
 </a>
+
+<!-- Visor de foto completa -->
+<div *ngIf="fotoAmpliada" class="visor-backdrop" (click)="cerrarFoto()">
+  <div class="visor-card" (click)="$event.stopPropagation()">
+    <img [src]="fotoAmpliada" [alt]="fotoTitulo" class="visor-img">
+    <p class="visor-caption">{{ fotoTitulo }}</p>
+    <button type="button" class="visor-close" (click)="cerrarFoto()" aria-label="Cerrar">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>

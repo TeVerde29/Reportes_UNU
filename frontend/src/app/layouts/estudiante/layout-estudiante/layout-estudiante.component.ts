@@ -61,11 +61,13 @@ export class LayoutEstudianteComponent implements OnInit {
 
   setActiveTab(tab: 'ultimos' | 'populares' | 'mis-reportes'): void {
     this.activeTab = tab;
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { tab: tab },
-      queryParamsHandling: 'merge'
+    this.router.navigate(['/estudiante/inicio'], {
+      queryParams: { tab: tab }
     });
+  }
+
+  irNuevo(): void {
+    this.router.navigate(['/estudiante/nuevo-reporte']);
   }
 
   obtenerIniciales(nombre: string): string {

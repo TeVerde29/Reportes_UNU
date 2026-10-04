@@ -5,7 +5,7 @@
   <div *ngIf="successMessage" class="alert alert-success" role="status">{{ successMessage }}</div>
 
   <form [formGroup]="reporteForm" (ngSubmit)="onSubmit()" class="eu-form-card">
-    <h2>{{ isEditMode ? 'Editar Reporte de Incidencia' : 'Nuevo Reporte de Incidencia' }}</h2>
+    <h2>{{ isEditMode ? 'Editar reporte de incidencia' : 'Nuevo reporte de incidencia' }}</h2>
     <p class="form-subtitle">Completa los datos y marca la ubicación en el croquis del campus.</p>
 
     <!-- TÍTULO -->
@@ -388,7 +388,7 @@
 
     <!-- BOTONES -->
     <div class="form-actions">
-      <button mat-stroked-button type="button" routerLink="/inicio" class="btn-cancel" [disabled]="enviando">
+      <button mat-stroked-button type="button" routerLink="/estudiante/inicio" class="btn-cancel" [disabled]="enviando">
         Cancelar
       </button>
       <button mat-flat-button type="submit" class="btn-save" [disabled]="enviando">

@@ -16,6 +16,7 @@ import { EstadoService } from '../../../services/estado.service';
 import { Estado, EstadoResponse } from '../../../models/estado.interface';
 import { AuthService } from '../../../services/auth.service';
 import { ReporteResponse } from '../../../models/reporte.interface';
+import { environment } from '../../../environment/environment';
 import { Usuario } from '../../../models/usuario.interface';
 import { EstudianteService } from '../../../services/estudiante.service';
 
@@ -225,8 +226,8 @@ onSubmit(): void {
     this.reporteService.actualizarReporte(this.id_reporte, formData).subscribe({
       next: (res) => {
         if (res.success) {
-          this.successMessage = '¡Reporte actualizado con éxito!';
-          setTimeout(() => this.router.navigate(['/mis-reportes']), 500);
+          this.successMessage = 'Reporte actualizado con éxito';
+          setTimeout(() => this.router.navigate(['/estudiante/inicio'], { queryParams: { tab: 'mis-reportes' } }), 500);
         } else {
           this.error = res.message;
           this.enviando = false;
@@ -242,8 +243,8 @@ onSubmit(): void {
     this.reporteService.crearReporte(formData).subscribe({
       next: (res) => {
         if (res.success) {
-          this.successMessage = '¡Reporte creado con éxito!';
-          setTimeout(() => this.router.navigate(['/inicio']), 500);
+          this.successMessage = 'Reporte creado con éxito';
+          setTimeout(() => this.router.navigate(['/estudiante/inicio']), 500);
         } else {
           this.error = res.message;
           this.enviando = false;
@@ -263,7 +264,7 @@ onSubmit(): void {
     if (response.success) {
       this.successMessage = mensajeExito;
       setTimeout(() => {
-        this.router.navigateByUrl('/mis-reportes'); // O '/mis-reportes'
+        this.router.navigate(['/estudiante/inicio'], { queryParams: { tab: 'mis-reportes' } });
       }, 500);
     } else {
       this.error = response.message || 'Error en la operación';
@@ -285,7 +286,7 @@ onSubmit(): void {
         this.reporteForm.patchValue(data);
         // MOSTRAR IMAGEN: Si el reporte tiene foto, armamos la URL del servidor
         if (data.foto_url) {
-          this.previewUrl = `http://localhost:3000${data.foto_url}`;
+          this.previewUrl = `${environment.baseUrl}${data.foto_url}`;
         }
       }
     }
