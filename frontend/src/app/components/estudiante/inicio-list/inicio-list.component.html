@@ -80,7 +80,7 @@
       <p *ngIf="r.descripcion" class="post-text">{{ r.descripcion }}</p>
       <div *ngIf="r.foto_url" class="post-media" (click)="abrirFoto(r)" (keyup.enter)="abrirFoto(r)" tabindex="0" role="button" [attr.aria-label]="'Ampliar foto de ' + (r.titulo || 'reporte')">
         <img
-          [src]="baseUrl + r.foto_url"
+          [src]="fotoSrc(r.foto_url)"
           [alt]="r.titulo || 'Imagen del reporte'"
           loading="lazy"
           class="post-image"

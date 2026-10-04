@@ -64,7 +64,7 @@
       <aside class="eu-review-evidence">
         <span class="eu-read-label">Evidencia visual</span>
         <div class="eu-evidence-frame" *ngIf="reporte.foto_url; else sinEvidencia">
-          <img [src]="baseUrl + reporte.foto_url" alt="Evidencia del reporte" class="eu-evidence-img">
+          <img [src]="fotoSrc(reporte.foto_url)" alt="Evidencia del reporte" class="eu-evidence-img">
         </div>
         <ng-template #sinEvidencia>
           <div class="eu-evidence-empty">

@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Reporte } from '../../../models/reporte.interface';
 import { environment } from '../../../environment/environment';
+import { resolverFotoUrl } from '../../../utils/foto-url';
 import { ReporteService } from '../../../services/reporte.service';
 import { EstadoService } from '../../../services/estado.service';
 import { TipoProblemaService } from '../../../services/tipo-problema.service';
@@ -51,6 +52,11 @@ export class PendientesFormComponent implements OnInit {
   // Pendiente se decide, Aceptado se puede corregir, Resuelto solo se mira/elimina
   get esEditable(): boolean {
     return this.tipoEstado === 'Pendiente' || this.tipoEstado === 'Aceptado';
+  }
+
+  // Nube (URL absoluta) se usa tal cual, disco (ruta relativa) lleva baseUrl
+  fotoSrc(url?: string | null): string | null {
+    return resolverFotoUrl(url);
   }
 
   cancelar(): void {

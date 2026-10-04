@@ -17,6 +17,7 @@ import { Estado, EstadoResponse } from '../../../models/estado.interface';
 import { AuthService } from '../../../services/auth.service';
 import { ReporteResponse } from '../../../models/reporte.interface';
 import { environment } from '../../../environment/environment';
+import { resolverFotoUrl } from '../../../utils/foto-url';
 import { Usuario } from '../../../models/usuario.interface';
 import { EstudianteService } from '../../../services/estudiante.service';
 
@@ -284,9 +285,10 @@ onSubmit(): void {
       if (response.success && !Array.isArray(response.data)) {
         const data = response.data!;
         this.reporteForm.patchValue(data);
-        // MOSTRAR IMAGEN: Si el reporte tiene foto, armamos la URL del servidor
+        // MOSTRAR IMAGEN: Si el reporte tiene foto, resolvemos la URL
+        // (relativa en disco local, absoluta en Cloudinary)
         if (data.foto_url) {
-          this.previewUrl = `${environment.baseUrl}${data.foto_url}`;
+          this.previewUrl = resolverFotoUrl(data.foto_url);
         }
       }
     }

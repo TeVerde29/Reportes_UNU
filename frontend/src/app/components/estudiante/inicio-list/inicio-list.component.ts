@@ -11,6 +11,7 @@ import { UbicacionService } from '../../../services/ubicacion.service';
 import { TipoProblemaService } from '../../../services/tipo-problema.service';
 import { Reporte, FiltrosReporte } from '../../../models/reporte.interface';
 import { environment } from '../../../environment/environment';
+import { resolverFotoUrl } from '../../../utils/foto-url';
 import { Reaccion } from '../../../models/reaccion.interface';
 import { Ubicacion } from '../../../models/ubicacion.interface';
 import { TipoProbelma } from '../../../models/tipoProblema.interface';
@@ -355,8 +356,13 @@ cargarReportesConMasLikes(): void {
   private mostrarAmpliada(): void {
     const r = this.reportes[this.indiceAmpliada];
     if (!r?.foto_url) return;
-    this.fotoAmpliada = this.baseUrl + r.foto_url;
+    this.fotoAmpliada = this.fotoSrc(r.foto_url);
     this.fotoTitulo = r.titulo || 'Foto del reporte';
+  }
+
+  // Nube (URL absoluta) se usa tal cual, disco (ruta relativa) lleva baseUrl
+  fotoSrc(url?: string | null): string | null {
+    return resolverFotoUrl(url);
   }
 
   @HostListener('document:keydown', ['$event'])
