@@ -51,18 +51,27 @@ app.use(express.urlencoded({ extended: true }));
 
 // 3) Cajón de sesiones en MySQL (usa la tabla `sessions` que ya creaste con el .sql)
 // Si la tabla no existe y pones createDatabaseTable:true, él la crea solo.
-// OJO Render/TiDB: usa DB_PORT (4000) y DB_SSL, igual que config/database.js.
-const sessionStore = new MySQLStore({
+// OJO Render/TiDB: express-mysql-session@3 filtra sus opciones (solo deja pasar
+// host/port/user/... a mysql2) y ELIMINA `ssl`. Sin SSL TiDB rechaza la conexión
+// y login/me con sesión daban 500. Por eso se le pasa un pool propio YA con SSL
+// como conexión existente (uso documentado: new MySQLStore(options, connection)).
+const mysql = require('mysql2'); // API callback, la que el store espera
+const sessionPool = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME || 'reporte_incidencias',
-    createDatabaseTable: true, // crea `sessions` si falta
-    clearExpired: true, // borra sesiones vencidas solo
-    checkExpirationInterval: 900000, // revisa cada 15 min
+    waitForConnections: true,
+    connectionLimit: 5,
+    queueLimit: 0,
     ...(process.env.DB_SSL === 'true' ? { ssl: { rejectUnauthorized: true } } : {})
 });
+const sessionStore = new MySQLStore({
+    createDatabaseTable: true, // crea `sessions` si falta
+    clearExpired: true, // borra sesiones vencidas solo
+    checkExpirationInterval: 900000 // revisa cada 15 min
+}, sessionPool);
 // Log de errores del store: sin esto el fallo de sesión llega como HTML 500
 // y el front muestra "<!DOCTYPE ... is not valid JSON".
 sessionStore.on('error', (err) => {
