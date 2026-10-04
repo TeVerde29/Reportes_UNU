@@ -6,7 +6,7 @@ export interface Reporte {
     fecha_reporte?: string;
     fecha_edicion?: string;
     cantidad_reacciones?: number;
-    id_estudiante?: number;
+    codigo_estudiante?: string;
     id_estado?: number;
     id_tipo_problema?: number;
     id_ubicacion?: number;
@@ -22,5 +22,16 @@ export interface ReporteResponse {
     success: boolean;
     message: string;
     count?: number;
+    total?: number;
+    page?: number;
+    limit?: number;
     data?: Reporte | Reporte [];
+}
+
+export interface FiltrosReporte {
+  page?: number;
+  limit?: number;
+  id_tipo_problema?: number | null;
+  id_ubicacion?: number | null;
+  q?: string;
 }

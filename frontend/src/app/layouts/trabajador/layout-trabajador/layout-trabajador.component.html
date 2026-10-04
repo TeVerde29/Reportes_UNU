@@ -3,9 +3,7 @@
     <div class="topbar-inner">
       <div class="brand">
         <div class="brand-logo" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          </svg>
+          <img src="/img/unu-logo.png" alt="" width="40" height="40">
         </div>
         <div class="brand-text">
           <h1 class="brand-title">UNU Incidencias</h1>
@@ -16,19 +14,20 @@
       <div class="top-actions">
         <div class="tabs" role="tablist">
           <button mat-button type="button" class="eu-tab" routerLink="/trabajador/reportes-pendientes" routerLinkActive="active">
-            Pendientes
+            <mat-icon>pending_actions</mat-icon>
+            <span>Pendientes</span>
           </button>
           <button mat-button type="button" class="eu-tab" routerLink="/trabajador/reportes-aceptados" routerLinkActive="active">
-            Aceptados
+            <mat-icon>check_circle</mat-icon>
+            <span>Aceptados</span>
           </button>
           <button mat-button type="button" class="eu-tab" routerLink="/trabajador/reportes-solucionados" routerLinkActive="active">
-            Solucionados
-          </button>
-          <button mat-button type="button" class="eu-tab" routerLink="/trabajador/reportes-rechazados" routerLinkActive="active">
-            Rechazados
+            <mat-icon>task_alt</mat-icon>
+            <span>Solucionados</span>
           </button>
           <button mat-button type="button" class="eu-tab" routerLink="/trabajador/estadisticas" routerLinkActive="active">
-            Estadísticas
+            <mat-icon>bar_chart</mat-icon>
+            <span>Estadísticas</span>
           </button>
         </div>
 
@@ -57,4 +56,28 @@
       <router-outlet></router-outlet>
     </main>
   </div>
+
+  <!-- Navegación inferior móvil (solo ≤640px) -->
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <a class="bn-item" routerLink="/trabajador/reportes-pendientes" routerLinkActive="active">
+      <mat-icon>pending_actions</mat-icon>
+      <span>Pendientes</span>
+    </a>
+    <a class="bn-item" routerLink="/trabajador/reportes-aceptados" routerLinkActive="active">
+      <mat-icon>check_circle</mat-icon>
+      <span>Aceptados</span>
+    </a>
+    <a class="bn-item" routerLink="/trabajador/reportes-solucionados" routerLinkActive="active">
+      <mat-icon>task_alt</mat-icon>
+      <span>Solucionados</span>
+    </a>
+    <a class="bn-item" routerLink="/trabajador/estadisticas" routerLinkActive="active">
+      <mat-icon>bar_chart</mat-icon>
+      <span>Datos</span>
+    </a>
+    <button type="button" class="bn-item" (click)="logout()" aria-label="Cerrar sesión">
+      <mat-icon>logout</mat-icon>
+      <span>Salir</span>
+    </button>
+  </nav>
 </div>

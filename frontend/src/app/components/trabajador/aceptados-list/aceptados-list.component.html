@@ -3,7 +3,7 @@
     <div class="section-title-wrapper">
       <div>
         <div class="section-title-row">
-          <h2 class="section-title">Reportes Aceptados</h2>
+          <h2 class="section-title">Reportes aceptados</h2>
           <span class="eu-badge eu-badge-aceptado">Aceptado</span>
         </div>
         <p class="section-subtitle">Incidencias validadas en proceso de solución</p>
@@ -16,7 +16,6 @@
         matInput
         type="text"
         [(ngModel)]="filtroTexto"
-        (ngModelChange)="onSearchChange()"
         placeholder="Buscar por título, estudiante...">
     </mat-form-field>
   </header>
@@ -30,16 +29,15 @@
             <th>Título de Incidencia</th>
             <th>Fecha</th>
             <th>Estudiante</th>
-            <th class="d-hide-mobile">Carrera</th>
             <th class="text-center">Categoría</th>
             <th>Ubicación</th>
             <th class="text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let r of reportesPaginados; let i=index">
+          <tr *ngFor="let r of reportesFiltrados; let i=index">
             <td class="text-center row-id">
-              {{ (paginaActual - 1) * itemsPorPagina + (i + 1) }}
+              {{ i + 1 }}
             </td>
             <td>
               <span class="main-text">{{ r.titulo }}</span>
@@ -50,14 +48,11 @@
             <td>
               <span class="user-name-cell">{{ r.estudiante }}</span>
             </td>
-            <td class="d-hide-mobile">
-              <span class="carrera-tag">{{ r.carrera }}</span>
-            </td>
             <td class="text-center">
               <span class="eu-tag">{{ r.tipo_problema }}</span>
             </td>
             <td>
-              <div class="location-cell">
+              <div class="location-cell" [title]="r.ubicacion">
                 <span class="eu-tag">{{ r.ubicacion }}</span>
               </div>
             </td>
@@ -90,23 +85,7 @@
 
     <div class="table-footer" *ngIf="!error && reportesFiltrados.length > 0">
       <div class="pagination-info">
-        Mostrando <span>{{ (paginaActual - 1) * itemsPorPagina + 1 }}</span> -
-        <span>{{ Math.min(paginaActual * itemsPorPagina, totalReportesDinamico) }}</span>
-        de <span>{{ totalReportesDinamico }}</span> reportes
-      </div>
-
-      <div class="pagination-controls">
-        <button class="btn-pagination" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)" aria-label="Anterior">
-          <mat-icon>chevron_left</mat-icon>
-        </button>
-        <div class="page-numbers">
-          <button *ngFor="let p of paginas" class="page-num" [class.active]="p === paginaActual" (click)="cambiarPagina(p)">
-            {{ p }}
-          </button>
-        </div>
-        <button class="btn-pagination" [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)" aria-label="Siguiente">
-          <mat-icon>chevron_right</mat-icon>
-        </button>
+        <span>{{ reportesFiltrados.length }}</span> reportes
       </div>
     </div>
   </div>

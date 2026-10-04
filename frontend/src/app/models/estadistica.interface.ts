@@ -26,6 +26,12 @@ export interface EstadisticaPorMes {
   total_reportes: number;
 }
 
+export interface EstadisticaPorEstado {
+  id_estado: number;
+  estado: string;
+  total_reportes: number;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   message: string;

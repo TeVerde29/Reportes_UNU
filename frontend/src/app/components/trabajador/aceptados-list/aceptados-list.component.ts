@@ -33,10 +33,8 @@ export class AceptadosListComponent implements OnInit, OnDestroy {
   reporteSeleccionado: Reporte | null = null;
   mostrarModal = false;
 
-  // Lógica de búsqueda y paginación
+  // Lógica de búsqueda (se muestra todo, sin paginación)
   filtroTexto: string = '';
-  paginaActual: number = 1;
-  itemsPorPagina: number = 5;
 
   private sub?: Subscription;
 
@@ -49,7 +47,7 @@ export class AceptadosListComponent implements OnInit, OnDestroy {
     this.reportesAceptados();
   }
 
-  // Getters para filtrado y paginación (Igual que en Pendientes)
+  // Getters para filtrado (se muestra todo, sin paginación)
   get reportesFiltrados(): Reporte[] {
     if (!this.filtroTexto.trim()) return this.reportes;
     const busqueda = this.filtroTexto.toLowerCase();
@@ -58,35 +56,6 @@ export class AceptadosListComponent implements OnInit, OnDestroy {
       r.estudiante?.toLowerCase().includes(busqueda) ||
       r.ubicacion?.toLowerCase().includes(busqueda)
     );
-  }
-
-  get reportesPaginados(): Reporte[] {
-    const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
-    const fin = inicio + this.itemsPorPagina;
-    return this.reportesFiltrados.slice(inicio, fin);
-  }
-
-  get totalReportesDinamico(): number {
-    return this.reportesFiltrados.length;
-  }
-
-  get totalPaginas(): number {
-    return Math.ceil(this.reportesFiltrados.length / this.itemsPorPagina);
-  }
-
-  get paginas(): number[] {
-    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
-  }
-
-  onSearchChange(): void {
-    this.paginaActual = 1;
-  }
-
-  cambiarPagina(pagina: number): void {
-    if (pagina >= 1 && pagina <= this.totalPaginas) {
-      this.paginaActual = pagina;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   }
 
   reportesAceptados(): void {
@@ -98,11 +67,10 @@ export class AceptadosListComponent implements OnInit, OnDestroy {
           return;
         }
 
-        this.reporteService.obtenerReportesPorIdEstado(estadoAceptado.id_estado).subscribe({
+        this.reporteService.obtenerReportesPorIdEstado(estadoAceptado.id_estado, { limit: 500 }).subscribe({
           next: (resp) => {
             if (resp.success && Array.isArray(resp.data)) {
               this.reportes = resp.data;
-              this.paginaActual = 1;
             } else {
               this.error = 'No se pudieron cargar los reportes aceptados';
             }
@@ -130,6 +98,4 @@ export class AceptadosListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
   }
-
-  protected readonly Math = Math;
 }

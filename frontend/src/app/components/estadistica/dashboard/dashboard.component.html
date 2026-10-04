@@ -1,22 +1,41 @@
 <div class="dashboard">
-  <h2>Dashboard de Reportes</h2>
+  <h2>Dashboard de reportes</h2>
+  <p class="dashboard-sub">Resumen del estado de las incidencias del campus</p>
 
-  <div class="kpi-container">
-    <mat-card class="kpi-card">
-      <h4>Total de Reportes</h4>
-      <p class="kpi-value">{{ totalReportes }}</p>
-    </mat-card>
-    <mat-card class="kpi-card">
-      <h4>Reportes Mes Actual</h4>
-      <p class="kpi-value">{{ reportesMesActual }}</p>
-    </mat-card>
-    <mat-card class="kpi-card">
-      <h4>Problema Más Frecuente</h4>
-      <p class="kpi-value kpi-text">{{ tipoProblemaTop || '—' }}</p>
-    </mat-card>
-    <mat-card class="kpi-card">
-      <h4>Ubicación Más Crítica</h4>
-      <p class="kpi-value kpi-text">{{ ubicacionTop || '—' }}</p>
+  <div class="top-row">
+    <div class="kpi-col">
+      <mat-card class="kpi-card">
+        <span class="kpi-icon"><mat-icon>assignment</mat-icon></span>
+        <p class="kpi-value">{{ totalReportes }}</p>
+        <h4>Total de reportes</h4>
+      </mat-card>
+      <mat-card class="kpi-card">
+        <span class="kpi-icon kpi-teal-bg"><mat-icon>calendar_month</mat-icon></span>
+        <p class="kpi-value">{{ reportesMesActual }}</p>
+        <h4>Mes actual <span *ngIf="variacionMes" class="kpi-delta" [class.sube]="variacionSube" [class.baja]="variacionSube === false">({{ variacionMes }})</span></h4>
+      </mat-card>
+      <mat-card class="kpi-card">
+        <span class="kpi-icon kpi-terra-bg"><mat-icon>category</mat-icon></span>
+        <p class="kpi-value kpi-text" [title]="tipoProblemaTop">{{ tipoProblemaTop || '—' }}</p>
+        <h4>Más frecuente</h4>
+      </mat-card>
+      <mat-card class="kpi-card">
+        <span class="kpi-icon kpi-ink-bg"><mat-icon>place</mat-icon></span>
+        <p class="kpi-value kpi-text" [title]="ubicacionTop">{{ ubicacionTop || '—' }}</p>
+        <h4>Más crítica</h4>
+      </mat-card>
+    </div>
+
+    <mat-card class="chart-section main-chart">
+      <h3>Tendencia mensual de reportes</h3>
+      <p class="chart-sub">Evolución de incidencias registradas por mes</p>
+      <div class="chart-wrapper">
+        <canvas baseChart
+          [type]="lineChartType"
+          [data]="lineChartData"
+          [options]="lineChartOptions">
+        </canvas>
+      </div>
     </mat-card>
   </div>
 
@@ -27,37 +46,43 @@
 
   <ng-container *ngIf="!loading">
 
-    <mat-card class="chart-section main-chart">
-      <h3>Tendencia Mensual de Reportes</h3>
-      <div class="chart-wrapper">
-        <canvas baseChart
-          [type]="lineChartType"
-          [data]="lineChartData"
-          [options]="lineChartOptions">
-        </canvas>
-      </div>
-    </mat-card>
-
     <div class="charts-grid">
 
       <mat-card class="chart-section">
-        <h3>Distribución por Tipo de Problema</h3>
-        <div class="chart-wrapper">
+        <h3>Estado de los reportes</h3>
+        <p class="chart-sub">Pendientes frente a atendidos</p>
+        <div class="chart-wrapper chart-sm">
           <canvas baseChart
-            [type]="doughnutChartType"
-            [data]="doughnutChartData"
-            [options]="doughnutChartOptions">
+            [type]="estadoChartType"
+            [data]="estadoChartData"
+            [options]="estadoChartOptions"
+            [plugins]="centroDona">
           </canvas>
         </div>
       </mat-card>
 
       <mat-card class="chart-section">
-        <h3>Top 5 Ubicaciones con más Reportes</h3>
+        <h3>Distribución por tipo de problema</h3>
+        <p class="chart-sub">Qué tipo de incidencias predominan</p>
+        <div class="chart-wrapper chart-sm">
+          <canvas baseChart
+            [type]="doughnutChartType"
+            [data]="doughnutChartData"
+            [options]="doughnutChartOptions"
+            [plugins]="centroDona">
+          </canvas>
+        </div>
+      </mat-card>
+
+      <mat-card class="chart-section chart-wide">
+        <h3>Top 5 ubicaciones con más reportes</h3>
+        <p class="chart-sub">Zonas del campus que más atención piden</p>
         <div class="chart-wrapper">
           <canvas baseChart
             [type]="barChartType"
             [data]="barChartData"
-            [options]="barChartOptions">
+            [options]="barChartOptions"
+            [plugins]="valorEnBarra">
           </canvas>
         </div>
       </mat-card>

@@ -2,7 +2,7 @@
 // RUTAS DEL FRONT
 // Guía:
 //  - /login es público.
-//  - /estudiante/... solo rol 3 (Estudiante)
+//  - /estudiante/... solo alumnos (sesión con codigo_estudiante)
 //  - /trabajador/... solo roles 1 y 2 (Supervisor y Administrador)
 //  AuthGuard = ¿logueado?  RoleGuard = ¿rol correcto?
 //  Si fallan, vuelves a /login.
@@ -18,11 +18,11 @@ import { PendientesFormComponent } from './components/trabajador/pendientes-form
 
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LayoutEstudianteComponent } from './layouts/estudiante/layout-estudiante/layout-estudiante.component';
 import { LayoutTrabajadorComponent } from './layouts/trabajador/layout-trabajador/layout-trabajador.component';
 import { SolucionadoListComponent } from './components/trabajador/solucionado-list/solucionado-list.component';
 import { AceptadosListComponent } from './components/trabajador/aceptados-list/aceptados-list.component';
-import { RechazadosListComponent } from './components/trabajador/rechazados-list/rechazados-list.component';
 import { DashboardComponent } from './components/estadistica/dashboard/dashboard.component';
 
 export const routes: Routes = [
@@ -32,7 +32,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginFormComponent },
 
   // ============================
-  // ESTUDIANTE (rol 3)
+  // ESTUDIANTE (sesión alumno, sin fila en `usuario`)
   // ============================
   {
     path: 'estudiante',
@@ -59,7 +59,6 @@ export const routes: Routes = [
       { path: 'reportes-pendientes', component: PendientesListComponent },
       { path: 'reportes-solucionados', component: SolucionadoListComponent },
       { path: 'reportes-aceptados', component: AceptadosListComponent },
-      { path: 'reportes-rechazados', component: RechazadosListComponent },
       { path: 'ver-reporte/:id', component: PendientesFormComponent },
       { path: 'estadisticas', component: DashboardComponent },
 
@@ -67,5 +66,5 @@ export const routes: Routes = [
     ]
   },
 
-  { path: '**', redirectTo: 'login' }
+  { path: '**', component: NotFoundComponent }
 ];

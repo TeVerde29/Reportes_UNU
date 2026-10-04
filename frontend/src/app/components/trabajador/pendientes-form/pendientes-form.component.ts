@@ -7,6 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Reporte } from '../../../models/reporte.interface';
+import { environment } from '../../../environment/environment';
 import { ReporteService } from '../../../services/reporte.service';
 import { EstadoService } from '../../../services/estado.service';
 import { TipoProblemaService } from '../../../services/tipo-problema.service';
@@ -25,6 +26,7 @@ export class PendientesFormComponent implements OnInit {
   @Output() cerrar = new EventEmitter<void>();
 
   tiposProblema: TipoProbelma[] = [];
+  readonly baseUrl = environment.baseUrl;
   tipoEstado: string = '';
   form = {
     titulo: '',
@@ -46,6 +48,11 @@ export class PendientesFormComponent implements OnInit {
     this.cargarEstadoReporte();
   }
 
+  // Pendiente se decide, Aceptado se puede corregir, Resuelto solo se mira/elimina
+  get esEditable(): boolean {
+    return this.tipoEstado === 'Pendiente' || this.tipoEstado === 'Aceptado';
+  }
+
   cancelar(): void {
     this.cerrar.emit();
   }
@@ -64,7 +71,14 @@ export class PendientesFormComponent implements OnInit {
   }
 
   rechazar(): void {
-    this.estadoService.obtenerEstadoPorNombre('Rechazado').subscribe(res => {
+    // Rechazo = borrado total (registro + foto), sin estado Rechazado
+    if (!this.reporte.id_reporte) return;
+    this.reporteService.eliminarReporte(this.reporte.id_reporte)
+      .subscribe(() => this.cerrar.emit());
+  }
+
+  actualizar(): void {
+    this.estadoService.obtenerEstadoPorNombre('Aceptado').subscribe(res => {
       const estado = Array.isArray(res.data) ? res.data[0] : res.data;
       if (!estado) return;
       this.reporteService.revisarReporte(this.reporte.id_reporte, {
@@ -74,6 +88,13 @@ export class PendientesFormComponent implements OnInit {
         id_estado: estado.id_estado
       }).subscribe(() => this.cerrar.emit());
     });
+  }
+
+  eliminar(): void {
+    if (!this.reporte.id_reporte) return;
+    if (!confirm('¿Eliminar este reporte? Se borra el registro y la foto.')) return;
+    this.reporteService.eliminarReporte(this.reporte.id_reporte)
+      .subscribe(() => this.cerrar.emit());
   }
 
   solucionar(): void {

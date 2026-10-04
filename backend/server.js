@@ -86,6 +86,26 @@ const loginFreno = rateLimit({
 });
 app.use('/api/auth/login', loginFreno);
 
+// 4.1) Job diario: borra pendientes con más de 7 días (fila + foto)
+// Sin librerías: calcula cuánto falta para las 03:00 y repite cada 24h.
+const { limpiarPendientesAntiguos } = require('./jobs/limpiarPendientes');
+function programarLimpiezaPendientes() {
+    const ejecutar = async () => {
+        try {
+            const r = await limpiarPendientesAntiguos();
+            if (r.reportes > 0) console.log(`[job pendientes] eliminados: ${r.reportes} reportes, ${r.fotos} fotos`);
+        } catch (e) {
+            console.error('[job pendientes]', e.message);
+        }
+    };
+    const ahora = new Date();
+    const proxima = new Date(ahora);
+    proxima.setHours(3, 0, 0, 0);
+    if (proxima <= ahora) proxima.setDate(proxima.getDate() + 1);
+    setTimeout(() => { ejecutar(); setInterval(ejecutar, 24 * 60 * 60 * 1000); }, proxima - ahora);
+}
+programarLimpiezaPendientes();
+
 const REPORTES_IMG_DIR = process.env.UPLOAD_DIR || path.join(__dirname, '..', 'Reportes_UNU_IMG', 'uploads', 'reportes');
 app.use('/uploads/reportes', express.static(REPORTES_IMG_DIR));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -154,6 +174,18 @@ app.use((req, res) => {
         success: false,
         mensaje: "Ruta no encontrada"
     });
+});
+
+// 5) Errores de subida: multer tira HTML por defecto, el front espera JSON
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+    if (err && (err.code === 'LIMIT_FILE_SIZE' || (err.message && err.message.includes('Solo se permiten imágenes')) || err.message === 'Tipo de archivo no permitido')) {
+        return res.status(400).json({
+            success: false,
+            message: err.code === 'LIMIT_FILE_SIZE' ? 'Foto de máximo 5MB' : err.message
+        });
+    }
+    next(err);
 });
 
 app.listen(PORT, () => {

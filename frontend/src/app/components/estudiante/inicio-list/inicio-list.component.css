@@ -66,13 +66,55 @@
   font-size: 14px;
 }
 
-/* ===== Feed ===== */
+/* ===== Filtros compactos sin tarjeta ===== */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  max-width: 1005px;
+  margin: 0 auto 16px;
+}
+
+.filter-field {
+  flex: 1 1 140px;
+  min-width: 120px;
+}
+
+.filter-search {
+  flex: 2 1 160px;
+}
+
+@media (max-width: 640px) {
+  .filter-bar {
+    flex-wrap: wrap;
+  }
+}
+
+/* ===== Feed estilo Pinterest (2 columnas independientes, orden cronológico) ===== */
 .feed {
+  display: flex;
+  gap: 16px;
+  max-width: 1005px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+.feed-col {
+  flex: 1 1 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 680px;
-  margin: 0 auto;
+}
+
+.feed-col .post {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .feed {
+    flex-direction: column;
+  }
 }
 
 /* ===== Post (mat-card blanco, borde #E4ECE7, radio 16px) ===== */
@@ -81,7 +123,7 @@
   border: 1px solid #E4ECE7;
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 1px 3px 0 rgba(45, 90, 70, 0.04), 0 1px 2px -1px rgba(45, 90, 70, 0.04);
+  box-shadow: 0 1px 3px 0 rgba(37, 107, 69, 0.04), 0 1px 2px -1px rgba(37, 107, 69, 0.04);
 }
 
 .post-head {
@@ -96,8 +138,8 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #2D5A46;
-  background: var(--eu-primary, #2D5A46);
+  background: #256B45;
+  background: var(--eu-primary, #256B45);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -182,6 +224,17 @@
   margin-bottom: 10px;
 }
 
+/* Tags chicos para que tipo + ubicación quepan juntos */
+.post-meta-bottom .eu-tag {
+  font-size: 11px;
+  padding: 0.15rem 0.55rem;
+}
+
+.post-meta-bottom .tag-ubi {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 /* Tags de categoría y badge de estado usan .eu-tag / .eu-badge globales de styles.css */
 
 /* ===== Body ===== */
@@ -191,33 +244,39 @@
 
 .post-title {
   margin: 0 0 6px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  line-height: 24px;
+  line-height: 22px;
   color: #111e1a;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .post-text {
   margin: 0 0 12px;
   color: #4b5563;
   line-height: 20px;
-  font-size: 14px;
+  font-size: 13px;
   white-space: pre-wrap;
 }
 
-/* ===== Media (imagen a ancho completo, alto natural) ===== */
+/* ===== Media (miniatura 16/10 recortada, clic para ampliar) ===== */
 .post-media {
   width: 100%;
+  aspect-ratio: 16 / 10;
   border-radius: 12px;
   overflow: hidden;
   background: #F0F4F2;
   margin-top: 12px;
   display: block;
+  cursor: zoom-in;
 }
 
 .post-image {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
   object-fit: cover;
 }
@@ -238,16 +297,16 @@
   flex-wrap: wrap;
 }
 
-/* Botón like tipo pill (idle #F0F4F2, liked tint #E2ECE7 texto #2D5A46) */
+/* Botón like tipo pill (idle #F0F4F2, liked tint #E2ECE7 texto #256B45) */
 .like-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
   border-radius: 9999px;
-  border: 1px solid transparent;
-  background: #2D5A46;
-  color: #ffffff;
+  border: 1px solid #256B45;
+  background: #ffffff;
+  color: #256B45;
   cursor: pointer;
   font-weight: 600;
   font-size: 13px;
@@ -262,19 +321,19 @@
 }
 
 .like-btn:hover:not(:disabled) {
-  background: #356852;
-  color: #ffffff;
+  background: #E2ECE7;
+  color: #1C5537;
 }
 
 .like-btn.liked {
-  background: #2D5A46;
-  border-color: #2D5A46;
+  background: #256B45;
+  border-color: #256B45;
   color: #ffffff;
 }
 
 .like-btn.liked:hover:not(:disabled) {
-  background: #356852;
-  border-color: #356852;
+  background: #1C5537;
+  border-color: #1C5537;
   color: #ffffff;
 }
 
@@ -313,18 +372,77 @@
 /* Botón Editar: ghost con borde eucalipto */
 .edit-btn {
   border-color: #D2DFD8;
-  color: #2D5A46;
+  color: #256B45;
   border-radius: 8px;
   font-weight: 600;
 }
 
-/* ===== FAB ===== */
+/* ===== Visor de foto (tipo Facebook) ===== */
+.visor-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background-color: rgba(10, 20, 15, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.visor-card {
+  position: relative;
+  max-width: 960px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background: #0e1512;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.visor-img {
+  max-width: 100%;
+  max-height: calc(90vh - 64px);
+  object-fit: contain;
+  background: #0e1512;
+}
+
+.visor-caption {
+  margin: 0;
+  padding: 10px 16px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.visor-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.visor-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
 .fab {
   position: fixed;
   right: 20px;
   bottom: 20px;
-  background: #2D5A46;
-  background: var(--eu-primary, #2D5A46);
+  background: #256B45;
+  background: var(--eu-primary, #256B45);
   color: #ffffff;
 }
 
@@ -337,5 +455,12 @@
   .post-title {
     font-size: 16px;
     line-height: 24px;
+  }
+}
+
+/* En móvil el Nuevo vive en la barra inferior: fuera FAB flotante */
+@media (max-width: 640px) {
+  .fab {
+    display: none;
   }
 }
