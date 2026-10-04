@@ -1,60 +1,6 @@
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 const db = require('../config/database');
-
-const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, '..', '..', 'Reportes_UNU_IMG', 'uploads', 'reportes');
-
-function generarCodigoSeguro() {
-  const U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const L = "abcdefghijklmnopqrstuvwxyz";
-  const D = "0123456789";
-  const all = U + L + D ;
-  let codigo = '';
-  for (let i = 0; i < 32; i++) {
-    codigo += all.charAt(Math.floor(Math.random() * all.length));
-  }
-  return codigo;
-}
-
-// ============================================================
-// SUBIDA DE FOTOS (multer)
-// Guía: solo imágenes de 5MB máx. El nombre se cambia por uno
-// al azar de 32 letras (no guardo tu nombre original) para que
-// nadie adivine rutas ni suba archivos .exe/.php disfrazados.
-// ============================================================
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadPath = UPLOAD_DIR;
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
-    }
-    cb(null, uploadPath);
-  },
-  filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
-    if (!allowedExtensions.includes(ext)) {
-      return cb(new Error('Tipo de archivo no permitido'), '');
-    }
-    const nombreSeguro = generarCodigoSeguro();
-    const nombreFinal = `${nombreSeguro}${ext}`;
-    cb(null, nombreFinal);
-  }
-});
-
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024},
-  fileFilter: function (req, file, cb) {
-    const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (allowedMimes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error('Solo se permiten imágenes (JPG, JPEG, PNG, WEBP)'));
-    }
-  }
-});
+// Fotos en disco o nube según entorno (ver config/storage.js)
+const { upload, guardarFoto, reemplazarFoto, borrarFoto } = require('../config/storage');
 
 const crearReporte = async (req, res) => {
     try {
@@ -73,27 +19,18 @@ const crearReporte = async (req, res) => {
         const idTipo = Number(id_tipo_problema);
         const idUbi = Number(id_ubicacion);
         if (!tituloLimpio || !descripcionLimpia || !Number.isInteger(idTipo) || idTipo <= 0 || !Number.isInteger(idUbi) || idUbi <= 0) {
-            if (req.file && req.file.path) {
-                fs.unlinkSync(req.file.path);
-            }
             return res.status(400).json({
                 success: false,
                 message: 'Faltan datos obligatorios'
             });
         }
         if (tituloLimpio.length < 5 || tituloLimpio.length > 150) {
-            if (req.file && req.file.path) {
-                fs.unlinkSync(req.file.path);
-            }
             return res.status(400).json({
                 success: false,
                 message: 'Título de 5 a 150 caracteres'
             });
         }
         if (descripcionLimpia.length > 1000) {
-            if (req.file && req.file.path) {
-                fs.unlinkSync(req.file.path);
-            }
             return res.status(400).json({
                 success: false,
                 message: 'Descripción de máximo 1000 caracteres'
@@ -104,14 +41,14 @@ const crearReporte = async (req, res) => {
                 [estado]
             );
         if (!estadoRows || estadoRows.length === 0) {
-        if (req.file && req.file.path) fs.unlinkSync(req.file.path);
         return res.status(500).json({
             success: false,
             message: `No existe el estado "${estado}" en la tabla estado`
         });
         }
         const id_estado = estadoRows[0].id_estado;
-        const fotoUrl = `/uploads/reportes/${req.file.filename}`;
+        // Guarda en disco o nube según entorno (ver config/storage.js)
+        const fotoUrl = await guardarFoto(req.file);
         const [reporte] = await db.query(`
             INSERT INTO reporte(titulo, descripcion, foto_url, fecha_reporte, fecha_edicion, cantidad_reacciones, id_estado, codigo_estudiante, id_tipo_problema, id_ubicacion)
             VALUES (?, ?, ?, NOW(), NOW(), 0, ?, ?, ?, ?)`,
@@ -128,13 +65,6 @@ const crearReporte = async (req, res) => {
         });
     } catch (error) {
         console.error('Error al crear reporte:', error);
-        if (req.file && req.file.path) {
-            try {
-                fs.unlinkSync(req.file.path);
-            } catch (unlinkError) {
-                console.error('Error al eliminar archivo:', unlinkError);
-            }
-        }
         res.status(500).json({
             success: false,
             message: 'Error al crear reporte'
@@ -143,16 +73,10 @@ const crearReporte = async (req, res) => {
 };
 
 const actualizarReporte = async (req, res) => {
-  let backupPath = null;
-  let targetPath = null;
-  const safeUnlink = (p) => {
-    try { if (p && fs.existsSync(p)) fs.unlinkSync(p); } catch (e) { console.error('Error al eliminar:', e); }
-  };
   try {
     const { id } = req.params;
     const idReporte = Number(id);
     if (!Number.isInteger(idReporte) || idReporte <= 0) {
-      if (req.file) safeUnlink(req.file.path);
       return res.status(400).json({ success: false, message: 'Id inválido' });
     }
     const { titulo, descripcion, id_estado, id_tipo_problema, id_ubicacion } = req.body;
@@ -160,65 +84,46 @@ const actualizarReporte = async (req, res) => {
     const idTipo = Number(id_tipo_problema);
     const idUbi = Number(id_ubicacion);
     if (!tituloLimpio || !Number.isInteger(idTipo) || idTipo <= 0 || !Number.isInteger(idUbi) || idUbi <= 0) {
-      if (req.file) safeUnlink(req.file.path);
       return res.status(400).json({ success: false, message: 'Faltan campos obligatorios (titulo, tipo o ubicación)' });
     }
     if (tituloLimpio.length < 5 || tituloLimpio.length > 150) {
-      if (req.file) safeUnlink(req.file.path);
       return res.status(400).json({ success: false, message: 'Título de 5 a 150 caracteres' });
     }
     const descripcionLimpia = typeof descripcion === 'string' ? descripcion.trim() : '';
     if (descripcionLimpia.length > 1000) {
-      if (req.file) safeUnlink(req.file.path);
       return res.status(400).json({ success: false, message: 'Descripción de máximo 1000 caracteres' });
     }
     const idEstado = id_estado == null || id_estado === '' ? null : Number(id_estado);
     if (idEstado !== null && ![1, 2, 3].includes(idEstado)) {
-      if (req.file) safeUnlink(req.file.path);
       return res.status(400).json({ success: false, message: 'Estado inválido (solo 1, 2 o 3)' });
     }
     // Solo el dueño edita su reporte (código del API, sale de la sesión)
     const [propio] = await db.query(
-      'SELECT codigo_estudiante FROM reporte WHERE id_reporte = ?',
+      'SELECT codigo_estudiante, foto_url FROM reporte WHERE id_reporte = ?',
       [idReporte]
     );
     if (propio.length === 0) {
-      if (req.file) safeUnlink(req.file.path);
       return res.status(404).json({ success: false, message: 'Reporte no encontrado' });
     }
     if (propio[0].codigo_estudiante !== req.session.auth.codigo_estudiante) {
-      if (req.file) safeUnlink(req.file.path);
       return res.status(403).json({ success: false, message: 'No es tu reporte' });
     }
     const fecha_edicion = new Date();
-    if (req.file && req.file.path) {
-      const [rowsFoto] = await db.query("SELECT foto_url FROM reporte WHERE id_reporte = ?", [idReporte]);
-      if (rowsFoto.length > 0 && rowsFoto[0].foto_url) {
-        const filenameActual = path.basename(rowsFoto[0].foto_url);
-        const uploadDir = UPLOAD_DIR;
-        targetPath = path.join(uploadDir, filenameActual);
-        if (fs.existsSync(targetPath)) {
-          backupPath = `${targetPath}.bak_${Date.now()}`;
-          fs.renameSync(targetPath, backupPath);
-        }
-        fs.renameSync(req.file.path, targetPath);
-      } else {
-        safeUnlink(req.file.path);
-      }
+    // Si manda foto nueva, reemplaza manteniendo la misma URL (disco o nube)
+    if (req.file && req.file.buffer && propio[0].foto_url) {
+      await reemplazarFoto(req.file, propio[0].foto_url);
     }
     await db.query(`
       UPDATE reporte
       SET titulo = ?, descripcion = ?, fecha_edicion = ?, id_estado = COALESCE(?, id_estado), id_tipo_problema = ?, id_ubicacion = ?
       WHERE id_reporte = ?
     `, [tituloLimpio, descripcionLimpia, fecha_edicion, idEstado, idTipo, idUbi, idReporte]);
-    if (backupPath) safeUnlink(backupPath);
     return res.status(200).json({
       success: true,
       message: 'Reporte actualizado correctamente'
     });
   } catch (error) {
     console.error('Error al actualizar reporte:', error);
-    if (req.file) safeUnlink(req.file.path);
     return res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
 };
@@ -321,10 +226,8 @@ const eliminarReporte = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Reporte no encontrado' });
     }
     await db.query('DELETE FROM reporte WHERE id_reporte = ?', [idReporte]);
-    if (rows[0].foto_url) {
-      const fotoPath = path.join(UPLOAD_DIR, path.basename(rows[0].foto_url));
-      try { if (fs.existsSync(fotoPath)) fs.unlinkSync(fotoPath); } catch (e) { console.error('Error al eliminar foto:', e); }
-    }
+    // Borra en disco o nube según entorno (ver config/storage.js)
+    await borrarFoto(rows[0].foto_url);
     return res.status(200).json({ success: true, message: 'Reporte eliminado correctamente' });
   } catch (error) {
     console.error('Error al eliminar reporte:', error);

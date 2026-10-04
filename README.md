@@ -67,11 +67,17 @@ DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=tu_password
 DB_NAME=reporte_incidencias
+DB_PORT=3306
+DB_SSL=false        # true en nube (TiDB exige SSL)
 BCRYPT_ROUNDS=10
 SESSION_SECRET=una_clave_larga_y_secreta
 FRONTEND_ORIGIN=http://localhost:4200
 COOKIE_SECURE=false
 UPLOAD_DIR=C:/Reportes_UNU/Reportes_UNU_IMG/uploads/reportes
+
+# Solo en despliegue (nube). Si faltan, todo sigue en local.
+# CLOUDINARY_URL=cloudinary://api_key:api_secret@cloud_name
+# CLOUDINARY_FOLDER=reportes_unu
 ```
 
 ```bash
@@ -146,8 +152,22 @@ Sin runner automatizado; verificación por capas:
 
 - Proyecto académico UNU: imágenes en disco local y carpeta única responden a
   requisitos de entrega.
-- Para despliegue free: ver bloqueos conocidos (MySQL→Postgres, disco efímero→
-  storage externo, sesiones, CORS/`secure`, SPA rewrite, cold starts).
+- **Modo dual local/nube:** mismo código, decide por entorno. Sin `CLOUDINARY_URL`
+  guarda fotos en disco; con ella sube a Cloudinary (`backend/config/storage.js`).
+  `DB_SSL=true` + `DB_PORT` para TiDB. Sesiones y SQL funcionan igual en ambos.
+- Para despliegue free paso a paso:
+  1. **TiDB Cloud** (gratis): cluster Serverless, copia host/puerto/usuario/clave;
+     importa `database/bd_reporte_incidencias.sql` una vez.
+  2. **Cloudinary** (gratis): copia el `CLOUDINARY_URL` del dashboard.
+  3. **Render** (gratis): New → Web Service con este repo (lee `render.yaml`);
+     pega las variables de TiDB + `CLOUDINARY_URL`; anota su URL.
+  4. **Front:** pon esa URL en `frontend/src/app/environment/environment.prod.ts`
+     (`apiUrl` y `baseUrl`), commit y despliega en **Vercel** (`vercel.json` ya
+     trae el rewrite SPA). Copia la URL del front.
+  5. **Vuelve a Render** y pon `FRONTEND_ORIGIN` con la URL de Vercel
+     (`COOKIE_SECURE=true`, `COOKIE_SAMESITE=none` ya van en `render.yaml`).
+  Ojo: cold starts (~30s la primera carga) y disco efímero (por eso las fotos
+  van a la nube).
 
 ## Licencia
 
