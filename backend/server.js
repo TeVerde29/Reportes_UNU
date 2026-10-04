@@ -51,15 +51,17 @@ app.use(express.urlencoded({ extended: true }));
 
 // 3) Cajón de sesiones en MySQL (usa la tabla `sessions` que ya creaste con el .sql)
 // Si la tabla no existe y pones createDatabaseTable:true, él la crea solo.
+// OJO Render/TiDB: usa DB_PORT (4000) y DB_SSL, igual que config/database.js.
 const sessionStore = new MySQLStore({
     host: process.env.DB_HOST || 'localhost',
-    port: 3306,
+    port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME || 'reporte_incidencias',
     createDatabaseTable: true, // crea `sessions` si falta
     clearExpired: true, // borra sesiones vencidas solo
-    checkExpirationInterval: 900000 // revisa cada 15 min
+    checkExpirationInterval: 900000, // revisa cada 15 min
+    ...(process.env.DB_SSL === 'true' ? { ssl: { rejectUnauthorized: true } } : {})
 });
 
 app.use(session({
