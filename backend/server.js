@@ -63,6 +63,11 @@ const sessionStore = new MySQLStore({
     checkExpirationInterval: 900000, // revisa cada 15 min
     ...(process.env.DB_SSL === 'true' ? { ssl: { rejectUnauthorized: true } } : {})
 });
+// Log de errores del store: sin esto el fallo de sesión llega como HTML 500
+// y el front muestra "<!DOCTYPE ... is not valid JSON".
+sessionStore.on('error', (err) => {
+    console.error('[sessionStore]', err && err.message ? err.message : err);
+});
 
 app.use(session({
     name: 'sid', // nombre de la cookie de sesión
@@ -190,6 +195,19 @@ app.use((err, req, res, next) => {
         });
     }
     next(err);
+});
+
+// 6) Fallo final en JSON: sin esto Express devuelve HTML en errores del
+// middleware de sesión (GET /api/auth/me y POST /api/auth/login daban 500
+// con <!DOCTYPE, imposible de leer desde Angular).
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+    console.error('[unhandled]', err && err.message ? err.message : err);
+    if (res.headersSent) return next(err);
+    res.status(err && err.status ? err.status : 500).json({
+        success: false,
+        message: 'Error interno del servidor'
+    });
 });
 
 app.listen(PORT, () => {
