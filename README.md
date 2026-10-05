@@ -8,6 +8,15 @@ seguimiento a los suyos. El personal (supervisor/administrador) revisa los pendi
 los acepta, resuelve o los elimina (rechazo = borrado total), y consulta estadísticas
 por tipo de problema, ubicación, mes y estado.
 
+## Producción
+
+| Capa     | URL                                              |
+|----------|--------------------------------------------------|
+| Frontend | https://reportes-unu.vercel.app                  |
+| Backend  | https://reportes-unu.onrender.com                |
+
+Base de datos en TiDB Cloud y fotos en Cloudinary.
+
 ## Stack
 
 | Capa      | Tecnología                                                                |
@@ -16,7 +25,7 @@ por tipo de problema, ubicación, mes y estado.
 | Auth      | `express-session` + `express-mysql-session` (cookie `sid`, 8h) + `bcrypt` |
 | Seguridad | `helmet`, `cors`, `express-rate-limit` (login)                            |
 | Frontend  | Angular 19 standalone + Angular Material + Chart.js (`ng2-charts`)        |
-| BD        | MySQL 8 (`utf8mb4`) — script en `database/bd_reporte_incidencias.sql`     |
+| BD        | MySQL 8 (`utf8mb4`) / TiDB Cloud — scripts SQL solo en local (ignorados en git) |
 
 ## Arquitectura
 
@@ -49,7 +58,7 @@ por tipo de problema, ubicación, mes y estado.
 ### 1. Base de datos
 
 ```sql
-SOURCE database/bd_reporte_incidencias.sql;  -- crea reporte_incidencias + sessions (vacía)
+SOURCE database/bd_reporte_incidencias.sql;  -- script local (no se commitea) + sessions (vacía)
 ```
 
 ### 2. Backend
@@ -100,11 +109,12 @@ Reportes_UNU/
 ├── backend/        # API Express: controllers/, routes/, middleware/,
 │                   # jobs/limpiarPendientes.js, config/, server.js
 ├── frontend/       # App Angular: components/{auth,estudiante,trabajador,
-│                   # estadistica}, layouts/, guards/, services/, models/
-├── database/       # bd_reporte_incidencias.sql (script canónico limpio)
+│                   # estadistica}, layouts/, guards/, services/, models/,
+│                   # utils/foto-url.ts (resuelve URL de foto local vs nube)
+├── database/       # SQL locales (bd_reporte_incidencias.sql, bd_tidb.sql),
+│                   # NO se commitean (ver .gitignore)
 ├── documentation/  # Informes del proyecto
 ├── Reportes_UNU_IMG/uploads/reportes/  # Fotos (no se commitea el contenido)
-├── observaciones.md
 └── README.md
 ```
 
@@ -157,7 +167,7 @@ Sin runner automatizado; verificación por capas:
   `DB_SSL=true` + `DB_PORT` para TiDB. Sesiones y SQL funcionan igual en ambos.
 - Para despliegue free paso a paso:
   1. **TiDB Cloud** (gratis): cluster Serverless, copia host/puerto/usuario/clave;
-     importa `database/bd_reporte_incidencias.sql` una vez.
+     importa el SQL local una vez (los `.sql` no están en el repo).
   2. **Cloudinary** (gratis): copia el `CLOUDINARY_URL` del dashboard.
   3. **Render** (gratis): New → Web Service con este repo (lee `render.yaml`);
      pega las variables de TiDB + `CLOUDINARY_URL`; anota su URL.
@@ -168,6 +178,16 @@ Sin runner automatizado; verificación por capas:
      (`COOKIE_SECURE=true`, `COOKIE_SAMESITE=none` ya van en `render.yaml`).
   Ojo: cold starts (~30s la primera carga) y disco efímero (por eso las fotos
   van a la nube).
+- Detalles que ya mordieron en producción (no tocar sin leer):
+  1. **Vercel → Output Directory** debe ser `dist/front/browser` (el builder
+     `application` de Angular 19 mete `index.html` en `browser/`). Si apunta a
+     `dist/front` el deploy sale verde pero sirve 404.
+  2. **Sesiones en TiDB:** `express-mysql-session@3` filtra sus opciones y
+     elimina `ssl`; el store se crea con un pool `mysql2` propio ya con SSL
+     (`backend/server.js`). Sin eso, login con clave correcta da 500.
+  3. **Fotos:** en BD se guarda ruta relativa (disco) o URL absoluta
+     (Cloudinary). El front las resuelve con `utils/foto-url.ts`; nunca
+     concatenar `baseUrl` a ciegas.
 
 ## Licencia
 
