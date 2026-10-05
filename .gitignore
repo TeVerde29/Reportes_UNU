@@ -1,0 +1,6 @@
+# Base de datos (SQL locales, no se suben al repo)
+database/
+
+# Notas personales del proyecto
+MEMORY.md
+observaciones.md
