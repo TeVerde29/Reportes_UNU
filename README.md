@@ -6,6 +6,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Estado-Activo-0f9488?style=for-the-badge" alt="Estado: activo">
   <img src="https://img.shields.io/badge/Frontend-Angular_19-dd0031?style=for-the-badge&logo=angular&logoColor=ffffff" alt="Angular 19">
+  <img src="https://img.shields.io/badge/Backend-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=ffffff" alt="Backend Node.js">
+  <img src="https://img.shields.io/badge/BD-MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=ffffff" alt="Base de datos MySQL">
   <img src="https://img.shields.io/badge/Licencia-MIT-64748b?style=for-the-badge" alt="Licencia MIT">
 </p>
 
