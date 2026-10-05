@@ -16,7 +16,7 @@ Sin tokens ni JWT: la identidad viaja en cookie HTTP-only `sid` y vive en la tab
 │ (Vercel)     │      CORS + cred.    │ (Render)     │            │  puerto    │
 └──────────────┘                      └──────┬───────┘            │  4000      │
                                              │ foto               └────────────┘
-                                    ┌────────┴────────┐
+                                    ┌────────┴──────┐
                                     │ disco local   │  Cloudinary (prod)
                                     │ (UPLOAD_DIR)  │
                                     └───────────────┘
@@ -24,14 +24,14 @@ Sin tokens ni JWT: la identidad viaja en cookie HTTP-only `sid` y vive en la tab
 
 ## 2. Stack
 
-| Capa | Tecnología |
-|---|---|
-| Frontend | Angular 19 standalone, Angular Material, Chart.js vía `ng2-charts`, RxJS |
-| Backend | Node.js 20+, Express 5, `mysql2`, `multer` (memoria, 5MB) |
-| Auth | `express-session` + `express-mysql-session` (cookie `sid`, 8h) + `bcrypt` |
-| Seguridad | `helmet`, `cors` (origen único), `express-rate-limit` en login |
-| Datos | MySQL 8 / TiDB Cloud (`utf8mb4`), fotos en Cloudinary en prod |
-| Despliegue | Vercel (front), Render (back, lee `render.yaml`), TiDB Cloud, Cloudinary |
+| Capa       | Tecnología                                                                |
+|------------|---------------------------------------------------------------------------|
+| Frontend   | Angular 19 standalone, Angular Material, Chart.js vía `ng2-charts`, RxJS  |
+| Backend    | Node.js 20+, Express 5, `mysql2`, `multer` (memoria, 5MB)                 |
+| Auth       | `express-session` + `express-mysql-session` (cookie `sid`, 8h) + `bcrypt` |
+| Seguridad  | `helmet`, `cors` (origen único), `express-rate-limit` en login            |
+| Datos      | MySQL 8 / TiDB Cloud (`utf8mb4`), fotos en Cloudinary en prod             |
+| Despliegue | Vercel (front), Render (back, lee `render.yaml`), TiDB Cloud, Cloudinary  |
 
 ## 3. Backend: capas y flujo
 
@@ -101,7 +101,7 @@ a ciegas.
 ```
 app/
 ├── components/{auth,estudiante,trabajador,estadistica,not-found}
-├── layouts/{estudiante,trabajador}   # shell + navegación por rol
+├── layouts/{estudiante,trabajador}  # shell + navegación por rol
 ├── guards/{auth.guard,role.guard}   # AuthGuard=¿logueado? RoleGuard=¿rol ok?
 ├── services/*.service.ts            # HttpClient + { withCredentials: true }
 ├── models/*.interface.ts            # contratos con el API
