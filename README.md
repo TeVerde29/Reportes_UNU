@@ -12,12 +12,16 @@
   <img src="https://img.shields.io/badge/Licencia-MIT-64748b?style=for-the-badge" alt="Licencia MIT">
 </p>
 
-<p align="center">
-  <img src="./img/login.png" alt="Inicio de sesión de Reportes UNU" width="420">
-  <img src="./img/inicio-estudiante.png" alt="Feed de reportes del estudiante" width="420">
-  <img src="./img/detalle-reporte.png" alt="Detalle de incidencia con evidencia visual" width="420">
-  <img src="./img/aceptados-admin.png" alt="Módulo de aceptados del trabajador" width="420">
-</p>
+<table align="center">
+  <tr>
+    <td><img src="./img/login.png" alt="Inicio de sesión de Reportes UNU" width="420"></td>
+    <td><img src="./img/inicio-estudiante.png" alt="Feed de reportes del estudiante" width="420"></td>
+  </tr>
+  <tr>
+    <td><img src="./img/detalle-reporte.png" alt="Detalle de incidencia con evidencia visual" width="420"></td>
+    <td><img src="./img/aceptados-admin.png" alt="Módulo de aceptados del trabajador" width="420"></td>
+  </tr>
+</table>
 
 <p align="center">
   <img src="./img/login-movil.png" alt="Inicio de sesión en móvil" width="200">
