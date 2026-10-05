@@ -6,9 +6,6 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Estado-Activo-0f9488?style=for-the-badge" alt="Estado: activo">
   <img src="https://img.shields.io/badge/Frontend-Angular_19-dd0031?style=for-the-badge&logo=angular&logoColor=ffffff" alt="Angular 19">
-  <img src="https://img.shields.io/badge/Backend-Express_5-000000?style=for-the-badge&logo=express&logoColor=ffffff" alt="Express 5">
-  <img src="https://img.shields.io/badge/BD-TiDB_Cloud-2563eb?style=for-the-badge&logo=mysql&logoColor=ffffff" alt="TiDB Cloud">
-  <img src="https://img.shields.io/badge/Fotos-Cloudinary-3448c5?style=for-the-badge&logo=cloudinary&logoColor=ffffff" alt="Cloudinary">
   <img src="https://img.shields.io/badge/Licencia-MIT-64748b?style=for-the-badge" alt="Licencia MIT">
 </p>
 
