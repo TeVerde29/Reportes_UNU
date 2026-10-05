@@ -15,7 +15,16 @@
 <p align="center">
   <img src="./img/login.png" alt="Inicio de sesión de Reportes UNU" width="640">
   <img src="./img/inicio-estudiante.png" alt="Feed de reportes del estudiante" width="640">
-  <img src="./img/visor-foto.png" alt="Visor de evidencia fotográfica" width="640">
+  <img src="./img/nuevo-reporte.png" alt="Formulario de nuevo reporte" width="640">
+  <img src="./img/panel-admin.png" alt="Panel del trabajador con reportes pendientes" width="640">
+  <img src="./img/detalle-reporte.png" alt="Detalle de incidencia con evidencia visual" width="640">
+  <img src="./img/datos-admin.png" alt="Dashboard de estadísticas" width="640">
+</p>
+
+<p align="center">
+  <img src="./img/login-movil.png" alt="Inicio de sesión en móvil" width="260">
+  <img src="./img/inicio-movil.png" alt="Feed del estudiante en móvil" width="260">
+  <img src="./img/panel-movil.png" alt="Panel del trabajador en móvil" width="260">
 </p>
 
 Los estudiantes crean reportes con foto, les dan like a los reportes aceptados y hacen
