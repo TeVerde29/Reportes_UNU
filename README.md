@@ -1,7 +1,22 @@
 # Reportes_UNU — Sistema de Reportes de Averías e Incidencias
 
-Aplicación web para reportar incidencias dentro de la UNU (infraestructura, mobiliario,
-equipos electrónicos, instalaciones eléctricas y sanitarias, áreas verdes, seguridad y limpieza).
+> Aplicación web para reportar incidencias dentro de la UNU (infraestructura, mobiliario,
+> equipos electrónicos, instalaciones eléctricas y sanitarias, áreas verdes, seguridad y limpieza).
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Estado-Activo-0f9488?style=for-the-badge" alt="Estado: activo">
+  <img src="https://img.shields.io/badge/Frontend-Angular_19-dd0031?style=for-the-badge&logo=angular&logoColor=ffffff" alt="Angular 19">
+  <img src="https://img.shields.io/badge/Backend-Express_5-000000?style=for-the-badge&logo=express&logoColor=ffffff" alt="Express 5">
+  <img src="https://img.shields.io/badge/BD-TiDB_Cloud-2563eb?style=for-the-badge&logo=mysql&logoColor=ffffff" alt="TiDB Cloud">
+  <img src="https://img.shields.io/badge/Fotos-Cloudinary-3448c5?style=for-the-badge&logo=cloudinary&logoColor=ffffff" alt="Cloudinary">
+  <img src="https://img.shields.io/badge/Licencia-MIT-64748b?style=for-the-badge" alt="Licencia MIT">
+</p>
+
+<p align="center">
+  <img src="./img/login.png" alt="Inicio de sesión de Reportes UNU" width="640">
+  <img src="./img/inicio-estudiante.png" alt="Feed de reportes del estudiante" width="640">
+  <img src="./img/visor-foto.png" alt="Visor de evidencia fotográfica" width="640">
+</p>
 
 Los estudiantes crean reportes con foto, les dan like a los reportes aceptados y hacen
 seguimiento a los suyos. El personal (supervisor/administrador) revisa los pendientes,
@@ -191,4 +206,23 @@ Sin runner automatizado; verificación por capas:
 
 ## Licencia
 
-Ver `LICENSE`.
+Este proyecto se distribuye bajo la licencia **MIT**. Consulta el archivo `LICENSE` para más detalles.
+
+---
+
+## Autor
+
+**Pedro Giovanni Ricra Figueroa**
+Estudiante de Ingeniería de Sistemas — Universidad Nacional de Ucayali
+
+- GitHub: [@TeVerde29](https://github.com/TeVerde29)
+- LinkedIn: [Pedro Giovanni Ricra Figueroa](http://www.linkedin.com/in/pedro-giovanni-ricra-figueroa-971a20433)
+- Email: pedro.ricra.figueroa@gmail.com
+
+---
+
+<div align="center">
+
+Si este proyecto te resultó útil, considera darle una estrella en GitHub.
+
+</div>
