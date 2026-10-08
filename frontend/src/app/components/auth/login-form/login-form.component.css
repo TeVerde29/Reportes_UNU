@@ -183,6 +183,28 @@
   transform: translateY(0);
 }
 
+.submit-btn:disabled {
+  opacity: 0.85;
+  cursor: wait;
+  transform: none;
+}
+
+.submit-btn .btn-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  vertical-align: -3px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-top-color: #ffffff;
+  animation: btnGiro 0.7s linear infinite;
+}
+
+@keyframes btnGiro {
+  to { transform: rotate(360deg); }
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .login-card {

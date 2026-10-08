@@ -44,7 +44,10 @@
       <div *ngIf="error" class="system-message error-msg">{{ error }}</div>
 
       <!-- Botón Submit -->
-      <button type="submit" class="submit-btn">Ingresar</button>
+      <button type="submit" class="submit-btn" [disabled]="loading">
+        <span *ngIf="loading" class="btn-spinner" aria-hidden="true"></span>
+        {{ loading ? 'Ingresando…' : 'Ingresar' }}
+      </button>
 
     </form>
   </div>
