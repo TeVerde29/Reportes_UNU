@@ -367,7 +367,7 @@
   }
 
   .layout {
-    padding: 16px 12px 96px;
+    padding: 16px 12px calc(120px + env(safe-area-inset-bottom));
   }
 
   .bottom-nav {

@@ -102,6 +102,8 @@ export class InicioListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.querySubscription?.unsubscribe();
     this.busquedaSub?.unsubscribe();
+    // Seguro: si el visor quedó abierto al salir, libera el scroll del body
+    document.body.style.overflow = '';
   }
 
   setActiveTab(tab: 'ultimos' | 'populares' | 'mis-reportes'): void {
