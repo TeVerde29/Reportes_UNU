@@ -30,8 +30,8 @@
   <span>{{ error }}</span>
 </div>
 
-<!-- Estado vacío -->
-<div *ngIf="!error && reportes.length === 0" class="empty-state">
+<!-- Estado vacío (solo cuando ya terminó de cargar) -->
+<div *ngIf="!error && !cargando && reportes.length === 0" class="empty-state">
   <div class="empty-icon" aria-hidden="true">
     <mat-icon>inbox</mat-icon>
   </div>
@@ -118,6 +118,28 @@
     </ng-container>
   </div>
 </section>
+
+<!-- Primera tanda: esqueletos mientras carga -->
+<div *ngIf="cargando" class="cargando-inicial" aria-hidden="true">
+  <div class="skel-post" *ngFor="let i of [1, 2, 3]">
+    <div class="skel-linea skel-titulo"></div>
+    <div class="skel-linea"></div>
+    <div class="skel-linea skel-corta"></div>
+    <div class="skel-foto"></div>
+  </div>
+</div>
+
+<!-- Centinela del scroll infinito: al verse pide la siguiente tanda -->
+<div *ngIf="!error && !cargando && hayMas && reportes.length > 0" #centinela class="centinela" aria-hidden="true"></div>
+
+<!-- Tandas siguientes: ruedita + aviso -->
+<div *ngIf="cargandoMas" class="cargando-mas" role="status">
+  <span class="loader-mini"></span>
+  <span>Cargando más reportes…</span>
+</div>
+
+<!-- Fin del feed -->
+<p *ngIf="!error && !cargando && !hayMas && reportes.length > 0" class="fin-feed">No hay más reportes por mostrar</p>
 
 <!-- FAB para nuevo reporte -->
 <a mat-fab class="fab" routerLink="/estudiante/nuevo-reporte" aria-label="Nuevo reporte" title="Nuevo reporte">

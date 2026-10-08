@@ -499,3 +499,77 @@
     display: none;
   }
 }
+
+/* ===== Scroll infinito ===== */
+.centinela {
+  height: 2px;
+}
+
+/* Esqueletos de carga (primera tanda) */
+.cargando-inicial {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1005px;
+  margin: 0 auto;
+}
+
+.skel-post {
+  background: #FFFFFF;
+  border: 1px solid #E4ECE7;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.skel-linea,
+.skel-foto {
+  border-radius: 8px;
+  background: linear-gradient(90deg, #F0F4F2 25%, #E2ECE7 50%, #F0F4F2 75%);
+  background-size: 200% 100%;
+  animation: skelBrillo 1.2s ease-in-out infinite;
+}
+
+.skel-linea {
+  height: 14px;
+  margin-bottom: 10px;
+}
+
+.skel-titulo {
+  height: 18px;
+  width: 60%;
+}
+
+.skel-corta {
+  width: 40%;
+}
+
+.skel-foto {
+  height: 180px;
+  margin-top: 12px;
+}
+
+@keyframes skelBrillo {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* Cargando más (tandas siguientes) */
+.cargando-mas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 0 8px;
+  color: #256B45;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Fin del feed */
+.fin-feed {
+  text-align: center;
+  color: #6C7A74;
+  font-size: 13px;
+  padding: 20px 0 8px;
+  margin: 0;
+}

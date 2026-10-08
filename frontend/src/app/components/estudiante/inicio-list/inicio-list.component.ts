@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -30,7 +30,7 @@ import { MatSelectModule } from '@angular/material/select';
   templateUrl: './inicio-list.component.html',
   styleUrl: './inicio-list.component.css',
 })
-export class InicioListComponent implements OnInit, OnDestroy {
+export class InicioListComponent implements OnInit, AfterViewInit, OnDestroy {
   reportes: Reporte[] = [];
   error: string = '';
   likedByMe: Record<number, boolean> = {};
@@ -42,12 +42,28 @@ export class InicioListComponent implements OnInit, OnDestroy {
   private busquedaSub?: Subscription;
   private codigoEstudiante: string = '';
   private sesionLista = false;
-  // Filtros + se trae todo (sin paginación ni "Ver más")
+  // Filtros + scroll infinito (10 por tanda, el back devuelve `total`)
   tipos: TipoProbelma[] = [];
   ubicaciones: Ubicacion[] = [];
   filtroTipo: number | null = null;
   filtroUbi: number | null = null;
   textoQ: string = '';
+  // Estado de paginación por pestaña (se reinicia al cambiar tab/filtros)
+  private readonly TAM_PAGINA = 10;
+  private pagina = 1;
+  private totalReportes = 0;
+  cargando = false;      // primera página
+  cargandoMas = false;   // siguientes páginas
+  hayMas = true;
+  private idEstadoAceptado: number | null = null;
+  private observador?: IntersectionObserver;
+  // El centinela aparece/desaparece con *ngIf: observarlo cada vez que exista
+  @ViewChild('centinela') set refCentinela(el: ElementRef | undefined) {
+    if (el && this.observador) {
+      this.observador.disconnect();
+      this.observador.observe(el.nativeElement);
+    }
+  }
   // Visor de foto completa
   fotoAmpliada: string | null = null;
   fotoTitulo: string = '';
@@ -78,14 +94,15 @@ export class InicioListComponent implements OnInit, OnDestroy {
     });
   }
 
-  private cargarSegunTab(): void {
+  private cargarSegunTab(sumar = false): void {
+    if (!sumar) this.reiniciarPaginacion();
     if (this.activeTab === 'ultimos') {
-      this.cargarReportesPorFecha();
+      this.cargarReportesPorFecha(sumar);
       return;
     }
 
     if (this.activeTab === 'populares') {
-      this.cargarReportesConMasLikes();
+      this.cargarReportesConMasLikes(sumar);
       return;
     }
 
@@ -95,13 +112,41 @@ export class InicioListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.cargarMisReportes();
+    this.cargarMisReportes(sumar);
+  }
+
+  // Vuelve a página 1 y limpia (cambio de tab o de filtros)
+  private reiniciarPaginacion(): void {
+    this.pagina = 1;
+    this.totalReportes = 0;
+    this.hayMas = true;
+    this.reportes = [];
+    this.error = '';
+  }
+
+  // La pide el centinela al acercarse al final (tipo Facebook)
+  private cargarMas(): void {
+    if (!this.hayMas || this.cargando || this.cargandoMas) return;
+    this.pagina++;
+    this.cargarSegunTab(true);
+  }
+
+  ngAfterViewInit(): void {
+    // Seguro prerender: sin IntersectionObserver no hay scroll infinito
+    if (typeof IntersectionObserver === 'undefined') return;
+    this.observador = new IntersectionObserver(
+      (entradas) => {
+        if (entradas.some(e => e.isIntersecting)) this.cargarMas();
+      },
+      { rootMargin: '600px' }
+    );
   }
 
 
   ngOnDestroy(): void {
     this.querySubscription?.unsubscribe();
     this.busquedaSub?.unsubscribe();
+    this.observador?.disconnect();
     // Seguro: si el visor quedó abierto al salir, libera el scroll del body
     document.body.style.overflow = '';
   }
@@ -127,14 +172,41 @@ export class InicioListComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Filtros actuales como query del back (se trae todo de una vez)
+  // Filtros + página actual como query del back (tandas de 10)
   private filtrosActuales(): FiltrosReporte {
     return {
-      limit: 500,
+      page: this.pagina,
+      limit: this.TAM_PAGINA,
       id_tipo_problema: this.filtroTipo,
       id_ubicacion: this.filtroUbi,
       q: this.textoQ
     };
+  }
+
+  // Marca qué rueda mostrar (inicial o "cargando más")
+  private marcarCarga(sumar: boolean): void {
+    if (sumar) this.cargandoMas = true;
+    else this.cargando = true;
+  }
+
+  private terminarCarga(): void {
+    this.cargando = false;
+    this.cargandoMas = false;
+  }
+
+  // Pega la página pedida al final (sin duplicados) y decide si hay más
+  private asentarPagina(resp: any, sumar: boolean): void {
+    const datos: Reporte[] = Array.isArray(resp?.data) ? resp.data : [];
+    if (sumar) {
+      const vistos = new Set(this.reportes.map(r => r.id_reporte));
+      this.reportes = [...this.reportes, ...datos.filter(r => !vistos.has(r.id_reporte))];
+    } else {
+      this.reportes = datos;
+    }
+    const total = Number(resp?.total);
+    this.totalReportes = Number.isFinite(total) ? total : this.reportes.length;
+    this.hayMas = this.reportes.length < this.totalReportes;
+    this.terminarCarga();
   }
 
   aplicarFiltros(): void {
@@ -204,70 +276,92 @@ export class InicioListComponent implements OnInit, OnDestroy {
     });
   }
 
-  cargarReportesPorFecha(): void {
+  cargarReportesPorFecha(sumar = false): void {
+    this.marcarCarga(sumar);
     this.error = '';
+    // El id de Aceptado no cambia: se cachea para no pedirlo en cada página
+    if (this.idEstadoAceptado) {
+      this.pedirPorEstado(this.idEstadoAceptado, sumar);
+      return;
+    }
     this.estadoService.obtenerEstadoPorNombre('Aceptado').subscribe({
       next: (response) => {
         const estadoAceptado = Array.isArray(response.data) ? response.data[0] : response.data;
         if (!estadoAceptado) {
+          this.terminarCarga();
           this.error = 'No se encontró el estado Aceptado';
           return;
         }
-        this.reporteService.obtenerReportesPorIdEstado(estadoAceptado.id_estado, this.filtrosActuales()).subscribe({
-          next: (resp) => {
-            if (resp.success && Array.isArray(resp.data)) {
-              this.reportes = resp.data;
-            } else {
-              this.reportes = [];
-              this.error = 'No se pudieron cargar los reportes';
-            }
-          },
-          error: (er) => {
-            console.error('Error al obtener los reportes:', er);
-            this.error = 'Error al cargar los reportes';
-          },
-        });
+        this.idEstadoAceptado = estadoAceptado.id_estado;
+        this.pedirPorEstado(estadoAceptado.id_estado, sumar);
       },
       error: (err) => {
+        this.terminarCarga();
         this.error = err?.error?.message || 'Error al obtener estado';
         console.error('Error al obtener estado:', err);
       },
     });
   }
 
-cargarReportesConMasLikes(): void {
-  this.error = '';
-  this.reporteService.obtenerReportesPorMayorReacciones(this.filtrosActuales()).subscribe({
-    next: (resp) => {
-      if (resp.success && Array.isArray(resp.data)) {
-        this.reportes = resp.data;
-      } else {
-        this.reportes = [];
-        this.error = '';
-      }
-    },
-    error: (er) => {
-      console.error('Error al obtener los reportes:', er);
-      this.reportes = [];
-      this.error = 'Error al cargar los reportes';
-    },
-  });
-}
-
-  cargarMisReportes(): void {
-    this.error = '';
-    this.reporteService.obtenerReportesPorIdEstudiante(this.filtrosActuales()).subscribe({
+  private pedirPorEstado(idEstado: number, sumar: boolean): void {
+    this.reporteService.obtenerReportesPorIdEstado(idEstado, this.filtrosActuales()).subscribe({
       next: (resp) => {
         if (resp.success && Array.isArray(resp.data)) {
-          this.reportes = resp.data;
+          this.asentarPagina(resp, sumar);
         } else {
-          this.reportes = [];
+          if (!sumar) this.reportes = [];
+          this.terminarCarga();
           this.error = 'No se pudieron cargar los reportes';
         }
       },
       error: (er) => {
         console.error('Error al obtener los reportes:', er);
-        this.reportes = [];
+        if (!sumar) this.reportes = [];
+        this.terminarCarga();
+        this.error = 'Error al cargar los reportes';
+      },
+    });
+  }
+
+cargarReportesConMasLikes(sumar = false): void {
+  this.marcarCarga(sumar);
+  this.error = '';
+  this.reporteService.obtenerReportesPorMayorReacciones(this.filtrosActuales()).subscribe({
+    next: (resp) => {
+      if (resp.success && Array.isArray(resp.data)) {
+        this.asentarPagina(resp, sumar);
+      } else {
+        if (!sumar) this.reportes = [];
+        this.terminarCarga();
+        this.error = '';
+      }
+    },
+    error: (er) => {
+      console.error('Error al obtener los reportes:', er);
+      if (!sumar) this.reportes = [];
+      this.terminarCarga();
+      this.error = 'Error al cargar los reportes';
+    },
+  });
+}
+
+  cargarMisReportes(sumar = false): void {
+    this.marcarCarga(sumar);
+    this.error = '';
+    this.reporteService.obtenerReportesPorIdEstudiante(this.filtrosActuales()).subscribe({
+      next: (resp) => {
+        if (resp.success && Array.isArray(resp.data)) {
+          this.asentarPagina(resp, sumar);
+        } else {
+          if (!sumar) this.reportes = [];
+          this.terminarCarga();
+          this.error = 'No se pudieron cargar los reportes';
+        }
+      },
+      error: (er) => {
+        console.error('Error al obtener los reportes:', er);
+        if (!sumar) this.reportes = [];
+        this.terminarCarga();
         this.error = 'Error al cargar los reportes';
       },
     });
