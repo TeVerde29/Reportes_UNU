@@ -32,8 +32,11 @@ export class LayoutTrabajadorComponent {
   }
 
   // Guía: salir llama a POST /api/auth/logout (borra sesión y cookie)
-  // y te devuelve a /login aunque falle.
+  // y te devuelve a /login aunque falle. Bloquea doble toque con `saliendo`.
+  saliendo = false;
   logout(): void {
+    if (this.saliendo) return;
+    this.saliendo = true;
     this.authService.logout().subscribe({
       next: () => this.router.navigateByUrl('/login'),
       error: () => this.router.navigateByUrl('/login')

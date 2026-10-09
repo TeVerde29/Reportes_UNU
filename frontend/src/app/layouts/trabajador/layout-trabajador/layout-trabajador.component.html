@@ -32,9 +32,9 @@
         </div>
 
         <div class="actions">
-          <button mat-button type="button" class="eu-ghost" title="Cerrar sesión" (click)="logout()">
+          <button mat-button type="button" class="eu-ghost" title="Cerrar sesión" (click)="logout()" [disabled]="saliendo">
             <mat-icon>logout</mat-icon>
-            <span class="btn-text">Salir</span>
+            <span class="btn-text">{{ saliendo ? 'Saliendo…' : 'Salir' }}</span>
           </button>
         </div>
 
@@ -75,9 +75,9 @@
       <mat-icon>bar_chart</mat-icon>
       <span>Datos</span>
     </a>
-    <button type="button" class="bn-item" (click)="logout()" aria-label="Cerrar sesión">
+    <button type="button" class="bn-item" (click)="logout()" [disabled]="saliendo" aria-label="Cerrar sesión">
       <mat-icon>logout</mat-icon>
-      <span>Salir</span>
+      <span>{{ saliendo ? 'Saliendo…' : 'Salir' }}</span>
     </button>
   </nav>
 </div>
