@@ -40,8 +40,8 @@
 </div>
 
 <!-- Feed de reportes (2 columnas: pares izq, impares der = orden cronológico) -->
-<ng-template #tarjeta let-r="reporte">
-  <mat-card class="post">
+<ng-template #tarjeta let-r="reporte" let-orden="orden">
+  <mat-card class="post" [style.order]="orden">
     <!-- Header del post -->
     <div class="post-head">
       <div class="post-avatar" aria-hidden="true">
@@ -108,13 +108,13 @@
 
 <section *ngIf="!error && reportes.length > 0" class="feed">
   <div class="feed-col">
-    <ng-container *ngFor="let r of colIzquierda; trackBy: trackByIdReporte">
-      <ng-container *ngTemplateOutlet="tarjeta; context: { reporte: r }"></ng-container>
+    <ng-container *ngFor="let r of colIzquierda; let i = index; trackBy: trackByIdReporte">
+      <ng-container *ngTemplateOutlet="tarjeta; context: { reporte: r, orden: i * 2 }"></ng-container>
     </ng-container>
   </div>
   <div class="feed-col">
-    <ng-container *ngFor="let r of colDerecha; trackBy: trackByIdReporte">
-      <ng-container *ngTemplateOutlet="tarjeta; context: { reporte: r }"></ng-container>
+    <ng-container *ngFor="let r of colDerecha; let i = index; trackBy: trackByIdReporte">
+      <ng-container *ngTemplateOutlet="tarjeta; context: { reporte: r, orden: i * 2 + 1 }"></ng-container>
     </ng-container>
   </div>
 </section>
