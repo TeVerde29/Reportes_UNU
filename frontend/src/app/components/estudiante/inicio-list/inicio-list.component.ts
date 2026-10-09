@@ -225,7 +225,6 @@ export class InicioListComponent implements OnInit, AfterViewInit, OnDestroy {
     // en primera visita, empezar arriba. Reintenta porque las fotos
     // siguen estirando el contenido después del primer pintado.
     if (!sumar) {
-      (window as any).__marcasScroll = { ...this.scrollPorTab };
       const y = this.scrollPorTab[this.activeTab] || 0;
       let intentos = 0;
       const intentar = () => {
