@@ -48,6 +48,12 @@ export class InicioListComponent implements OnInit, AfterViewInit, OnDestroy {
   filtroTipo: number | null = null;
   filtroUbi: number | null = null;
   textoQ: string = '';
+  // Marca de scroll por pestaña (solo en memoria: al recargar se pierde)
+  private scrollPorTab: Record<'ultimos' | 'populares' | 'mis-reportes', number> = {
+    ultimos: 0,
+    populares: 0,
+    'mis-reportes': 0
+  };
   // Estado de paginación por pestaña (se reinicia al cambiar tab/filtros)
   private readonly TAM_PAGINA = 10;
   private pagina = 1;
@@ -88,8 +94,16 @@ export class InicioListComponent implements OnInit, AfterViewInit, OnDestroy {
       distinctUntilChanged()
     ).subscribe(() => this.aplicarFiltros());
     this.querySubscription = this.route.queryParams.subscribe(params => {
-      const tab = params['tab'];
-      this.activeTab = (tab === 'populares' || tab === 'mis-reportes') ? tab : 'ultimos';
+      const tab: 'ultimos' | 'populares' | 'mis-reportes' = (params['tab'] === 'populares' || params['tab'] === 'mis-reportes') ? params['tab'] : 'ultimos';
+      if (tab === this.activeTab && this.sesionLista) {
+        // Re-tocar la pestaña activa: refrescar desde arriba
+        this.scrollPorTab[tab] = 0;
+        window.scrollTo(0, 0);
+      } else if (tab !== this.activeTab) {
+        // Guardar dónde quedó la anterior antes de irse
+        this.scrollPorTab[this.activeTab] = window.scrollY;
+      }
+      this.activeTab = tab;
       this.cargarSegunTab();
     });
   }
@@ -207,9 +221,17 @@ export class InicioListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.totalReportes = Number.isFinite(total) ? total : this.reportes.length;
     this.hayMas = this.reportes.length < this.totalReportes;
     this.terminarCarga();
+    // Al volver a una pestaña ya vista, regresar a su marca de scroll
+    if (!sumar) {
+      const y = this.scrollPorTab[this.activeTab] || 0;
+      if (y > 0) setTimeout(() => window.scrollTo(0, y));
+    }
   }
 
   aplicarFiltros(): void {
+    // La lista cambió: la marca vieja ya no vale, volver arriba
+    this.scrollPorTab[this.activeTab] = 0;
+    window.scrollTo(0, 0);
     this.cargarSegunTab();
   }
 
@@ -228,7 +250,7 @@ export class InicioListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filtroTipo = null;
     this.filtroUbi = null;
     this.textoQ = '';
-    this.cargarSegunTab();
+    this.aplicarFiltros();
   }
 
   cargarSesion(): void {
