@@ -115,6 +115,13 @@
   .feed {
     flex-direction: column;
   }
+
+  /* En móvil se aplana a una sola columna cronológica: sin esto la
+     columna izquierda se pinta entera primero y la derecha después,
+     y el orden visual no coincide con el cronológico */
+  .feed-col {
+    display: contents;
+  }
 }
 
 /* ===== Post (mat-card blanco, borde #E4ECE7, radio 16px) ===== */
