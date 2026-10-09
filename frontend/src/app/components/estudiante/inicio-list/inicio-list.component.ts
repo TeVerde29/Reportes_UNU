@@ -221,10 +221,19 @@ export class InicioListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.totalReportes = Number.isFinite(total) ? total : this.reportes.length;
     this.hayMas = this.reportes.length < this.totalReportes;
     this.terminarCarga();
-    // Al volver a una pestaña ya vista, regresar a su marca de scroll
+    // Al volver a una pestaña ya vista, regresar a su marca de scroll;
+    // en primera visita, empezar arriba. Reintenta porque las fotos
+    // siguen estirando el contenido después del primer pintado.
     if (!sumar) {
+      (window as any).__marcasScroll = { ...this.scrollPorTab };
       const y = this.scrollPorTab[this.activeTab] || 0;
-      if (y > 0) setTimeout(() => window.scrollTo(0, y));
+      let intentos = 0;
+      const intentar = () => {
+        window.scrollTo(0, y);
+        intentos++;
+        if (intentos < 6 && Math.abs(window.scrollY - y) > 4) setTimeout(intentar, 150);
+      };
+      setTimeout(intentar, 80);
     }
   }
 
