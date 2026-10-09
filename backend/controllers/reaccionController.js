@@ -51,7 +51,8 @@ const darLike = async (req, res) => {
       );
       const [upd] = await conn.query(
         `UPDATE reporte
-         SET cantidad_reacciones = IFNULL(cantidad_reacciones, 0) + 1
+         SET cantidad_reacciones = IFNULL(cantidad_reacciones, 0) + 1,
+             fecha_edicion = fecha_edicion
          WHERE id_reporte = ?`,
         [idReporte]
       );
@@ -84,7 +85,8 @@ const darLike = async (req, res) => {
     );
     const [upd2] = await conn.query(
       `UPDATE reporte
-       SET cantidad_reacciones = IFNULL(cantidad_reacciones, 0) + 1
+       SET cantidad_reacciones = IFNULL(cantidad_reacciones, 0) + 1,
+           fecha_edicion = fecha_edicion
        WHERE id_reporte = ?`,
       [idReporte]
     );
@@ -157,7 +159,8 @@ const quitarLike = async (req, res) => {
     );
     const [upd] = await conn.query(
       `UPDATE reporte
-       SET cantidad_reacciones = GREATEST(0, IFNULL(cantidad_reacciones, 0) - 1)
+       SET cantidad_reacciones = GREATEST(0, IFNULL(cantidad_reacciones, 0) - 1),
+           fecha_edicion = fecha_edicion
        WHERE id_reporte = ?`,
       [idReporte]
     );
