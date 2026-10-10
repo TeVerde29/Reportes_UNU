@@ -3,6 +3,17 @@ const db = require('../config/database');
 const obtenerTrabajadorPorId = async (req, res) => {
     try {
         const { id } = req.params;
+        const auth = req.session && req.session.auth;
+        // Propiedad: un trabajador solo ve su propio perfil; los roles 1 y 2
+        // ven cualquiera; los alumnos no usan este endpoint (403)
+        const esPersonal = auth && (auth.id_rol === 1 || auth.id_rol === 2);
+        const esPropio = auth && Number(id) === Number(auth.id_trabajador);
+        if (!esPersonal && !esPropio) {
+            return res.status(403).json({
+                success: false,
+                message: 'No tienes permiso para ver este perfil'
+            });
+        }
         const [trabajador] = await db.query(`
             SELECT * FROM trabajador WHERE id_trabajador = ?
             `, [id]

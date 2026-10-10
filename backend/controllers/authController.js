@@ -12,6 +12,26 @@
 // ============================================================
 const db = require('../config/database');
 const bcrypt = require('bcrypt');
+const { estaBloqueada, registrarFallo, limpiarIntentos } = require('../config/seguridad');
+
+// Respuesta 429 unificada (no dice si la cuenta existe o no)
+function respuestaBloqueo(res) {
+  return res.status(429).json({
+    success: false,
+    message: 'Cuenta bloqueada temporalmente por demasiados intentos, espera 15 minutos'
+  });
+}
+
+// Fallo de credenciales: suma al freno por cuenta y avisa si se bloqueó
+async function falloCredenciales(req, res, codigo) {
+  const bloqueada = await registrarFallo(codigo);
+  if (bloqueada) return respuestaBloqueo(res);
+  // Mensaje igual si no existe o si la clave está mal (no doy pistas)
+  return res.status(401).json({
+    success: false,
+    message: 'Credenciales inválidas'
+  });
+}
 
 // Ayuda: crea una sesión nueva desde cero.
 // Esto evita que un atacante te pase su sesión vieja (fijación de sesión).
@@ -38,6 +58,10 @@ const login = async (req, res) => {
         message: 'Datos incompletos'
       });
     }
+    // Paso 1b: freno por cuenta (antes de tocar la BD de usuarios)
+    if (await estaBloqueada(codigo)) {
+      return respuestaBloqueo(res);
+    }
     // ==================================================
     // 1) BUSCAR EN TABLA USUARIO (SOLO PERSONAL: roles 1 y 2)
     // ==================================================
@@ -52,13 +76,10 @@ const login = async (req, res) => {
       // Comparo la clave que escribió con la guardada (que está revuelta con bcrypt)
       const passwordOk = await bcrypt.compare(clave, usuario.clave);
       if (!passwordOk) {
-        // Mensaje igual si no existe o si la clave está mal (no doy pistas)
-        return res.status(401).json({
-          success: false,
-          message: 'Credenciales inválidas'
-        });
+        return falloCredenciales(req, res, codigo);
       }
       // Clave correcta: creo sesión nueva con sus datos
+      await limpiarIntentos(codigo);
       await crearSesionNueva(req, {
         id_usuario: usuario.id_usuario,
         id_rol: usuario.id_rol,
@@ -85,22 +106,17 @@ const login = async (req, res) => {
       LIMIT 1
     `, [codigo]);
     if (estudiantes.length === 0) {
-      return res.status(401).json({
-        success: false,
-        message: 'Credenciales inválidas'
-      });
+      return falloCredenciales(req, res, codigo);
     }
     const estudiante = estudiantes[0];
     const passwordEstudianteOk = await bcrypt.compare(clave, estudiante.clave);
     if (!passwordEstudianteOk) {
-      return res.status(401).json({
-        success: false,
-        message: 'Credenciales inválidas'
-      });
+      return falloCredenciales(req, res, codigo);
     }
     // ==================================================
     // 3) CREAR SESIÓN DE ALUMNO (sin tocar `usuario`)
     // ==================================================
+    await limpiarIntentos(codigo);
     await crearSesionNueva(req, {
       id_usuario: null,
       id_rol: 3,

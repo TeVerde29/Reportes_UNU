@@ -104,6 +104,33 @@ const loginFreno = rateLimit({
 });
 app.use('/api/auth/login', loginFreno);
 
+// 4b) Freno por cuenta: mismo login, pero la llave es el `codigo`.
+// Sin esto, un atacante rota IPs y el freno de arriba nunca salta.
+// Va DESPUÉS de express.json() para poder leer req.body.codigo.
+const loginFrenoPorCuenta = rateLimit({
+    windowMs: 15 * 60 * 1000, // ventana de 15 minutos
+    max: 20, // 20 intentos por cuenta (el bloqueo real lo pone bloqueo_login con 10 fallos)
+    keyGenerator: (req) => (req.body && req.body.codigo) || req.ip,
+    message: { success: false, message: 'Demasiados intentos, espera 15 minutos' },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+app.use('/api/auth/login', loginFrenoPorCuenta);
+
+// 4c) Freno para verificarUsuario (oráculo de claves del personal sin límite)
+const verificarFreno = rateLimit({
+    windowMs: 15 * 60 * 1000, // ventana de 15 minutos
+    max: 30, // 30 intentos por IP
+    message: { success: false, message: 'Demasiados intentos, espera 15 minutos' },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+app.use('/api/usuario', verificarFreno);
+
+// Tablas auxiliares de seguridad (bloqueo_login): se crea sola si falta
+const { initSeguridad } = require('./config/seguridad');
+initSeguridad();
+
 // 4.1) Job diario: borra pendientes con más de 7 días (fila + foto)
 // Sin librerías: calcula cuánto falta para las 03:00 y repite cada 24h.
 const { limpiarPendientesAntiguos } = require('./jobs/limpiarPendientes');

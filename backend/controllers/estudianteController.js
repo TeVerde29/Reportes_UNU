@@ -9,6 +9,14 @@ const db = require('../config/database');
 const obtenerEstudiantePorId = async (req, res) => {
     try {
         const { id } = req.params;
+        const auth = req.session && req.session.auth;
+        // Propiedad: un alumno solo ve su propio perfil; el personal ve cualquiera
+        if (auth && auth.codigo_estudiante && Number(id) !== Number(auth.id_estudiante)) {
+            return res.status(403).json({
+                success: false,
+                message: 'No tienes permiso para ver este perfil'
+            });
+        }
         const [estudiante] = await db.query(`
             SELECT id_estudiante, nombres, apellido_paterno, apellido_materno,
                    dni, telefono, correo, escuela, facultad, codigo
