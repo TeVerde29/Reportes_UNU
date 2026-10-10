@@ -1,4 +1,4 @@
-# Reportes_UNU — Sistema de Reportes de Averías e Incidencias
+# Reportes UNU — Sistema de Reportes de Averías e Incidencias
 
 > Aplicación web para reportar incidencias dentro de la UNU (infraestructura, mobiliario,
 > equipos electrónicos, instalaciones eléctricas y sanitarias, áreas verdes, seguridad y limpieza).
