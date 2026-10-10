@@ -217,6 +217,14 @@
   to { transform: rotate(360deg); }
 }
 
+/* CAPTCHA de Turnstile (centrado, solo cuando el back lo exige) */
+.captcha-box {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0 12px;
+  min-height: 65px;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .login-card {

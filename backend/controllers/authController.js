@@ -12,7 +12,7 @@
 // ============================================================
 const db = require('../config/database');
 const bcrypt = require('bcrypt');
-const { estaBloqueada, registrarFallo, limpiarIntentos } = require('../config/seguridad');
+const { estaBloqueada, registrarFallo, limpiarIntentos, obtenerIntentos, verificarCaptcha, INTENTOS_CAPTCHA } = require('../config/seguridad');
 
 // Respuesta 429 unificada (no dice si la cuenta existe o no)
 function respuestaBloqueo(res) {
@@ -61,6 +61,21 @@ const login = async (req, res) => {
     // Paso 1b: freno por cuenta (antes de tocar la BD de usuarios)
     if (await estaBloqueada(codigo)) {
       return respuestaBloqueo(res);
+    }
+    // Paso 1c: con 3+ fallos se exige CAPTCHA (primera muralla).
+    // El conteo vive en BD y lo pone el front tras el primer 403.
+    const intentos = await obtenerIntentos(codigo);
+    if (intentos >= INTENTOS_CAPTCHA) {
+      const token = req.body.captchaToken;
+      const ip = req.ip || (req.headers['x-forwarded-for'] || '').toString().split(',')[0].trim();
+      const captchaOk = await verificarCaptcha(token, ip);
+      if (!captchaOk) {
+        return res.status(403).json({
+          success: false,
+          requireCaptcha: true,
+          message: 'Verifica que no eres un robot para continuar'
+        });
+      }
     }
     // ==================================================
     // 1) BUSCAR EN TABLA USUARIO (SOLO PERSONAL: roles 1 y 2)

@@ -19,7 +19,7 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(data: { codigo: string; clave: string }): Observable<any> {
+  login(data: { codigo: string; clave: string; captchaToken?: string | null }): Observable<any> {
     return this.http.post(`${this.API}/login`, data, {
       withCredentials: true
     });

@@ -13,6 +13,8 @@ const db = require('./database');
 
 const MAX_INTENTOS = 10;
 const BLOQUEO_MINUTOS = 15;
+// Desde cuántos fallos se exige CAPTCHA (primera muralla, antes del bloqueo)
+const INTENTOS_CAPTCHA = 3;
 
 // Crea la tabla si falta (idempotente, se llama al arrancar el server)
 async function initSeguridad() {
@@ -81,11 +83,52 @@ async function limpiarIntentos(codigo) {
   }
 }
 
+// Cuántos fallos seguidos lleva una cuenta (0 si no hay registro o falla la BD)
+async function obtenerIntentos(codigo) {
+  try {
+    const [rows] = await db.query(
+      `SELECT intentos FROM bloqueo_login WHERE codigo = ? LIMIT 1`,
+      [codigo]
+    );
+    return rows.length > 0 ? Number(rows[0].intentos) || 0 : 0;
+  } catch (e) {
+    console.error('[seguridad:intentos]', e.message);
+    return 0;
+  }
+}
+
+// Valida un token de Cloudflare Turnstile contra su API.
+// Sin secreto configurado devuelve false (fail-closed: no se salta).
+async function verificarCaptcha(token, ip) {
+  try {
+    const secreto = process.env.CLOUDFLARE_TURNSTILE_SECRET;
+    if (!secreto || !token) return false;
+    const params = new URLSearchParams({
+      secret: secreto,
+      response: token
+    });
+    if (ip) params.append('remoteip', ip);
+    const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString()
+    });
+    const data = await r.json();
+    return data && data.success === true;
+  } catch (e) {
+    console.error('[seguridad:captcha]', e.message);
+    return false;
+  }
+}
+
 module.exports = {
   initSeguridad,
   estaBloqueada,
   registrarFallo,
   limpiarIntentos,
+  obtenerIntentos,
+  verificarCaptcha,
   MAX_INTENTOS,
-  BLOQUEO_MINUTOS
+  BLOQUEO_MINUTOS,
+  INTENTOS_CAPTCHA
 };

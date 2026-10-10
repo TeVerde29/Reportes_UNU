@@ -40,6 +40,9 @@
         </div>
       </div>
 
+      <!-- CAPTCHA (solo aparece si el servidor lo exige tras varios fallos) -->
+      <div *ngIf="mostrarCaptcha" class="captcha-box" #captchaBox></div>
+
       <!-- Mensajes del sistema -->
       <div *ngIf="error" class="system-message error-msg">{{ error }}</div>
 
