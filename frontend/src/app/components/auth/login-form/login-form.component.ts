@@ -123,13 +123,11 @@ export class LoginFormComponent implements OnInit {
 
   private reiniciarCaptcha(): void {
     this.captchaToken = null;
-    // El widget a veces queda sin iframe (pestaña en 2.º plano, red lenta):
-    // se elimina y se vuelve a pintar para que siempre haya uno sano
+    // reset() limpia el token y deja el iframe listo para reintentar
+    // (remove() en ciclos rápidos dejaba al widget huérfano)
     try {
       if (typeof turnstile !== 'undefined' && this.captchaWidgetId !== null) {
-        turnstile.remove(this.captchaWidgetId);
-        this.captchaWidgetId = null;
-        setTimeout(() => this.renderCaptcha(), 300);
+        turnstile.reset(this.captchaWidgetId);
       }
     } catch {
       this.captchaWidgetId = null;
