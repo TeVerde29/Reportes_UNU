@@ -88,6 +88,7 @@
   .filter-bar {
     flex-wrap: nowrap;
     gap: 6px;
+    margin-bottom: 10px;
   }
 
   /* Los 3 juntos en una fila y más delgaditos (solo móvil) */
