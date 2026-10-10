@@ -70,6 +70,12 @@ export class LayoutEstudianteComponent implements OnInit {
     this.router.navigate(['/estudiante/nuevo-reporte']);
   }
 
+  // En nuevo/editar no hay tab activo: el puntito no se muestra.
+  esFormulario(): boolean {
+    const url = this.router.url || '';
+    return url.includes('/nuevo-reporte') || url.includes('/editar-reporte');
+  }
+
   obtenerIniciales(nombre: string): string {
     if (!nombre) return 'U';
     const partes = nombre.trim().split(' ');

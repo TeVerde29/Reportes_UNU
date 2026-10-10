@@ -4,14 +4,14 @@
     <mat-label>Categoría</mat-label>
     <mat-select [(ngModel)]="filtroTipo" (selectionChange)="aplicarFiltros()">
       <mat-option [value]="null">Todas</mat-option>
-      <mat-option *ngFor="let t of tipos" [value]="t.id_tipo_problema">{{ t.nombre }}</mat-option>
+      <mat-option *ngFor="let t of tipos" [value]="t.id_tipo_problema">{{ nombreOracion(t.nombre) }}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field appearance="outline" class="filter-field" subscriptSizing="dynamic">
     <mat-label>Ubicación</mat-label>
     <mat-select [(ngModel)]="filtroUbi" (selectionChange)="aplicarFiltros()">
       <mat-option [value]="null">Todas</mat-option>
-      <mat-option *ngFor="let u of ubicaciones" [value]="u.id_ubicacion">{{ u.nombre }}</mat-option>
+      <mat-option *ngFor="let u of ubicaciones" [value]="u.id_ubicacion">{{ nombreOracion(u.nombre) }}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field appearance="outline" class="filter-field filter-search" subscriptSizing="dynamic">

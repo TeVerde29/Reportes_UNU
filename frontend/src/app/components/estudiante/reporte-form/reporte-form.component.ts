@@ -411,7 +411,7 @@ onSubmit(): void {
       this.reporteForm.get('id_ubicacion')?.setValue(id);
       this.reporteForm.get('id_ubicacion')?.markAsTouched();
       const match = this.ubicaciones.find(u => u.id_ubicacion === id);
-      this.ubicacionSeleccionadaNombre = match?.nombre ?? nombreSvg;
+      this.ubicacionSeleccionadaNombre = this.nombreOracion(match?.nombre ?? nombreSvg);
       console.log('Ubicación seleccionada:', this.ubicacionSeleccionadaNombre, '(ID:', id, ')');
     };
     for (const el of edificios) {
@@ -448,5 +448,21 @@ onSubmit(): void {
       .toLowerCase()
       .replace(/\s+/g, ' ')
       .trim();
+  }
+
+  // Display en formato oración: "AUDITORIO GENERAL" -> "Auditorio General".
+  // Solo presentación, no toca el matching (normalize) ni la BD.
+  nombreOracion(texto: string | undefined): string {
+    if (!texto) return '';
+    const conectores = new Set(['de', 'la', 'las', 'los', 'del', 'y', 'e', 'en', 'con', 'para', 'por', 'al', 'el']);
+    const partes = texto.toLowerCase().split(/(\s+)/);
+    return partes
+      .map((parte, i) => {
+        if (/^\s+$/.test(parte) || parte === '') return parte;
+        const limpia = parte.toLowerCase();
+        if (i > 2 && conectores.has(limpia)) return limpia;
+        return limpia.charAt(0).toUpperCase() + limpia.slice(1);
+      })
+      .join('');
   }
 }

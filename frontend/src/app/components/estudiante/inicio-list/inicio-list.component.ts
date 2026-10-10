@@ -456,6 +456,23 @@ cargarReportesConMasLikes(sumar = false): void {
     return t.replace(/^Facultad De /, 'Fac. ');
   }
 
+  // Combo en formato oración: "AUDITORIO GENERAL" -> "Auditorio General".
+  // Conectores en minúscula para que no quede todo en mayúsculas.
+  nombreOracion(texto: string | undefined): string {
+    if (!texto) return '';
+    const conectores = new Set(['de', 'la', 'las', 'los', 'del', 'y', 'e', 'en', 'con', 'para', 'por', 'al', 'el']);
+    return texto
+      .toLowerCase()
+      .split(/(\s+)/)
+      .map((parte, i) => {
+        if (/^\s+$/.test(parte) || parte === '') return parte;
+        const limpia = parte.toLowerCase();
+        if (i > 2 && conectores.has(limpia)) return limpia;
+        return limpia.charAt(0).toUpperCase() + limpia.slice(1);
+      })
+      .join('');
+  }
+
   // Columnas para masonry cronológico: pares a la izq, impares a la der
   get colIzquierda(): Reporte[] {
     return this.reportes.filter((_, i) => i % 2 === 0);

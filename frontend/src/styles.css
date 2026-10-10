@@ -223,12 +223,12 @@ html {
 
 /* Opciones del desplegable (rinden en overlay global, compactas) */
 .cdk-overlay-pane .mat-mdc-option {
-  font-size: 13px;
-  min-height: 36px;
+  font-size: 12px;
+  min-height: 32px;
 }
 
 .cdk-overlay-pane .mat-mdc-option .mdc-list-item__primary-text {
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .filter-bar .mat-mdc-form-field-subscript-wrapper {

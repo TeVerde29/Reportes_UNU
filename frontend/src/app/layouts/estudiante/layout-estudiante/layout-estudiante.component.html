@@ -59,19 +59,18 @@
 
   <!-- Navegación inferior móvil (estilo Twitter/IG: solo ≤640px) -->
   <nav class="bottom-nav" aria-label="Navegación principal">
-    <button type="button" class="bn-item" [class.active]="activeTab === 'ultimos'" (click)="setActiveTab('ultimos')">
+    <button type="button" class="bn-item" [class.active]="activeTab === 'ultimos' && !esFormulario()" (click)="setActiveTab('ultimos')">
       <mat-icon>history</mat-icon>
       <span>Últimos</span>
     </button>
-    <button type="button" class="bn-item" [class.active]="activeTab === 'populares'" (click)="setActiveTab('populares')">
+    <button type="button" class="bn-item" [class.active]="activeTab === 'populares' && !esFormulario()" (click)="setActiveTab('populares')">
       <mat-icon>trending_up</mat-icon>
       <span>Populares</span>
     </button>
     <button type="button" class="bn-item bn-new" (click)="irNuevo()" aria-label="Nuevo reporte">
       <mat-icon>add</mat-icon>
-      <span>Reportar</span>
     </button>
-    <button type="button" class="bn-item" [class.active]="activeTab === 'mis-reportes'" (click)="setActiveTab('mis-reportes')">
+    <button type="button" class="bn-item" [class.active]="activeTab === 'mis-reportes' && !esFormulario()" (click)="setActiveTab('mis-reportes')">
       <mat-icon>folder_shared</mat-icon>
       <span>Mis reportes</span>
     </button>
