@@ -101,11 +101,15 @@ export class LoginFormComponent implements OnInit {
     });
   }
 
-  // Pinta el widget de Turnstile (solo cuando el back lo exige)
-  private renderCaptcha(): void {
+  // Pinta el widget de Turnstile (solo cuando el back lo exige).
+  // Reintenta porque api.js carga con async/defer y puede no existir aún.
+  private renderCaptcha(intentos = 0): void {
     try {
-      if (typeof turnstile === 'undefined' || !this.captchaBox) return;
-      if (this.captchaWidgetId !== null) return;
+      if (typeof turnstile === 'undefined') {
+        if (intentos < 20) setTimeout(() => this.renderCaptcha(intentos + 1), 500);
+        return;
+      }
+      if (!this.captchaBox || this.captchaWidgetId !== null) return;
       this.captchaWidgetId = turnstile.render(this.captchaBox.nativeElement, {
         sitekey: environment.turnstileSiteKey,
         callback: (token: string) => { this.captchaToken = token; },
