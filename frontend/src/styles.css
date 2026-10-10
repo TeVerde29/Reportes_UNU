@@ -235,6 +235,41 @@ html {
   display: none;
 }
 
+/* Solo móvil (≤640px): filtros en una fila y más delgaditos. PC intacto. */
+@media (max-width: 640px) {
+  .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-text-field-wrapper {
+    height: 30px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-form-field-flex {
+    height: 30px;
+  }
+
+  .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-form-field-infix {
+    padding: 3px 0;
+  }
+
+  .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-floating-label,
+  .filter-bar .filter-field.mat-mdc-form-field .mdc-floating-label {
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .filter-bar .filter-field.mat-mdc-form-field input.mat-mdc-input-element,
+  .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-select-value {
+    font-size: 12px;
+  }
+
+  .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-form-field-icon-prefix .mat-icon,
+  .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-form-field-icon-suffix .mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
 /* Los paneles de Material (mat-select, etc.) rinden en body con z-1000:
    subirlos sobre el modal de revisión (1051) o las opciones salen detrás */
 .cdk-overlay-container { z-index: 1060; }

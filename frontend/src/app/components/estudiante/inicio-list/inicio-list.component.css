@@ -86,7 +86,18 @@
 
 @media (max-width: 640px) {
   .filter-bar {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  /* Los 3 juntos en una fila y más delgaditos (solo móvil) */
+  .filter-field {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .filter-search {
+    flex: 1 1 0;
   }
 }
 

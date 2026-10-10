@@ -389,7 +389,7 @@
     flex-direction: column;
     align-items: center;
     gap: 2px;
-    padding: 6px 4px;
+    padding: 6px 4px 8px;
     border: none;
     background: none;
     color: rgba(255, 255, 255, 0.65);
@@ -398,10 +398,33 @@
     cursor: pointer;
     min-height: 48px;
     justify-content: center;
+    position: relative;
   }
 
   .bn-item.active {
     color: #ffffff;
+  }
+
+  /* Puntito indicador bajo el activo (invertido: blanco sobre verde) */
+  .bn-item.active:not(.bn-new)::after {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #ffffff;
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+
+  /* Reserva el espacio del puntito en inactivos para que no salte el layout */
+  .bn-item:not(.active):not(.bn-new)::after {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: transparent;
+    margin-top: 3px;
+    flex-shrink: 0;
   }
 
   .bn-item .mat-icon {
