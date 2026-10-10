@@ -4,3 +4,6 @@ database/
 # Notas personales del proyecto
 MEMORY.md
 observaciones.md
+
+# Blueprint general local (referencia personal, no se commitea)
+documentation/ARQUITECTURA_GENERAL.md
