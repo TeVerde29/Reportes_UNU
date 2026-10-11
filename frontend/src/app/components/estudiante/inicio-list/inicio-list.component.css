@@ -209,8 +209,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 15px;
   text-transform: uppercase;
   flex-shrink: 0;
 }
