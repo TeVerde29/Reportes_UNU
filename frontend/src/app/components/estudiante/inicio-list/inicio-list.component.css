@@ -100,6 +100,48 @@
   .filter-search {
     flex: 1 1 0;
   }
+
+  /* Filtros delgados: espejo de styles.css con ::ng-deep.
+     Los internos de Material (.mat-mdc-*) no llevan el atributo de
+     encapsulación, por eso sin ::ng-deep estas reglas no los alcanzan.
+     Vive en el CSS del componente (inyectado inline por Angular) para que
+     aplique aunque la hoja global quede en media="print" (fallo verificado
+     en el desplegado). Mismos valores que styles.css, sin conflicto. */
+  .filter-bar ::ng-deep .filter-field.mat-mdc-form-field {
+    --mat-form-field-container-height: 26px;
+  }
+
+  .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined {
+    height: 26px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-form-field-flex {
+    height: 26px;
+  }
+
+  .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-form-field-infix {
+    min-height: 0;
+    padding: 2px 0;
+  }
+
+  .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mdc-floating-label {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .filter-bar ::ng-deep .filter-field.mat-mdc-form-field input.mat-mdc-input-element,
+  .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-select-value {
+    font-size: 12px;
+  }
+
+  .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-form-field-icon-prefix .mat-icon,
+  .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-form-field-icon-suffix .mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
 }
 
 /* ===== Feed estilo Pinterest (2 columnas independientes, orden cronológico) ===== */
