@@ -374,6 +374,11 @@ mat-error,
 /* Solo móvil (≤640px): campos compactos como los filtros del feed
    (30px de alto, letra 12px). ::ng-deep para alcanzar internos Material. */
 @media (max-width: 640px) {
+  /* Menos aire entre Título, Descripción y Tipo */
+  .form-group {
+    margin-bottom: 8px;
+  }
+
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field {
     --mat-form-field-container-height: 30px;
   }
