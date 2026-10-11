@@ -68,4 +68,9 @@ export class ReporteService {
     return this.http.delete<ReporteResponse>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
+  // El alumno cancela su propio pendiente (dueño + estado 1, lo revisa el back)
+  eliminarMiReporte(id: number): Observable<ReporteResponse> {
+    return this.http.delete<ReporteResponse>(`${this.apiUrl}/mio/${id}`, { withCredentials: true });
+  }
+
 }

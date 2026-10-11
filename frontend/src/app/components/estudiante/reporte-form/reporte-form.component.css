@@ -83,6 +83,12 @@
   color: #235B3C;
 }
 
+.alert-info {
+  background: #EAF6F2;
+  border-color: #B5DCD3;
+  color: #14705C;
+}
+
 /* CAMPOS MATERIAL */
 .form-group {
   margin-bottom: 16px;

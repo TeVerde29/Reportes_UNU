@@ -30,6 +30,12 @@
   <span>{{ error }}</span>
 </div>
 
+<!-- Aviso: editar/eliminar solo mientras está pendiente -->
+<div *ngIf="!error && activeTab === 'mis-reportes'" class="alert alert-info">
+  <mat-icon class="alert-icon">info</mat-icon>
+  <span>Puedes editar o eliminar tus datos mientras el reporte esté pendiente de revisión.</span>
+</div>
+
 <!-- Estado vacío (solo cuando ya terminó de cargar) -->
 <div *ngIf="!error && !cargando && reportes.length === 0" class="empty-state">
   <div class="empty-icon" aria-hidden="true">
@@ -101,6 +107,10 @@
           class="edit-btn" [routerLink]="['/estudiante/editar-reporte', r.id_reporte]">
           Editar
         </button>
+        <button *ngIf="activeTab === 'mis-reportes' && r.estado === 'Pendiente'" mat-button type="button"
+          class="delete-btn" (click)="abrirConfirmarEliminar(r)">
+          Eliminar
+        </button>
       </div>
     </div>
   </mat-card>
@@ -154,5 +164,21 @@
     <button type="button" class="visor-close" (click)="cerrarFoto()" aria-label="Cerrar">
       <mat-icon>close</mat-icon>
     </button>
+  </div>
+</div>
+
+<!-- Confirmar eliminación de mi pendiente -->
+<div *ngIf="eliminarId !== null" class="confirm-backdrop" (click)="cancelarEliminar()">
+  <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirm-title" (click)="$event.stopPropagation()">
+    <h3 id="confirm-title">¿Eliminar este reporte?</h3>
+    <p>Se borrará el reporte y su foto. Esta acción no se puede deshacer.</p>
+    <div class="confirm-actions">
+      <button mat-stroked-button type="button" class="btn-cancel" (click)="cancelarEliminar()" [disabled]="eliminando">
+        Cancelar
+      </button>
+      <button mat-flat-button type="button" class="btn-danger" (click)="confirmarEliminar()" [disabled]="eliminando">
+        {{ eliminando ? 'Eliminando…' : 'Eliminar' }}
+      </button>
+    </div>
   </div>
 </div>

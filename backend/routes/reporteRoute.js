@@ -25,6 +25,7 @@ const {
   obtenerReportesPorIdEstudiante,
   revisarReporte,
   eliminarReporte,
+  eliminarMiReporte,
   obtenerReportesPorTipoProblema,
   obtenerReportesPorUbicacion,
   obtenerReportesPorTipoYUbicacion,
@@ -41,6 +42,8 @@ router.get('/mis-reportes', requireSession, requireEstudiante, obtenerReportesPo
 router.put('/revisar/:id', requireSession, requireRole([1, 2]), revisarReporte);
 // Rechazo = borrado total (registro + foto), solo personal
 router.delete('/:id', requireSession, requireRole([1, 2]), eliminarReporte);
+// El alumno cancela su propio pendiente (dueño + estado 1, lo revisa el controlador)
+router.delete('/mio/:id', requireSession, requireEstudiante, eliminarMiReporte);
 // Editar: solo el dueño (sesión alumno, el controlador verifica)
 router.put('/:id', requireSession, requireEstudiante, upload.single('foto'), actualizarReporte);
 

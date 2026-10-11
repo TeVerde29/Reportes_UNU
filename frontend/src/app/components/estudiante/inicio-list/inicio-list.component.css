@@ -470,6 +470,82 @@
   font-weight: 600;
 }
 
+/* Botón Eliminar: texto rojo sobrio (solo mis pendientes) */
+.delete-btn {
+  color: #9C2B2B;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+/* Aviso info (mis reportes) */
+.alert-info {
+  border: 1px solid #B5DCD3;
+  background: #EAF6F2;
+  color: #14705C;
+  max-width: 1005px;
+  margin: 0 auto 16px;
+}
+
+.alert-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Confirmar eliminación */
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background-color: rgba(10, 20, 15, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.confirm-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 8px 30px rgba(10, 30, 20, 0.25);
+  animation: modalIn 0.25s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.confirm-card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111e1a;
+}
+
+.confirm-card p {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.confirm-actions .btn-cancel {
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.confirm-actions .btn-danger {
+  background: #9C2B2B;
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
 /* ===== Visor de foto (tipo Facebook) ===== */
 .visor-backdrop {
   position: fixed;

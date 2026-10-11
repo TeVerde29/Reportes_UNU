@@ -236,6 +236,40 @@ const eliminarReporte = async (req, res) => {
 };
 
 // ============================================================
+// ELIMINAR MI REPORTE (el alumno cancela su propio pendiente)
+// Guía: mismo borrado total que eliminarReporte, pero solo el dueño
+// (código de sesión) y solo si sigue Pendiente (id_estado 1).
+// Aceptado/Resuelto ya es del personal y no se toca.
+// ============================================================
+const eliminarMiReporte = async (req, res) => {
+  try {
+    const idReporte = Number(req.params.id);
+    if (!Number.isInteger(idReporte) || idReporte <= 0) {
+      return res.status(400).json({ success: false, message: 'Id inválido' });
+    }
+    const [rows] = await db.query(
+      'SELECT foto_url, codigo_estudiante, id_estado FROM reporte WHERE id_reporte = ?',
+      [idReporte]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Reporte no encontrado' });
+    }
+    if (rows[0].codigo_estudiante !== req.session.auth.codigo_estudiante) {
+      return res.status(403).json({ success: false, message: 'No es tu reporte' });
+    }
+    if (Number(rows[0].id_estado) !== 1) {
+      return res.status(403).json({ success: false, message: 'Solo puedes eliminar reportes pendientes' });
+    }
+    await db.query('DELETE FROM reporte WHERE id_reporte = ?', [idReporte]);
+    await borrarFoto(rows[0].foto_url);
+    return res.status(200).json({ success: true, message: 'Reporte eliminado correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar mi reporte:', error);
+    return res.status(500).json({ success: false, message: 'Error al eliminar reporte' });
+  }
+};
+
+// ============================================================
 // FILTROS + PAGINACIÓN (?page=&limit=&id_tipo_problema=&id_ubicacion=&q=)
 // Guía: los 3 listados del inicio traían el 100%. Ahora por páginas
 // de 10 y con filtros, para que aguante miles de reportes.
@@ -683,6 +717,7 @@ module.exports = {
   obtenerReportesPorIdEstudiante,
   revisarReporte,
   eliminarReporte,
+  eliminarMiReporte,
   obtenerReportesPorTipoProblema,
   obtenerReportesPorUbicacion,
   obtenerReportesPorTipoYUbicacion,

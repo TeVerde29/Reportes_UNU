@@ -445,6 +445,41 @@ cargarReportesConMasLikes(sumar = false): void {
     return !!(r.id_reporte && this.likedByMe[r.id_reporte]);
   }
 
+  // Eliminar mi pendiente con confirmación (dueño + Pendiente lo valida el back)
+  eliminarId: number | null = null;
+  eliminando = false;
+
+  abrirConfirmarEliminar(r: Reporte): void {
+    if (!r.id_reporte) return;
+    this.eliminarId = r.id_reporte;
+  }
+
+  cancelarEliminar(): void {
+    if (this.eliminando) return;
+    this.eliminarId = null;
+  }
+
+  confirmarEliminar(): void {
+    if (this.eliminarId == null || this.eliminando) return;
+    const id = this.eliminarId;
+    this.eliminando = true;
+    this.reporteService.eliminarMiReporte(id).subscribe({
+      next: () => {
+        this.reportes = this.reportes.filter(x => x.id_reporte !== id);
+        this.totalReportes = Math.max(0, this.totalReportes - 1);
+        this.hayMas = this.reportes.length < this.totalReportes;
+        this.eliminarId = null;
+        this.eliminando = false;
+      },
+      error: (err) => {
+        console.error('Error al eliminar reporte:', err);
+        this.error = err?.error?.message || 'No se pudo eliminar el reporte';
+        this.eliminarId = null;
+        this.eliminando = false;
+      }
+    });
+  }
+
   trackByIdReporte(index: number, item: Reporte): number {
     return item.id_reporte ?? index;
   }
