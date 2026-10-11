@@ -91,7 +91,7 @@
 
 /* CAMPOS MATERIAL */
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .eu-field {
@@ -99,8 +99,10 @@
 }
 
 .eu-field textarea {
-  min-height: 96px;
+  min-height: 88px;
   resize: vertical;
+  line-height: 1.45;
+  font-size: 14px;
 }
 
 .eu-label {

@@ -7,7 +7,6 @@
   <form [formGroup]="reporteForm" (ngSubmit)="onSubmit()" class="eu-form-card">
     <h2>{{ isEditMode ? 'Editar reporte de incidencia' : 'Nuevo reporte de incidencia' }}</h2>
     <p class="form-subtitle">Completa los datos y marca la ubicación en el croquis del campus.</p>
-    <div *ngIf="isEditMode" class="alert alert-info" role="note">Puedes editar o actualizar tus datos mientras el reporte esté pendiente de revisión.</div>
 
     <!-- TÍTULO -->
     <div class="form-group">

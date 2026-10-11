@@ -349,9 +349,9 @@
 }
 
 .post-text {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   color: #4b5563;
-  line-height: 20px;
+  line-height: 1.45;
   font-size: 13px;
   white-space: pre-wrap;
 }
