@@ -80,8 +80,14 @@ export class MapaTestComponent implements AfterViewInit, OnDestroy {
         this.nombreSel = nombre;
       });
     }
-    // Encuadra los 18 al abrir para que se vean todos en el celular
-    this.map.fitBounds(limites.pad(0.15));
+    // Encuadra los 18 al abrir. Diferido + invalidateSize porque al montar
+    // el contenedor aún puede no tener tamaño final (fuentes/CSS tardíos)
+    // y sin eso el encuadre sale desplazado.
+    setTimeout(() => {
+      if (!this.map) return;
+      this.map.invalidateSize();
+      this.map.fitBounds(limites.pad(0.15));
+    }, 300);
   }
 
   ngOnDestroy(): void {
