@@ -199,14 +199,13 @@
   margin-bottom: 10px;
 }
 
-/* Avatar circular 40px verde eucalipto con iniciales */
+/* Avatar circular estilo Stitch: círculo verdecito claro con iniciales en verde oscuro */
 .post-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #256B45;
-  background: var(--eu-primary, #256B45);
-  color: #ffffff;
+  background: #D9E9DC;
+  color: #1F5C3D;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -290,11 +289,39 @@
   margin-bottom: 10px;
 }
 
-/* Tags chicos para que tipo + ubicación quepan juntos */
+/* Tags tipo/ubicación estilo Stitch: letra verde sobre verdecito suave.
+   Base completa aquí (no solo en styles.css) para que aplique siempre. */
 .post-meta-bottom .eu-tag {
-  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #E2EEE3;
+  color: #2E6B47;
+  white-space: nowrap;
 }
+
+/* Estados estilo Stitch: píldora uppercase con fondo suave.
+   Pendiente rojito, Aceptado verde, Resuelto azul. */
+.post-meta-bottom .eu-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.post-meta-bottom .eu-badge-pendiente { background: #F7E4DC; color: #A03D22; border-color: #EBC4B4; }
+.post-meta-bottom .eu-badge-aceptado { background: #E2F2E5; color: #237A48; border-color: #B4DCC0; }
+.post-meta-bottom .eu-badge-resuelto { background: #E2EEFA; color: #245F8F; border-color: #C0D8EC; }
 
 .post-meta-bottom .tag-ubi {
   display: inline-block;
