@@ -54,26 +54,34 @@ export class MapaTestComponent implements AfterViewInit, OnDestroy {
     if (!this.mapaEl) return;
     this.map = L.map(this.mapaEl.nativeElement).setView([-8.3955, -74.5765], 16);
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      // En Pucallpa Esri no tiene foto más allá de z17: con maxNativeZoom
+      // el zoom profundo estira la foto (borroso) en vez de gris "not available".
+      maxNativeZoom: 17,
       maxZoom: 19,
       attribution: 'Tiles &copy; Esri &mdash; Edificios &copy; OpenStreetMap contributors'
     }).addTo(this.map);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const limites: any = (L as unknown as { latLngBounds: (a: unknown[]) => any }).latLngBounds([]);
     for (const [nombre, puntos] of this.EDIFICIOS) {
       const c = this.colorPorNombre(nombre);
       const poly = L.polygon(puntos as Array<[number, number]>, {
-        color: c.borde, weight: 1, fillColor: c.relleno, fillOpacity: 0.35
+        color: c.borde, weight: 1, fillColor: c.relleno, fillOpacity: 0.45
       }).addTo(this.map);
+      limites.extend(poly.getBounds());
       poly.bindTooltip(nombre);
       poly.on('click', () => {
         if (this.capaSel) {
           const pc = (this.capaSel as unknown as { _c: { borde: string; relleno: string } })._c;
-          this.capaSel.setStyle({ color: pc.borde, weight: 1, fillColor: pc.relleno, fillOpacity: 0.35 });
+          this.capaSel.setStyle({ color: pc.borde, weight: 1, fillColor: pc.relleno, fillOpacity: 0.45 });
         }
         (poly as unknown as { _c: unknown })._c = c;
         this.capaSel = poly;
-        poly.setStyle({ color: '#256B45', weight: 2, fillColor: '#256B45', fillOpacity: 0.4 });
+        poly.setStyle({ color: '#256B45', weight: 2, fillColor: '#256B45', fillOpacity: 0.45 });
         this.nombreSel = nombre;
       });
     }
+    // Encuadra los 18 al abrir para que se vean todos en el celular
+    this.map.fitBounds(limites.pad(0.15));
   }
 
   ngOnDestroy(): void {
