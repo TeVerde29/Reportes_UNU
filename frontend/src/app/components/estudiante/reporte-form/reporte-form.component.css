@@ -370,3 +370,52 @@ mat-error,
     max-height: 400px;
   }
 }
+
+/* Solo móvil (≤640px): campos compactos como los filtros del feed
+   (30px de alto, letra 12px). ::ng-deep para alcanzar internos Material. */
+@media (max-width: 640px) {
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field {
+    --mat-form-field-container-height: 30px;
+  }
+
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined {
+    height: 30px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-form-field-flex {
+    height: 30px;
+  }
+
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-form-field-infix {
+    min-height: 0;
+    padding: 2px 0;
+  }
+
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mdc-floating-label {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field input.mat-mdc-input-element,
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-select-value,
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field textarea.mat-mdc-input-element {
+    font-size: 12px;
+  }
+
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-select-arrow svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Descripción: alto libre pero más compacta */
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field:has(textarea) .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined,
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field:has(textarea) .mat-mdc-form-field-flex {
+    height: auto;
+  }
+
+  .eu-form-card .eu-field textarea {
+    min-height: 72px;
+  }
+}
