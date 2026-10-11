@@ -418,4 +418,15 @@ mat-error,
   .eu-form-card .eu-field textarea {
     min-height: 72px;
   }
+
+  /* Opciones del desplegable (rinden en body): mismo 12px que Categoría.
+     ::ng-deep sin ancestro para alcanzarlas. Solo móvil. */
+  ::ng-deep .cdk-overlay-pane .mat-mdc-option {
+    font-size: 12px;
+    min-height: 30px;
+  }
+
+  ::ng-deep .cdk-overlay-pane .mat-mdc-option .mdc-list-item__primary-text {
+    font-size: 12px;
+  }
 }
