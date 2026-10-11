@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import * as L from 'leaflet';
 
 // Guía: pantalla OCULTA de prueba (sin enlaces en la UI) para ver el mapa
 // real en el celular: /estudiante/mapa-test. Leaflet se importa diferido
@@ -51,7 +52,6 @@ export class MapaTestComponent implements AfterViewInit, OnDestroy {
 
   async ngAfterViewInit(): Promise<void> {
     if (!this.mapaEl) return;
-    const L = await import('leaflet');
     this.map = L.map(this.mapaEl.nativeElement).setView([-8.3955, -74.5765], 16);
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 19,
