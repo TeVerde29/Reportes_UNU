@@ -5,8 +5,13 @@
   <div *ngIf="successMessage" class="alert alert-success" role="status">{{ successMessage }}</div>
 
   <form [formGroup]="reporteForm" (ngSubmit)="onSubmit()" class="eu-form-card">
-    <h2>{{ isEditMode ? 'Editar reporte de incidencia' : 'Nuevo reporte de incidencia' }}</h2>
-    <p class="form-subtitle">Completa los datos y marca la ubicación en el croquis del campus.</p>
+    <div class="eu-m-sheet-head">
+      <span class="eu-m-indicator" aria-hidden="true"></span>
+      <div class="eu-m-sheet-titles">
+        <h2>{{ isEditMode ? 'Editar reporte de incidencia' : 'Nuevo reporte de incidencia' }}</h2>
+        <p class="form-subtitle">Completa los datos y marca la ubicación en el croquis del campus.</p>
+      </div>
+    </div>
 
     <!-- TÍTULO -->
     <div class="form-group">
