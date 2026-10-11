@@ -277,9 +277,8 @@ html {
   }
 }
 
-/* Los paneles de Material (mat-select, etc.) rinden en body con z-1000
-   (CDK lo inyecta en runtime dentro de @layer y gana al override simple):
-   subir el contenedor sobre el modal de revisión (1051) o las opciones
-   salen detrás y los toques los atraviesan. Requiere overlay-prebuilt.css
-   en angular.json (aporta .cdk-overlay-pane{position:absolute}). */
-body .cdk-overlay-container { z-index: 1060 !important; }
+/* Los paneles de Material (mat-select, etc.) rinden en el overlay de CDK
+   (z-1000): los modales propios deben quedar debajo (ver pendientes-form)
+   para que las opciones reciban los toques. No subir este contenedor:
+   CDK inyecta su z-index en runtime y gana a los overrides estáticos.
+   overlay-prebuilt.css se incluye en angular.json. */
