@@ -21,7 +21,6 @@ import { RoleGuard } from './guards/role.guard';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LayoutEstudianteComponent } from './layouts/estudiante/layout-estudiante/layout-estudiante.component';
 import { LayoutTrabajadorComponent } from './layouts/trabajador/layout-trabajador/layout-trabajador.component';
-import { MapaTestComponent } from './components/estudiante/mapa-test/mapa-test.component';
 import { SolucionadoListComponent } from './components/trabajador/solucionado-list/solucionado-list.component';
 import { AceptadosListComponent } from './components/trabajador/aceptados-list/aceptados-list.component';
 import { DashboardComponent } from './components/estadistica/dashboard/dashboard.component';
@@ -44,8 +43,6 @@ export const routes: Routes = [
       { path: 'inicio', component: InicioListComponent },
       { path: 'nuevo-reporte', component: ReporteFormComponent },
       { path: 'editar-reporte/:id', component: ReporteFormComponent },
-      // Prueba oculta del mapa real (sin enlaces en la UI)
-      { path: 'mapa-test', component: MapaTestComponent },
       { path: '', redirectTo: 'inicio', pathMatch: 'full' }
     ]
   },
