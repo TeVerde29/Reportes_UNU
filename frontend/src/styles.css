@@ -241,17 +241,17 @@ html {
    sin !important. Verificado en el desplegado. */
 @media (max-width: 640px) {
   .filter-bar .filter-field.mat-mdc-form-field {
-    --mat-form-field-container-height: 26px;
+    --mat-form-field-container-height: 30px;
   }
 
   .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined {
-    height: 26px;
+    height: 30px;
     padding-left: 8px;
     padding-right: 8px;
   }
 
   .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-form-field-flex {
-    height: 26px;
+    height: 30px;
   }
 
   .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-form-field-infix {

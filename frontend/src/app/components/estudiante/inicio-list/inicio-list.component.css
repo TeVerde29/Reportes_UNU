@@ -101,24 +101,19 @@
     flex: 1 1 0;
   }
 
-  /* Filtros delgados: espejo de styles.css con ::ng-deep.
-     Los internos de Material (.mat-mdc-*) no llevan el atributo de
-     encapsulación, por eso sin ::ng-deep estas reglas no los alcanzan.
-     Vive en el CSS del componente (inyectado inline por Angular) para que
-     aplique aunque la hoja global quede en media="print" (fallo verificado
-     en el desplegado). Mismos valores que styles.css, sin conflicto. */
+  /* Espejo móvil de styles.css con ::ng-deep (inline, inmune al link en print). */
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field {
-    --mat-form-field-container-height: 26px;
+    --mat-form-field-container-height: 30px;
   }
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined {
-    height: 26px;
+    height: 30px;
     padding-left: 8px;
     padding-right: 8px;
   }
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-form-field-flex {
-    height: 26px;
+    height: 30px;
   }
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-form-field-infix {
@@ -141,6 +136,16 @@
     font-size: 14px;
     width: 14px;
     height: 14px;
+  }
+
+  /* Opciones en body: ::ng-deep sin ancestro. Solo móvil. */
+  ::ng-deep .cdk-overlay-pane .mat-mdc-option {
+    font-size: 12px;
+    min-height: 30px;
+  }
+
+  ::ng-deep .cdk-overlay-pane .mat-mdc-option .mdc-list-item__primary-text {
+    font-size: 12px;
   }
 }
 
