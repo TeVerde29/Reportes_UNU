@@ -91,18 +91,24 @@
 
 /* CAMPOS MATERIAL */
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .eu-field {
   width: 100%;
 }
 
+.eu-field input.mat-mdc-input-element,
+.eu-field .mat-mdc-select-value {
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 .eu-field textarea {
   min-height: 88px;
   resize: vertical;
   line-height: 1.45;
-  font-size: 14px;
+  font-size: 13px;
   padding-top: 8px;
 }
 
@@ -377,9 +383,9 @@ mat-error,
 /* Solo móvil (≤640px): campos compactos como los filtros del feed
    (30px de alto, letra 12px). ::ng-deep para alcanzar internos Material. */
 @media (max-width: 640px) {
-  /* Menos aire entre Título, Descripción y Tipo */
+  /* Título, Descripción y Tipo pegados */
   .form-group {
-    margin-bottom: 8px;
+    margin-bottom: 4px;
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field {
@@ -409,7 +415,8 @@ mat-error,
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field input.mat-mdc-input-element,
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-select-value,
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field textarea.mat-mdc-input-element {
-    font-size: 16px;
+    font-size: 13px;
+    line-height: 1.45;
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-select-arrow svg {
