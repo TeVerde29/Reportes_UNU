@@ -28,8 +28,6 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
-              "@angular/cdk/overlay-prebuilt.css",
-              "@angular/cdk/a11y-prebuilt.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -95,8 +93,6 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
-              "@angular/cdk/overlay-prebuilt.css",
-              "@angular/cdk/a11y-prebuilt.css",
               "src/styles.css"
             ],
             "scripts": []

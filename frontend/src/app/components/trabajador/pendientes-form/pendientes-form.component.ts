@@ -44,15 +44,9 @@ export class PendientesFormComponent implements OnInit {
   ngOnInit(): void {
     this.form.titulo = this.reporte.titulo ?? '';
     this.form.descripcion = this.reporte.descripcion ?? '';
-    this.form.id_tipo_problema = Number(this.reporte.id_tipo_problema ?? 0);
+    this.form.id_tipo_problema = this.reporte.id_tipo_problema ?? 0;
     this.cargarTipoProblemas();
     this.cargarEstadoReporte();
-  }
-
-  // mat-select compara con === : normaliza string/number para que
-  // el valor actual siempre coincida con su opción y el combo abra bien.
-  compararIds(a: unknown, b: unknown): boolean {
-    return Number(a) === Number(b);
   }
 
   // Pendiente se decide, Aceptado se puede corregir, Resuelto solo se mira/elimina
@@ -69,14 +63,6 @@ export class PendientesFormComponent implements OnInit {
     this.cerrar.emit();
   }
 
-  // Categoría efectiva: la elegida en el combo o la actual como respaldo
-  // (evita 400 del back si el combo quedara sin valor válido).
-  private categoriaEfectiva(): number {
-    const elegida = Number(this.form.id_tipo_problema);
-    if (Number.isInteger(elegida) && elegida > 0) return elegida;
-    return Number(this.reporte.id_tipo_problema ?? 0);
-  }
-
   aceptar(): void {
     this.estadoService.obtenerEstadoPorNombre('Aceptado').subscribe(res => {
       const estado = Array.isArray(res.data) ? res.data[0] : res.data;
@@ -84,7 +70,7 @@ export class PendientesFormComponent implements OnInit {
       this.reporteService.revisarReporte(this.reporte.id_reporte, {
         titulo: this.form.titulo,
         descripcion: this.form.descripcion,
-        id_tipo_problema: this.categoriaEfectiva(),
+        id_tipo_problema: this.form.id_tipo_problema,
         id_estado: estado.id_estado
       }).subscribe(() => this.cerrar.emit());
     });
@@ -104,7 +90,7 @@ export class PendientesFormComponent implements OnInit {
       this.reporteService.revisarReporte(this.reporte.id_reporte, {
         titulo: this.form.titulo,
         descripcion: this.form.descripcion,
-        id_tipo_problema: this.categoriaEfectiva(),
+        id_tipo_problema: this.form.id_tipo_problema,
         id_estado: estado.id_estado
       }).subscribe(() => this.cerrar.emit());
     });
@@ -124,7 +110,7 @@ export class PendientesFormComponent implements OnInit {
       this.reporteService.revisarReporte(this.reporte.id_reporte, {
         titulo: this.form.titulo,
         descripcion: this.form.descripcion,
-        id_tipo_problema: this.categoriaEfectiva(),
+        id_tipo_problema: this.form.id_tipo_problema,
         id_estado: estado.id_estado
       }).subscribe(() => this.cerrar.emit());
     });
@@ -135,21 +121,6 @@ export class PendientesFormComponent implements OnInit {
     this.tipoProblemaService.obtenerTiposProblema().subscribe({
       next: (res: TipoProbelmaResponse) => {
         this.tiposProblema = Array.isArray(res.data) ? res.data : [];
-        // Si el catálogo no trae la categoría actual (o falló), se agrega
-        // como opción para que el combo siempre tenga valor válido y usable.
-        const actual = Number(this.form.id_tipo_problema);
-        if (actual > 0 && !this.tiposProblema.some(t => Number(t.id_tipo_problema) === actual)) {
-          this.tiposProblema = [
-            ...this.tiposProblema,
-            { id_tipo_problema: actual, nombre: this.reporte.tipo_problema ?? 'Categoría actual' }
-          ];
-        }
-      },
-      error: () => {
-        const actual = Number(this.form.id_tipo_problema);
-        this.tiposProblema = actual > 0
-          ? [{ id_tipo_problema: actual, nombre: this.reporte.tipo_problema ?? 'Categoría actual' }]
-          : [];
       }
     });
   }

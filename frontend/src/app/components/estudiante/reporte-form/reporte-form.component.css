@@ -60,15 +60,6 @@
   color: var(--eu-muted);
 }
 
-/* Cabecera tipo hoja-admin: en escritorio el indicador va oculto */
-.eu-m-sheet-head {
-  display: block;
-}
-
-.eu-m-indicator {
-  display: none;
-}
-
 /* ALERTAS sobrias */
 .alert {
   max-width: 900px;
@@ -354,35 +345,14 @@ mat-error,
   background-color: #EDF3F0;
 }
 
-/* Móvil (≤767px): hoja estilo admin (igual que el modal del trabajador).
-   Mismo breakpoint que pendientes-form: tarjeta redondeada, cabecera con
-   indicador lateral, campos cómodos y botones apilados de radio amplio. */
-@media (max-width: 767px) {
+/* RESPONSIVE */
+@media (max-width: 768px) {
   .form-container {
-    padding: 12px 12px 28px;
+    padding: 12px calc(12px + env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
   }
 
   .eu-form-card {
-    padding: 1rem;
-    border-radius: 20px;
-  }
-
-  /* Cabecera con indicador lateral verde como "Detalle de incidencia".
-     El aire va con padding (no con margen) para que la línea no se estire. */
-  .eu-m-sheet-head {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    padding-bottom: 16px;
-  }
-
-  .eu-m-indicator {
-    display: block;
-    width: 4px;
-    align-self: stretch;
-    min-height: 44px;
-    border-radius: 4px;
-    background: var(--eu-primary);
+    padding: 20px 16px;
   }
 
   .eu-form-card h2 {
@@ -390,57 +360,81 @@ mat-error,
     line-height: 28px;
   }
 
-  .form-subtitle {
-    margin: 2px 0 0;
-  }
-
-  .form-group {
-    margin-bottom: 12px;
-  }
-
-  /* Campos cómodos como en admin: sin compactar, 16px (evita zoom iOS).
-     El combo de categoría queda igual que el del trabajador. */
-  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field input.mat-mdc-input-element,
-  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-select-value-text,
-  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field textarea.mat-mdc-input-element {
-    font-size: 16px;
-  }
-
-  .eu-form-card .eu-field textarea {
-    min-height: 96px;
-  }
-
-  /* Etiquetas de sección en mayúsculas como en admin */
-  .eu-label {
-    text-transform: uppercase;
-    color: var(--eu-muted);
-  }
-
-  /* Footer apilado estilo admin: primario arriba, cancelar texto abajo */
   .form-actions {
     flex-direction: column-reverse;
-    align-items: stretch;
-    gap: 12px;
-    margin-top: 12px;
-    padding-top: 12px;
   }
 
-  .btn-save.mat-mdc-unelevated-button {
+  .form-actions .btn-save,
+  .form-actions .btn-cancel {
     width: 100%;
-    min-height: 48px;
-    border-radius: 12px;
-    font-size: 15px;
-  }
-
-  .btn-cancel.mat-mdc-outlined-button {
-    width: 100%;
-    min-height: 44px;
-    border-color: transparent;
-    border-radius: 12px;
   }
 
   .map-area {
     max-height: 400px;
-    border-radius: 12px;
+  }
+}
+
+/* Solo móvil (≤640px): campos cómodos al dedo (44px de alto, letra 16px
+   para evitar zoom iOS). ::ng-deep para alcanzar internos Material. */
+@media (max-width: 640px) {
+  /* Menos aire entre Título, Descripción y Tipo */
+  .form-group {
+    margin-bottom: 8px;
+  }
+
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field {
+    --mat-form-field-container-height: 44px;
+  }
+
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined {
+    height: 44px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-form-field-flex {
+    height: 44px;
+  }
+
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-form-field-infix {
+    min-height: 0;
+    padding: 8px 0;
+  }
+
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mdc-floating-label {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field input.mat-mdc-input-element,
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-select-value,
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field textarea.mat-mdc-input-element {
+    font-size: 16px;
+  }
+
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-select-arrow svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Descripción: alto libre pero más compacta */
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field:has(textarea) .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined,
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field:has(textarea) .mat-mdc-form-field-flex {
+    height: auto;
+  }
+
+  .eu-form-card .eu-field textarea {
+    min-height: 72px;
+  }
+
+  /* Opciones del desplegable (rinden en body).
+     ::ng-deep sin ancestro para alcanzarlas. Solo móvil. */
+  ::ng-deep .cdk-overlay-pane .mat-mdc-option {
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  ::ng-deep .cdk-overlay-pane .mat-mdc-option .mdc-list-item__primary-text {
+    font-size: 16px;
   }
 }
