@@ -127,7 +127,18 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     const file = input.files[0];
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    // Algunos celulares mandan HEIC de iPhone: se avisa claro en vez del genérico
+    if (file.type === 'image/heic' || file.type === 'image/heif' || ext === 'heic' || ext === 'heif') {
+      this.fotoError = 'Tu foto está en formato HEIC (iPhone): cámbiala a JPG en Ajustes > Cámara > Formatos e intenta de nuevo';
+      this.fotoFile = null;
+      this.previewUrl = null;
+      input.value = '';
+      return;
+    }
+    // Algunos Android mandan el tipo vacío: se acepta por extensión
+    const extOk = ['jpg', 'jpeg', 'png', 'webp'].includes(ext);
+    if (!allowedTypes.includes(file.type) && !(file.type === '' && extOk)) {
       this.fotoError = 'Solo se permiten imágenes (JPEG, PNG, WEBP)';
       this.fotoFile = null;
       this.previewUrl = null;
@@ -143,7 +154,9 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.fotoError = '';
-    // Comprime sola: baja a 1280px y JPEG 0.82 para pesar menos al subir
+    // Comprime sola: baja a 1280px y JPEG 0.82 para pesar menos al subir.
+    // Si la compresión falla (celular que no decodifica bien), usa la
+    // original para no bloquear al usuario en vez de mostrar error.
     this.comprimirImagen(file).then((reducida) => {
       this.fotoFile = reducida;
       const reader = new FileReader();
@@ -152,10 +165,19 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
       };
       reader.readAsDataURL(reducida);
     }).catch(() => {
-      this.fotoError = 'No se pudo procesar la imagen';
-      this.fotoFile = null;
-      this.previewUrl = null;
-      input.value = '';
+      this.fotoFile = file;
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        this.previewUrl = e.target?.result as string;
+        this.fotoError = '';
+      };
+      reader.onerror = () => {
+        this.fotoError = 'No se pudo procesar la imagen';
+        this.fotoFile = null;
+        this.previewUrl = null;
+        input.value = '';
+      };
+      reader.readAsDataURL(file);
     });
   }
 
