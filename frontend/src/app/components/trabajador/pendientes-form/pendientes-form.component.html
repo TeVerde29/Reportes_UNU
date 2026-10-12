@@ -37,15 +37,24 @@
           <textarea matInput rows="4" [(ngModel)]="form.descripcion" [readonly]="!esEditable"></textarea>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="eu-field">
-          <mat-label>Categoría de problema</mat-label>
-          <mat-select [(ngModel)]="form.id_tipo_problema" [disabled]="!esEditable">
-            <mat-option *ngIf="tiposProblema.length === 0" disabled value="0">Cargando categorías…</mat-option>
-            <mat-option *ngFor="let t of tiposProblema" [value]="t.id_tipo_problema">
-              {{ t.nombre }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+        <div class="eu-field">
+          <span class="eu-read-label" id="cat-label">Categoría de problema</span>
+          <div class="cat-list" role="listbox" aria-labelledby="cat-label">
+            <p *ngIf="tiposProblema.length === 0" class="cat-loading">Cargando categorías…</p>
+            <button
+              type="button"
+              role="option"
+              class="cat-opt"
+              *ngFor="let t of tiposProblema"
+              [class.selected]="form.id_tipo_problema === t.id_tipo_problema"
+              [attr.aria-selected]="form.id_tipo_problema === t.id_tipo_problema"
+              [disabled]="!esEditable"
+              (click)="form.id_tipo_problema = t.id_tipo_problema">
+              <span>{{ t.nombre }}</span>
+              <mat-icon *ngIf="form.id_tipo_problema === t.id_tipo_problema">check</mat-icon>
+            </button>
+          </div>
+        </div>
 
         <div class="eu-read-group">
           <span class="eu-read-label">Estudiante solicitante</span>

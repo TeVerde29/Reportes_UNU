@@ -140,13 +140,68 @@
   resize: vertical;
 }
 
-/* En resueltos el combo se ve normal pero no se toca */
-.eu-review-data .mat-mdc-select-disabled .mat-mdc-select-value-text {
-  color: var(--eu-ink, #111e1a);
+/* Lista de categorías con el diseño del combo del alumno:
+   filas verdes + check, siempre visible (sin panel flotante) */
+.cat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #EAF6F2;
+  border: 1px solid #B5DCD3;
+  border-radius: 8px;
+  padding: 6px;
+  margin-top: 8px;
 }
 
-.eu-review-data .mat-mdc-form-field-disabled .mdc-floating-label {
-  color: var(--eu-ink-soft, #414944);
+.cat-loading {
+  margin: 0;
+  padding: 12px;
+  font-size: 13px;
+  color: var(--eu-muted, #6c7a74);
+}
+
+.cat-opt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--eu-ink, #111e1a);
+  font-size: 13px;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cat-opt:hover:not(:disabled) {
+  background: #D8ECE4;
+}
+
+.cat-opt.selected {
+  background: #BFE3D2;
+  font-weight: 600;
+}
+
+.cat-opt .mat-icon,
+.cat-opt mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--eu-primary, #256B45);
+  flex-shrink: 0;
+}
+
+/* En resueltos se ve normal pero no se toca */
+.cat-opt:disabled {
+  cursor: default;
+  opacity: 1;
+  color: var(--eu-ink, #111e1a);
 }
 
 /* Read-only: misma caja inset que "Selecciona una ubicación" del alumno */
@@ -364,15 +419,5 @@
 
   .eu-review-data textarea {
     min-height: 72px;
-  }
-
-  /* Opciones del combo iguales a las del alumno */
-  ::ng-deep .cdk-overlay-pane .mat-mdc-option {
-    font-size: 12px;
-    min-height: 30px;
-  }
-
-  ::ng-deep .cdk-overlay-pane .mat-mdc-option .mdc-list-item__primary-text {
-    font-size: 12px;
   }
 }
