@@ -104,6 +104,12 @@
   line-height: 1.45;
 }
 
+.eu-field input#titulo.mat-mdc-input-element {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
 .eu-field textarea {
   min-height: 88px;
   resize: vertical;
@@ -419,6 +425,12 @@ mat-error,
     line-height: 1.45;
   }
 
+  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field input#titulo.mat-mdc-input-element {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-select-arrow svg {
     width: 16px;
     height: 16px;
@@ -434,13 +446,13 @@ mat-error,
     min-height: 72px;
   }
 
-  /* Opciones del desplegable a alto táctil */
+  /* Opciones del combo iguales a las de los filtros del feed */
   ::ng-deep .cdk-overlay-pane .mat-mdc-option {
-    font-size: 14px;
-    min-height: 44px;
+    font-size: 12px;
+    min-height: 30px;
   }
 
   ::ng-deep .cdk-overlay-pane .mat-mdc-option .mdc-list-item__primary-text {
-    font-size: 14px;
+    font-size: 12px;
   }
 }
