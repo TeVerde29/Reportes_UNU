@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -71,6 +71,25 @@ export class PendientesFormComponent implements OnInit {
   // Nube (URL absoluta) se usa tal cual, disco (ruta relativa) lleva baseUrl
   fotoSrc(url?: string | null): string | null {
     return resolverFotoUrl(url);
+  }
+
+  // Visor de foto completa como en el módulo alumno
+  fotoAmpliada: string | null = null;
+
+  abrirFoto(): void {
+    if (!this.reporte?.foto_url) return;
+    this.fotoAmpliada = this.fotoSrc(this.reporte.foto_url);
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarFoto(): void {
+    this.fotoAmpliada = null;
+    document.body.style.overflow = '';
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  teclaVisor(event: KeyboardEvent): void {
+    if (this.fotoAmpliada && event.key === 'Escape') this.cerrarFoto();
   }
 
   cancelar(): void {

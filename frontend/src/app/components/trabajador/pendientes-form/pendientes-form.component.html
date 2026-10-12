@@ -85,7 +85,8 @@
       <!-- Columna derecha: evidencia -->
       <aside class="eu-review-evidence">
         <span class="eu-read-label">Evidencia visual</span>
-        <div class="eu-evidence-frame" *ngIf="reporte.foto_url; else sinEvidencia">
+        <div class="eu-evidence-frame" *ngIf="reporte.foto_url; else sinEvidencia"
+          (click)="abrirFoto()" (keyup.enter)="abrirFoto()" tabindex="0" role="button" aria-label="Ampliar evidencia">
           <img [src]="fotoSrc(reporte.foto_url)" alt="Evidencia del reporte" class="eu-evidence-img">
         </div>
         <ng-template #sinEvidencia>
@@ -116,5 +117,15 @@
       </button>
     </div>
 
+  </div>
+</div>
+
+<!-- Visor de foto completa como en el módulo alumno -->
+<div *ngIf="fotoAmpliada" class="visor-backdrop" (click)="cerrarFoto()">
+  <div class="visor-card" (click)="$event.stopPropagation()">
+    <img [src]="fotoAmpliada" alt="Evidencia ampliada" class="visor-img">
+    <button type="button" class="visor-close" (click)="cerrarFoto()" aria-label="Cerrar">
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
 </div>

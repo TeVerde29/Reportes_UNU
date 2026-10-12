@@ -295,6 +295,7 @@
   border: 1px solid var(--eu-border, #e1e9e4);
   border-radius: 8px;
   padding: 12px;
+  cursor: zoom-in;
 }
 
 .eu-evidence-img {
@@ -377,6 +378,56 @@
 .eu-btn-resolve {
   background-color: #1f5987;
   color: #fff;
+}
+
+/* ===== Visor de foto completa (igual que el módulo alumno) ===== */
+.visor-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1060;
+  background-color: rgba(10, 20, 15, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+}
+
+.visor-card {
+  position: relative;
+  max-width: 960px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  background: #0e1512;
+  border-radius: 12px;
+  overflow: hidden;
+  animation: modalIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.visor-img {
+  width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  background: #0e1512;
+}
+
+.visor-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.visor-close:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Responsive: una columna en móvil */
