@@ -343,13 +343,18 @@
 
   .report-card .main-text {
     margin: 0;
-    font-size: 15px;
-    line-height: 1.4;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
   }
 
   .report-card .user-name-cell {
     margin: 0;
     font-size: 13px;
+  }
+
+  .report-card .fecha-text {
+    font-size: 12px;
   }
 
   .report-tags {
@@ -361,10 +366,59 @@
   .report-tags .eu-tag {
     max-width: 100%;
     white-space: normal;
+    font-size: 11px;
   }
 
   .btn-ver-full {
     width: 100%;
     margin-top: 4px;
+  }
+}
+/* ===== Móvil: mismo lenguaje visual que el alumno (solo visual) ===== */
+@media (max-width: 640px) {
+  .section-title {
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  .custom-table td {
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  /* Buscador como los filtros del alumno: 30px, letra 12px */
+  ::ng-deep .search-box.mat-mdc-form-field {
+    --mat-form-field-container-height: 30px;
+  }
+
+  ::ng-deep .search-box.mat-mdc-form-field .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined {
+    height: 30px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  ::ng-deep .search-box.mat-mdc-form-field .mat-mdc-form-field-flex {
+    height: 30px;
+  }
+
+  ::ng-deep .search-box.mat-mdc-form-field .mat-mdc-form-field-infix {
+    min-height: 0;
+    padding: 2px 0;
+  }
+
+  ::ng-deep .search-box.mat-mdc-form-field .mdc-floating-label {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  ::ng-deep .search-box.mat-mdc-form-field input.mat-mdc-input-element {
+    font-size: 12px;
+  }
+
+  ::ng-deep .search-box.mat-mdc-form-field .mat-mdc-form-field-icon-prefix .mat-icon,
+  ::ng-deep .search-box.mat-mdc-form-field .mat-mdc-form-field-icon-suffix .mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
   }
 }

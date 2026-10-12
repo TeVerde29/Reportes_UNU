@@ -321,3 +321,49 @@
     width: 100%;
   }
 }
+
+/* Móvil: campos como el formulario del alumno (44px, letra 13px) */
+@media (max-width: 767px) {
+  ::ng-deep .eu-review-data .mat-mdc-form-field {
+    --mat-form-field-container-height: 44px;
+  }
+
+  ::ng-deep .eu-review-data .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined {
+    height: 44px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  ::ng-deep .eu-review-data .mat-mdc-form-field-flex {
+    height: 44px;
+  }
+
+  ::ng-deep .eu-review-data .mat-mdc-form-field-infix {
+    min-height: 0;
+    padding: 6px 0;
+  }
+
+  ::ng-deep .eu-review-data .mdc-floating-label {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  ::ng-deep .eu-review-data input.mat-mdc-input-element,
+  ::ng-deep .eu-review-data textarea.mat-mdc-input-element {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  ::ng-deep .eu-review-data .mat-mdc-form-field:has(textarea) .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined,
+  ::ng-deep .eu-review-data .mat-mdc-form-field:has(textarea) .mat-mdc-form-field-flex {
+    height: auto;
+  }
+
+  .eu-review-data textarea {
+    min-height: 72px;
+  }
+
+  .eu-review-data select {
+    font-size: 13px;
+  }
+}
