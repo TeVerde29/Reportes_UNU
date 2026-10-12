@@ -1,6 +1,6 @@
 const db = require('../config/database');
 // Fotos en disco o nube según entorno (ver config/storage.js)
-const { upload, guardarFoto, reemplazarFoto, borrarFoto } = require('../config/storage');
+const { upload, guardarFoto, borrarFoto } = require('../config/storage');
 
 const crearReporte = async (req, res) => {
     try {
@@ -109,9 +109,13 @@ const actualizarReporte = async (req, res) => {
       return res.status(403).json({ success: false, message: 'No es tu reporte' });
     }
     const fecha_edicion = new Date();
-    // Si manda foto nueva, reemplaza manteniendo la misma URL (disco o nube)
+    // Si manda foto nueva, se guarda con URL nueva (así se ve al instante,
+    // sin pelear con la caché) y se borra la anterior
     if (req.file && req.file.buffer && propio[0].foto_url) {
-      await reemplazarFoto(req.file, propio[0].foto_url);
+      const fotoAnterior = propio[0].foto_url;
+      const nuevaUrl = await guardarFoto(req.file);
+      await db.query('UPDATE reporte SET foto_url = ? WHERE id_reporte = ?', [nuevaUrl, idReporte]);
+      await borrarFoto(fotoAnterior);
     }
     await db.query(`
       UPDATE reporte
