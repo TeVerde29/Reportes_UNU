@@ -140,18 +140,9 @@
   resize: vertical;
 }
 
-/* Combo nativo: rinde en línea (sin panel flotante) y con alto táctil */
-.eu-field select[matnativecontrol],
-.eu-field select[matNativeControl] {
-  min-height: 44px;
-  font-size: 14px;
-}
-
 /* En resueltos el combo se ve normal pero no se toca */
-.eu-review-data select:disabled {
+.eu-review-data .mat-mdc-select-disabled .mat-mdc-select-value-text {
   color: var(--eu-ink, #111e1a);
-  -webkit-text-fill-color: var(--eu-ink, #111e1a);
-  opacity: 1;
 }
 
 .eu-review-data .mat-mdc-form-field-disabled .mdc-floating-label {
@@ -360,7 +351,8 @@
   }
 
   ::ng-deep .eu-review-data input.mat-mdc-input-element,
-  ::ng-deep .eu-review-data textarea.mat-mdc-input-element {
+  ::ng-deep .eu-review-data textarea.mat-mdc-input-element,
+  ::ng-deep .eu-review-data .mat-mdc-select-value {
     font-size: 13px;
     line-height: 1.45;
   }
@@ -374,7 +366,13 @@
     min-height: 72px;
   }
 
-  .eu-review-data select {
-    font-size: 13px;
+  /* Opciones del combo iguales a las del alumno */
+  ::ng-deep .cdk-overlay-pane .mat-mdc-option {
+    font-size: 12px;
+    min-height: 30px;
+  }
+
+  ::ng-deep .cdk-overlay-pane .mat-mdc-option .mdc-list-item__primary-text {
+    font-size: 12px;
   }
 }
