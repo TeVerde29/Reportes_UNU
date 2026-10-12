@@ -11,12 +11,17 @@
     </div>
 
     <mat-form-field class="search-box" appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Buscar reportes</mat-label>
       <mat-icon matPrefix>search</mat-icon>
       <input
         matInput
         type="text"
         [(ngModel)]="filtroTexto"
-        placeholder="Buscar por título, estudiante...">
+        placeholder="Buscar por título, estudiante, ubicación..."
+        aria-label="Buscar reportes">
+      <button *ngIf="filtroTexto" mat-icon-button matSuffix type="button" (click)="limpiarFiltro()" aria-label="Limpiar búsqueda">
+        <mat-icon>close</mat-icon>
+      </button>
     </mat-form-field>
   </header>
 
@@ -67,6 +72,25 @@
       </table>
     </div>
 
+    <div class="cards-mobile" *ngIf="!error && reportesFiltrados.length > 0">
+      <article class="report-card" *ngFor="let r of reportesFiltrados; let i=index">
+        <div class="report-card-top">
+          <span class="row-id">N° {{ i + 1 }}</span>
+          <span class="fecha-text">{{ r.fecha_edicion | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <h3 class="main-text">{{ r.titulo }}</h3>
+        <p class="user-name-cell">{{ r.estudiante }}</p>
+        <div class="report-tags">
+          <span class="eu-tag">{{ r.tipo_problema }}</span>
+          <span class="eu-tag">{{ r.ubicacion }}</span>
+        </div>
+        <button mat-stroked-button color="primary" class="btn-ver btn-ver-full" (click)="abrirModal(r)">
+          <mat-icon>visibility</mat-icon>
+          <span>Ver reporte</span>
+        </button>
+      </article>
+    </div>
+
     <div *ngIf="!error && reportes.length === 0" class="empty-state">
       <div class="empty-icon">
         <mat-icon>inbox</mat-icon>
@@ -84,8 +108,8 @@
     </div>
 
     <div class="table-footer" *ngIf="!error && reportesFiltrados.length > 0">
-      <div class="pagination-info">
-        <span>{{ reportesFiltrados.length }}</span> reportes
+      <div class="pagination-info" aria-live="polite">
+        <span>{{ reportesFiltrados.length }}</span> de {{ reportes.length }} reportes
       </div>
     </div>
   </div>

@@ -55,6 +55,10 @@ export class PendientesListComponent implements OnInit, OnDestroy {
     );
   }
 
+  limpiarFiltro(): void {
+    this.filtroTexto = '';
+  }
+
   reportesPendientes(): void {
     this.estadoService.obtenerEstadoPorNombre('Pendiente').subscribe({
       next: (response) => {

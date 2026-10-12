@@ -348,7 +348,7 @@ mat-error,
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .form-container {
-    padding: 12px calc(12px + env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
+    padding: 12px 12px 28px;
   }
 
   .eu-form-card {
@@ -374,8 +374,8 @@ mat-error,
   }
 }
 
-/* Solo móvil (≤640px): campos cómodos al dedo (44px de alto, letra 16px
-   para evitar zoom iOS). ::ng-deep para alcanzar internos Material. */
+/* Solo móvil (≤640px): campos compactos como los filtros del feed
+   (30px de alto, letra 12px). ::ng-deep para alcanzar internos Material. */
 @media (max-width: 640px) {
   /* Menos aire entre Título, Descripción y Tipo */
   .form-group {
@@ -383,33 +383,33 @@ mat-error,
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field {
-    --mat-form-field-container-height: 44px;
+    --mat-form-field-container-height: 30px;
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined {
-    height: 44px;
-    padding-left: 12px;
-    padding-right: 12px;
+    height: 30px;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-form-field-flex {
-    height: 44px;
+    height: 30px;
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-form-field-infix {
     min-height: 0;
-    padding: 8px 0;
+    padding: 2px 0;
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mdc-floating-label {
-    font-size: 14px;
-    line-height: 20px;
+    font-size: 12px;
+    line-height: 16px;
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field input.mat-mdc-input-element,
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-select-value,
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field textarea.mat-mdc-input-element {
-    font-size: 16px;
+    font-size: 12px;
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-select-arrow svg {
@@ -427,14 +427,14 @@ mat-error,
     min-height: 72px;
   }
 
-  /* Opciones del desplegable (rinden en body).
+  /* Opciones del desplegable (rinden en body): mismo 12px que Categoría.
      ::ng-deep sin ancestro para alcanzarlas. Solo móvil. */
   ::ng-deep .cdk-overlay-pane .mat-mdc-option {
-    font-size: 16px;
-    min-height: 44px;
+    font-size: 12px;
+    min-height: 30px;
   }
 
   ::ng-deep .cdk-overlay-pane .mat-mdc-option .mdc-list-item__primary-text {
-    font-size: 16px;
+    font-size: 12px;
   }
 }

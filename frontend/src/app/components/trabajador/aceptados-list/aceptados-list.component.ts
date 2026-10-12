@@ -58,6 +58,10 @@ export class AceptadosListComponent implements OnInit, OnDestroy {
     );
   }
 
+  limpiarFiltro(): void {
+    this.filtroTexto = '';
+  }
+
   reportesAceptados(): void {
     this.sub = this.estadoService.obtenerEstadoPorNombre('Aceptado').subscribe({
       next: (response) => {

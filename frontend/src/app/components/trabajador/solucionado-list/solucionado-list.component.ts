@@ -58,6 +58,10 @@ export class SolucionadoListComponent implements OnInit, OnDestroy {
     );
   }
 
+  limpiarFiltro(): void {
+    this.filtroTexto = '';
+  }
+
   reportesSolucionar(): void {
     this.sub = this.estadoService.obtenerEstadoPorNombre('Resuelto').subscribe({
       next: (response) => {

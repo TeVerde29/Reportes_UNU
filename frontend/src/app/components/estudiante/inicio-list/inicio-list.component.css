@@ -102,49 +102,51 @@
     order: -1;
   }
 
+  /* Espejo móvil de styles.css con ::ng-deep (inline, inmune al link en print). */
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field {
-    --mat-form-field-container-height: 44px;
+    --mat-form-field-container-height: 30px;
   }
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined {
-    height: 44px;
-    padding-left: 12px;
-    padding-right: 12px;
+    height: 30px;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-form-field-flex {
-    height: 44px;
+    height: 30px;
   }
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-form-field-infix {
     min-height: 0;
-    padding: 8px 0;
+    padding: 2px 0;
   }
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mdc-floating-label {
-    font-size: 14px;
-    line-height: 20px;
+    font-size: 12px;
+    line-height: 16px;
   }
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field input.mat-mdc-input-element,
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-select-value {
-    font-size: 16px;
+    font-size: 12px;
   }
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-form-field-icon-prefix .mat-icon,
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-form-field-icon-suffix .mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
   }
 
+  /* Opciones en body: ::ng-deep sin ancestro. Solo móvil. */
   ::ng-deep .cdk-overlay-pane .mat-mdc-option {
-    font-size: 16px;
-    min-height: 44px;
+    font-size: 12px;
+    min-height: 30px;
   }
 
   ::ng-deep .cdk-overlay-pane .mat-mdc-option .mdc-list-item__primary-text {
-    font-size: 16px;
+    font-size: 12px;
   }
 }
 
@@ -394,15 +396,14 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 18px;
-  min-height: 44px;
+  padding: 7px 14px;
   border-radius: 9999px;
   border: 1px solid #256B45;
   background: #ffffff;
   color: #256B45;
   cursor: pointer;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1;
   transition: background 0.15s ease, color 0.15s ease;
 }
@@ -468,8 +469,6 @@
   color: #256B45;
   border-radius: 8px;
   font-weight: 600;
-  min-height: 44px;
-  padding: 0 16px;
 }
 
 /* Botón Eliminar: texto rojo sobrio (solo mis pendientes) */
@@ -477,8 +476,6 @@
   color: #9C2B2B;
   font-weight: 600;
   border-radius: 8px;
-  min-height: 44px;
-  padding: 0 16px;
 }
 
 /* Aviso info (mis reportes) */
@@ -507,7 +504,6 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  padding-bottom: calc(24px + env(safe-area-inset-bottom));
 }
 
 .confirm-card {
@@ -561,7 +557,6 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  padding-bottom: calc(24px + env(safe-area-inset-bottom));
 }
 
 .visor-card {

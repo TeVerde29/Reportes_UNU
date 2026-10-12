@@ -44,7 +44,7 @@
 
 .section-subtitle {
   font-size: 14px;
-  color: var(--eu-muted);
+  color: #414944;
   margin: 4px 0 0 0;
   line-height: 22px;
 }
@@ -86,7 +86,7 @@
   text-align: left;
   font-size: 11px;
   font-weight: 600;
-  color: var(--eu-muted);
+  color: #414944;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   line-height: 14px;
@@ -154,6 +154,7 @@
 /* Botón Ver sobrio (mat-stroked-button eucalyptus) */
 .btn-ver {
   white-space: nowrap;
+  min-height: 44px;
 }
 
 .btn-ver .mat-icon {
@@ -191,8 +192,8 @@
 }
 
 .btn-pagination {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -227,8 +228,8 @@
 }
 
 .page-num {
-  min-width: 32px;
-  height: 32px;
+  min-width: 44px;
+  height: 44px;
   padding: 0 8px;
   border: 1px solid transparent;
   background: none;
@@ -306,5 +307,66 @@
   .table-footer {
     flex-direction: column;
     text-align: center;
+  }
+}
+
+/* Tarjetas en móvil: sin scroll horizontal, Ver siempre visible */
+.cards-mobile {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .table-container {
+    display: none;
+  }
+
+  .cards-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .report-card {
+    background: #fff;
+    border: 1px solid var(--eu-border);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .report-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .report-card .main-text {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  .report-card .user-name-cell {
+    margin: 0;
+    font-size: 13px;
+  }
+
+  .report-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .report-tags .eu-tag {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .btn-ver-full {
+    width: 100%;
+    margin-top: 4px;
   }
 }

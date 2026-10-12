@@ -235,45 +235,45 @@ html {
   display: none;
 }
 
-/* Solo móvil (≤640px): filtros cómodos al dedo (44px, letra 16px).
+/* Solo móvil (≤640px): filtros en una fila y más delgaditos. PC intacto.
    OJO: el wrapper trae .mdc-text-field.mdc-text-field--outlined y Material le
    fija 56px con más peso del esperado: el selector las incluye para ganarle
    sin !important. Verificado en el desplegado. */
 @media (max-width: 640px) {
   .filter-bar .filter-field.mat-mdc-form-field {
-    --mat-form-field-container-height: 44px;
+    --mat-form-field-container-height: 30px;
   }
 
   .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined {
-    height: 44px;
-    padding-left: 12px;
-    padding-right: 12px;
+    height: 30px;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
   .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-form-field-flex {
-    height: 44px;
+    height: 30px;
   }
 
   .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-form-field-infix {
     min-height: 0;
-    padding: 8px 0;
+    padding: 2px 0;
   }
 
   .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-floating-label {
-    font-size: 14px;
-    line-height: 20px;
+    font-size: 12px;
+    line-height: 16px;
   }
 
   .filter-bar .filter-field.mat-mdc-form-field input.mat-mdc-input-element,
   .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-select-value {
-    font-size: 16px;
+    font-size: 12px;
   }
 
   .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-form-field-icon-prefix .mat-icon,
   .filter-bar .filter-field.mat-mdc-form-field .mat-mdc-form-field-icon-suffix .mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
   }
 }
 

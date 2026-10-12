@@ -215,17 +215,17 @@ export class DashboardComponent implements OnInit {
       },
       y: {
         ticks: {
-          color: '#555',
+          color: '#414944',
           autoSkip: false,
           font: {
-            size: 11
+            size: 12
           },
           padding: 10,
           callback: function(value: any) {
             const label = this.getLabelForValue(value);
 
-            if (label.length > 12) {
-              return label.split(' ');
+            if (label.length > 18) {
+              return label.slice(0, 18) + '…';
             }
             return label;
           }
@@ -274,7 +274,7 @@ export class DashboardComponent implements OnInit {
   ) {
     // Misma letra que el resto de la app dentro de los gráficos
     Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
-    Chart.defaults.color = '#68755F';
+    Chart.defaults.color = '#4A5450';
   }
 
   ngOnInit(): void {
