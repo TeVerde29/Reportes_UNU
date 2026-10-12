@@ -383,22 +383,22 @@ mat-error,
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field {
-    --mat-form-field-container-height: 30px;
+    --mat-form-field-container-height: 44px;
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined {
-    height: 30px;
-    padding-left: 8px;
-    padding-right: 8px;
+    height: 44px;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-form-field-flex {
-    height: 30px;
+    height: 44px;
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-form-field-infix {
     min-height: 0;
-    padding: 2px 0;
+    padding: 6px 0;
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mdc-floating-label {
@@ -409,7 +409,7 @@ mat-error,
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field input.mat-mdc-input-element,
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-select-value,
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field textarea.mat-mdc-input-element {
-    font-size: 12px;
+    font-size: 16px;
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-select-arrow svg {
@@ -427,14 +427,13 @@ mat-error,
     min-height: 72px;
   }
 
-  /* Opciones del desplegable (rinden en body): mismo 12px que Categoría.
-     ::ng-deep sin ancestro para alcanzarlas. Solo móvil. */
+  /* Opciones del desplegable a alto táctil */
   ::ng-deep .cdk-overlay-pane .mat-mdc-option {
-    font-size: 12px;
-    min-height: 30px;
+    font-size: 14px;
+    min-height: 44px;
   }
 
   ::ng-deep .cdk-overlay-pane .mat-mdc-option .mdc-list-item__primary-text {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
