@@ -44,7 +44,9 @@ export class PendientesFormComponent implements OnInit {
   ngOnInit(): void {
     this.form.titulo = this.reporte.titulo ?? '';
     this.form.descripcion = this.reporte.descripcion ?? '';
-    this.form.id_tipo_problema = this.reporte.id_tipo_problema ?? 0;
+    // El combo nativo trabaja con strings: normaliza a número para que
+    // la opción actual quede seleccionada y el back reciba número.
+    this.form.id_tipo_problema = Number(this.reporte.id_tipo_problema ?? 0);
     this.cargarTipoProblemas();
     this.cargarEstadoReporte();
   }
@@ -70,7 +72,7 @@ export class PendientesFormComponent implements OnInit {
       this.reporteService.revisarReporte(this.reporte.id_reporte, {
         titulo: this.form.titulo,
         descripcion: this.form.descripcion,
-        id_tipo_problema: this.form.id_tipo_problema,
+        id_tipo_problema: Number(this.form.id_tipo_problema),
         id_estado: estado.id_estado
       }).subscribe(() => this.cerrar.emit());
     });
@@ -90,7 +92,7 @@ export class PendientesFormComponent implements OnInit {
       this.reporteService.revisarReporte(this.reporte.id_reporte, {
         titulo: this.form.titulo,
         descripcion: this.form.descripcion,
-        id_tipo_problema: this.form.id_tipo_problema,
+        id_tipo_problema: Number(this.form.id_tipo_problema),
         id_estado: estado.id_estado
       }).subscribe(() => this.cerrar.emit());
     });
@@ -110,7 +112,7 @@ export class PendientesFormComponent implements OnInit {
       this.reporteService.revisarReporte(this.reporte.id_reporte, {
         titulo: this.form.titulo,
         descripcion: this.form.descripcion,
-        id_tipo_problema: this.form.id_tipo_problema,
+        id_tipo_problema: Number(this.form.id_tipo_problema),
         id_estado: estado.id_estado
       }).subscribe(() => this.cerrar.emit());
     });

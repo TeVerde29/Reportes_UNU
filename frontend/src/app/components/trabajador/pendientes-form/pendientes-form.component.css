@@ -132,6 +132,13 @@
   width: 100%;
 }
 
+/* Combo nativo: rinde en línea (sin panel flotante) y con alto táctil */
+.eu-field select[matnativecontrol],
+.eu-field select[matNativeControl] {
+  min-height: 44px;
+  font-size: 14px;
+}
+
 /* Read-only inset */
 .eu-read-group {
   display: flex;
