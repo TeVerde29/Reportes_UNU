@@ -395,8 +395,10 @@
 .like-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 7px 14px;
+  padding: 7px 16px;
+  min-height: 44px;
   border-radius: 9999px;
   border: 1px solid #256B45;
   background: #ffffff;
@@ -469,6 +471,7 @@
   color: #256B45;
   border-radius: 8px;
   font-weight: 600;
+  min-height: 44px;
 }
 
 /* Botón Eliminar: texto rojo sobrio (solo mis pendientes) */
@@ -476,6 +479,7 @@
   color: #9C2B2B;
   font-weight: 600;
   border-radius: 8px;
+  min-height: 44px;
 }
 
 /* Aviso info (mis reportes) */
@@ -605,8 +609,8 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: none;
   background: rgba(255, 255, 255, 0.15);
@@ -667,6 +671,18 @@
 @media (max-width: 640px) {
   .fab {
     display: none;
+  }
+
+  /* Carrera + fecha pueden bajar a 2 líneas en vez de recortarse */
+  .post-subline {
+    white-space: normal;
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+
+  .post-career {
+    white-space: normal;
+    overflow: visible;
   }
 }
 

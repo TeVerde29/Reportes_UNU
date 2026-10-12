@@ -543,6 +543,15 @@ cargarReportesConMasLikes(sumar = false): void {
     return resolverFotoUrl(url);
   }
 
+  // Srcset con versiones livianas solo si la foto vive en Cloudinary
+  // (transformación w_/f_auto/q_auto); en disco local no hay variantes.
+  fotoSrcSet(url?: string | null): string | null {
+    const src = this.fotoSrc(url);
+    if (!src || !/res\.cloudinary\.com/i.test(src) || !src.includes('/upload/')) return null;
+    const variante = (w: number) => src.replace('/upload/', `/upload/w_${w},c_limit,f_auto,q_auto/`);
+    return `${variante(480)} 480w, ${variante(960)} 960w`;
+  }
+
   @HostListener('document:keydown', ['$event'])
   teclaVisor(event: KeyboardEvent): void {
     if (!this.fotoAmpliada) return;

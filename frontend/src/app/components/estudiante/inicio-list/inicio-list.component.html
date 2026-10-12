@@ -81,8 +81,11 @@
       <div *ngIf="r.foto_url" class="post-media" (click)="abrirFoto(r)" (keyup.enter)="abrirFoto(r)" tabindex="0" role="button" [attr.aria-label]="'Ampliar foto de ' + (r.titulo || 'reporte')">
         <img
           [src]="fotoSrc(r.foto_url)"
+          [attr.srcset]="fotoSrcSet(r.foto_url)"
+          sizes="(max-width: 640px) 100vw, 50vw"
           [alt]="r.titulo || 'Imagen del reporte'"
           loading="lazy"
+          decoding="async"
           class="post-image"
           (error)="imgRota($event)"
         />
