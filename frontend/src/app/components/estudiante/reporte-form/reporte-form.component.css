@@ -104,12 +104,6 @@
   line-height: 1.45;
 }
 
-.eu-field input#titulo.mat-mdc-input-element {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.4;
-}
-
 .eu-field textarea {
   min-height: 88px;
   resize: vertical;
@@ -423,12 +417,6 @@ mat-error,
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field textarea.mat-mdc-input-element {
     font-size: 13px;
     line-height: 1.45;
-  }
-
-  .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field input#titulo.mat-mdc-input-element {
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1.4;
   }
 
   .eu-form-card ::ng-deep .eu-field.mat-mdc-form-field .mat-mdc-select-arrow svg {
