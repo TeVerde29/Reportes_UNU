@@ -140,8 +140,49 @@
   resize: vertical;
 }
 
-/* Lista de categorías con el diseño del combo del alumno:
-   filas verdes + check, siempre visible (sin panel flotante) */
+/* Combo como el del alumno: cerrado, se toca para abrir y elegir.
+   La lista rinde en línea (sin panel flotante) para que no falle */
+.cat-drop {
+  margin-top: 8px;
+}
+
+.cat-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 1px solid var(--eu-border-soft, #D5DCC8);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--eu-ink, #111e1a);
+  font-size: 13px;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cat-trigger .mat-icon,
+.cat-trigger mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: var(--eu-ink-soft, #414944);
+  flex-shrink: 0;
+}
+
+.cat-static {
+  padding: 12px 16px;
+  background: var(--eu-inset, #f0f4f2);
+  border: 1px solid var(--eu-border, #e1e9e4);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--eu-ink, #111e1a);
+}
+
 .cat-list {
   display: flex;
   flex-direction: column;
@@ -152,7 +193,7 @@
   border: 1px solid #B5DCD3;
   border-radius: 8px;
   padding: 6px;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .cat-loading {

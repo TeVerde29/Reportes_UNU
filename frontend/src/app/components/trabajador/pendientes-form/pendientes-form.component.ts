@@ -29,6 +29,7 @@ export class PendientesFormComponent implements OnInit {
   tiposProblema: TipoProbelma[] = [];
   readonly baseUrl = environment.baseUrl;
   tipoEstado: string = '';
+  comboAbierto = false;
   form = {
     titulo: '',
     descripcion: '',
@@ -54,6 +55,17 @@ export class PendientesFormComponent implements OnInit {
   // Pendiente se decide, Aceptado se puede corregir, Resuelto solo se mira/elimina
   get esEditable(): boolean {
     return this.tipoEstado === 'Pendiente' || this.tipoEstado === 'Aceptado';
+  }
+
+  nombreCategoriaActual(): string {
+    if (this.tiposProblema.length === 0) return 'Cargando categorías…';
+    const actual = this.tiposProblema.find(t => t.id_tipo_problema === Number(this.form.id_tipo_problema));
+    return actual?.nombre ?? 'Seleccionar…';
+  }
+
+  seleccionarCategoria(id: number): void {
+    this.form.id_tipo_problema = id;
+    this.comboAbierto = false;
   }
 
   // Nube (URL absoluta) se usa tal cual, disco (ruta relativa) lleva baseUrl

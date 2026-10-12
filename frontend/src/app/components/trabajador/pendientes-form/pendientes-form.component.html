@@ -39,20 +39,32 @@
 
         <div class="eu-field">
           <span class="eu-read-label" id="cat-label">Categoría de problema</span>
-          <div class="cat-list" role="listbox" aria-labelledby="cat-label">
-            <p *ngIf="tiposProblema.length === 0" class="cat-loading">Cargando categorías…</p>
+          <div class="cat-drop">
             <button
               type="button"
-              role="option"
-              class="cat-opt"
-              *ngFor="let t of tiposProblema"
-              [class.selected]="form.id_tipo_problema === t.id_tipo_problema"
-              [attr.aria-selected]="form.id_tipo_problema === t.id_tipo_problema"
-              [disabled]="!esEditable"
-              (click)="form.id_tipo_problema = t.id_tipo_problema">
-              <span>{{ t.nombre }}</span>
-              <mat-icon *ngIf="form.id_tipo_problema === t.id_tipo_problema">check</mat-icon>
+              class="cat-trigger"
+              *ngIf="esEditable"
+              (click)="comboAbierto = !comboAbierto"
+              [disabled]="tiposProblema.length === 0"
+              [attr.aria-expanded]="comboAbierto"
+              aria-haspopup="listbox">
+              <span>{{ nombreCategoriaActual() }}</span>
+              <mat-icon>{{ comboAbierto ? 'arrow_drop_up' : 'arrow_drop_down' }}</mat-icon>
             </button>
+            <div class="cat-list" role="listbox" aria-labelledby="cat-label" *ngIf="esEditable && comboAbierto">
+              <button
+                type="button"
+                role="option"
+                class="cat-opt"
+                *ngFor="let t of tiposProblema"
+                [class.selected]="form.id_tipo_problema === t.id_tipo_problema"
+                [attr.aria-selected]="form.id_tipo_problema === t.id_tipo_problema"
+                (click)="seleccionarCategoria(t.id_tipo_problema)">
+                <span>{{ t.nombre }}</span>
+                <mat-icon *ngIf="form.id_tipo_problema === t.id_tipo_problema">check</mat-icon>
+              </button>
+            </div>
+            <div class="cat-static" *ngIf="!esEditable">{{ nombreCategoriaActual() }}</div>
           </div>
         </div>
 
