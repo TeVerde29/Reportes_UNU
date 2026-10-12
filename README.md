@@ -149,19 +149,10 @@ Reportes_UNU/
 - **Estudiante:** feed Últimos/Populares/Mis reportes (grid 2 col, filtros por
   categoría/ubicación/búsqueda, `?page=&limit=`, visor de foto, likes), crear/editar
   con foto comprimida en front, fechas estilo red social, bottom-nav en móvil.
-- **Trabajador:** listas Pendientes/Aceptados/Solucionados con vista de tarjetas en
-  móvil (sin scroll horizontal, botón Ver siempre visible), buscador con etiqueta,
-  botón limpiar y conteo `X de Y`, botones a 44px, modal de revisión que ya no se
-  cierra al tocar fuera (aceptar/resolver/actualizar/eliminar), dashboard con KPIs,
-  tendencia mensual, dona por tipo y estado, top ubicaciones, gráficos fluidos en móvil.
+- **Trabajador:** tablas Pendientes/Aceptados/Solucionados (búsqueda, sin Carrera),
+  modal de revisión (aceptar/resolver/actualizar/eliminar), dashboard con KPIs,
+  tendencia mensual, dona por tipo y estado, top ubicaciones.
 - **Sistema:** login por sesión, 404 propio, `environment.prod.ts` para despliegue.
-
-## Flujo de desarrollo
-
-- Rama `main` es la que se despliega (Vercel lee `main`, Render lee `render.yaml`).
-- Cambios: editar → `npm run build` en `frontend/` → `git add .` → commit en español
-  (`fix(admin): ...`) → `git push`. Vercel redespliega solo.
-- Credenciales de prueba: estudiante `0002221081` / `1081`, trabajador `0001111000` / `1111`.
 
 ## API principal
 
@@ -227,15 +218,6 @@ Sin runner automatizado; verificación por capas:
 ## Licencia
 
 Este proyecto se distribuye bajo la licencia **MIT**. Consulta el archivo `LICENSE` para más detalles.
-
-## Cómo contribuir
-
-1. Crea una rama desde `main` (`fix/...` o `feat/...`).
-2. Sigue las convenciones de arriba (servicios con `withCredentials`, validaciones,
-   tokens `--eu-*`, comentarios guía en español).
-3. Verifica con `npm run build` en `frontend/` y humo manual (login ambos roles,
-   crear → revisar → eliminar, consola sin errores).
-4. Commit en español imperativo y push para revisión.
 
 ---
 
