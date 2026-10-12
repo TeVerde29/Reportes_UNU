@@ -147,6 +147,17 @@
   font-size: 14px;
 }
 
+/* En resueltos el combo se ve normal pero no se toca */
+.eu-review-data select:disabled {
+  color: var(--eu-ink, #111e1a);
+  -webkit-text-fill-color: var(--eu-ink, #111e1a);
+  opacity: 1;
+}
+
+.eu-review-data .mat-mdc-form-field-disabled .mdc-floating-label {
+  color: var(--eu-ink-soft, #414944);
+}
+
 /* Read-only: misma caja inset que "Selecciona una ubicación" del alumno */
 .eu-read-group {
   display: flex;
