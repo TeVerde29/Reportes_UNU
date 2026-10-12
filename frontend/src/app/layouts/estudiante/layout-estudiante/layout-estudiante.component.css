@@ -21,6 +21,7 @@
   position: sticky;
   top: 0;
   z-index: 50;
+  padding-top: env(safe-area-inset-top);
   background: linear-gradient(180deg, #123F2A 0%, #0E3524 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 2px 12px rgba(10, 30, 20, 0.25);
@@ -367,7 +368,7 @@
   }
 
   .layout {
-    padding: 16px 12px calc(120px + env(safe-area-inset-bottom));
+    padding: 16px max(12px, env(safe-area-inset-right)) calc(96px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
   }
 
   .bottom-nav {
@@ -379,7 +380,7 @@
     z-index: 60;
     background: #123F2A;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
-    padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+    padding: 8px max(8px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
     box-shadow: 0 -2px 12px rgba(10, 30, 20, 0.25);
   }
 
@@ -392,13 +393,18 @@
     padding: 6px 4px 8px;
     border: none;
     background: none;
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 10px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 11px;
     font-weight: 600;
     cursor: pointer;
     min-height: 48px;
     justify-content: center;
     position: relative;
+  }
+
+  .bn-item:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: -2px;
   }
 
   .bn-item.active {
@@ -450,9 +456,5 @@
 
   .user-chip {
     padding: 4px;
-  }
-
-  .layout {
-    padding: 16px 12px calc(96px + env(safe-area-inset-bottom));
   }
 }
