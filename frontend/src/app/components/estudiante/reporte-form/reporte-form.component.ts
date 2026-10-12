@@ -126,9 +126,18 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     const file = input.files[0];
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
+    const esImagen = file.type.startsWith('image/') || /\.(jpe?g|png|webp)$/i.test(file.name);
+    if (!esImagen) {
       this.fotoError = 'Solo se permiten imágenes (JPEG, PNG, WEBP)';
+      this.fotoFile = null;
+      this.previewUrl = null;
+      input.value = '';
+      return;
+    }
+    // HEIC/HEIF (fotos de iPhone): el navegador no siempre las puede leer.
+    // Se avisa antes de intentar procesarlas para no mostrar un error genérico.
+    if (file.type === 'image/heic' || file.type === 'image/heif' || /\.hei[cf]$/i.test(file.name)) {
+      this.fotoError = 'Esa foto es HEIC (iPhone). Cambia a JPG o PNG e inténtalo de nuevo.';
       this.fotoFile = null;
       this.previewUrl = null;
       input.value = '';
@@ -143,49 +152,103 @@ export class ReporteFormComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.fotoError = '';
-    // Comprime sola: baja a 1280px y JPEG 0.82 para pesar menos al subir
+    // Comprime sola: baja a 1280px y JPEG 0.82 para pesar menos al subir.
+    // Si la compresión falla en este navegador, se usa la foto original
+    // para no bloquear la subida.
     this.comprimirImagen(file).then((reducida) => {
       this.fotoFile = reducida;
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
         this.previewUrl = e.target?.result as string;
       };
+      reader.onerror = () => {
+        this.fotoError = 'No se pudo mostrar la vista previa, pero la foto sí se subirá.';
+        this.previewUrl = null;
+      };
       reader.readAsDataURL(reducida);
     }).catch(() => {
-      this.fotoError = 'No se pudo procesar la imagen';
-      this.fotoFile = null;
-      this.previewUrl = null;
-      input.value = '';
+      // Fallback: subir la original tal cual (ya pasó tipo y tamaño).
+      this.fotoFile = file;
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        this.previewUrl = e.target?.result as string;
+      };
+      reader.onerror = () => {
+        this.previewUrl = null;
+      };
+      reader.readAsDataURL(file);
+      this.fotoError = '';
     });
   }
 
-  // Baja la foto a máximo 1280px por lado y la pasa a JPEG liviano
+  // Baja la foto a máximo 1280px por lado y la pasa a JPEG liviano.
+  // Nunca rechaza: si algo falla, devuelve la original.
   private comprimirImagen(file: File): Promise<File> {
-    return new Promise((resolve, reject) => {
-      const url = URL.createObjectURL(file);
-      const img = new Image();
-      img.onload = () => {
-        URL.revokeObjectURL(url);
-        const maxLado = 1280;
-        const escala = Math.min(1, maxLado / Math.max(img.width, img.height));
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.round(img.width * escala);
-        canvas.height = Math.round(img.height * escala);
-        canvas.getContext('2d')?.drawImage(img, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob((blob) => {
-          if (!blob) {
+    const aJpeg = (fuente: CanvasImageSource, ancho: number, alto: number): Promise<File> => {
+      return new Promise((resolve) => {
+        try {
+          if (!ancho || !alto) {
             resolve(file);
             return;
           }
-          const nombre = file.name.replace(/\.[^.]+$/, '') + '.jpg';
-          resolve(new File([blob], nombre, { type: 'image/jpeg' }));
-        }, 'image/jpeg', 0.82);
-      };
-      img.onerror = () => {
-        URL.revokeObjectURL(url);
-        reject(new Error('Imagen inválida'));
-      };
-      img.src = url;
+          const maxLado = 1280;
+          const escala = Math.min(1, maxLado / Math.max(ancho, alto));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(ancho * escala));
+          canvas.height = Math.max(1, Math.round(alto * escala));
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(file);
+            return;
+          }
+          // Fondo blanco para que los PNG con transparencia no salgan negros
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(fuente, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob((blob) => {
+            if (!blob) {
+              resolve(file);
+              return;
+            }
+            const nombre = file.name.replace(/\.[^.]+$/, '') + '.jpg';
+            resolve(new File([blob], nombre, { type: 'image/jpeg' }));
+          }, 'image/jpeg', 0.82);
+        } catch {
+          resolve(file);
+        }
+      });
+    };
+    // Intento 1: createImageBitmap (respeta orientación EXIF en móviles)
+    try {
+      if (typeof createImageBitmap === 'function') {
+        return createImageBitmap(file, { imageOrientation: 'from-image' })
+          .then((bmp) => aJpeg(bmp, bmp.width, bmp.height).finally(() => bmp.close?.()))
+          .catch(() => this.comprimirConImg(file, aJpeg));
+      }
+    } catch {
+      // sigue al intento 2
+    }
+    // Intento 2: elemento Image clásico
+    return this.comprimirConImg(file, aJpeg);
+  }
+
+  private comprimirConImg(file: File, aJpeg: (fuente: CanvasImageSource, ancho: number, alto: number) => Promise<File>): Promise<File> {
+    return new Promise((resolve) => {
+      try {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          aJpeg(img, img.naturalWidth || img.width, img.naturalHeight || img.height).then(resolve);
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          resolve(file);
+        };
+        img.src = url;
+      } catch {
+        resolve(file);
+      }
     });
   }
 
