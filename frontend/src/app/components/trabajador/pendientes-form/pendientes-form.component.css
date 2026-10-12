@@ -23,7 +23,7 @@
 .eu-review-card {
   pointer-events: auto;
   width: 100%;
-  max-width: 840px;
+  max-width: 900px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -48,14 +48,13 @@
   }
 }
 
-/* Header */
+/* Header: mismo aspecto que la tarjeta de Nuevo reporte (título + subtítulo) */
 .eu-review-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--eu-border, #e1e9e4);
+  padding: 20px 20px 4px;
 }
 
 .eu-review-header-left {
@@ -65,24 +64,22 @@
 }
 
 .eu-review-indicator {
-  width: 4px;
-  align-self: stretch;
-  min-height: 44px;
-  border-radius: 4px;
-  background: var(--eu-primary, #2d5a46);
+  display: none;
 }
 
 .eu-review-title {
-  margin: 0;
-  font-size: 18px;
+  margin: 0 0 4px;
+  font-size: 20px;
   font-weight: 600;
-  line-height: 26px;
+  line-height: 28px;
+  letter-spacing: -0.015em;
   color: var(--eu-ink, #111e1a);
 }
 
 .eu-review-subtitle {
-  margin: 2px 0 6px;
-  font-size: 12px;
+  margin: 0 0 6px;
+  font-size: 14px;
+  line-height: 22px;
   color: var(--eu-muted, #6c7a74);
 }
 
@@ -116,20 +113,31 @@
 .eu-review-body {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
-  gap: 1.5rem;
-  padding: 1.5rem;
+  gap: 12px;
+  padding: 16px 20px 20px;
   overflow-y: auto;
 }
 
 .eu-review-data {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 12px;
   min-width: 0;
 }
 
 .eu-field {
   width: 100%;
+}
+
+.eu-review-data .mat-mdc-input-element {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.eu-review-data textarea.mat-mdc-input-element {
+  min-height: 88px;
+  padding-top: 8px;
+  resize: vertical;
 }
 
 /* Combo nativo: rinde en línea (sin panel flotante) y con alto táctil */
@@ -139,20 +147,18 @@
   font-size: 14px;
 }
 
-/* Read-only inset */
+/* Read-only: misma caja inset que "Selecciona una ubicación" del alumno */
 .eu-read-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 8px;
 }
 
 .eu-read-label {
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--eu-muted, #6c7a74);
+  color: var(--eu-ink-soft, #414944);
 }
 
 .read-only-box {
@@ -220,14 +226,14 @@
   font-size: 13px;
 }
 
-/* Footer */
+/* Footer: mismos botones que Nuevo reporte (primario + borde) */
 .eu-review-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 12px;
   flex-wrap: wrap;
-  padding: 1rem 1.5rem calc(1rem + env(safe-area-inset-bottom));
+  padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
   background: var(--eu-canvas, #f5f8f6);
   border-top: 1px solid var(--eu-border, #e1e9e4);
 }
@@ -235,6 +241,9 @@
 .eu-review-footer .mat-mdc-button,
 .eu-review-footer .mat-mdc-unelevated-button {
   min-height: 44px;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0 20px;
 }
 
 .eu-review-actions {
@@ -244,16 +253,26 @@
 }
 
 .eu-btn-ghost {
-  color: var(--eu-primary, #2d5a46);
+  color: #256B45;
+  border: 1px solid var(--eu-border-soft, #D5DCC8);
+  background: transparent;
+}
+
+.eu-btn-ghost:hover:not(:disabled) {
+  background-color: #EDF3F0;
 }
 
 .eu-btn-accept {
-  background-color: #235b3c;
+  background-color: #256B45;
   color: #fff;
 }
 
+.eu-btn-accept:hover:not(:disabled) {
+  background-color: #1C5537;
+}
+
 .eu-btn-reject {
-  background-color: #c84b4b;
+  background-color: #9C2B2B;
   color: #fff;
 }
 
@@ -275,7 +294,7 @@
 
   .eu-review-body {
     grid-template-columns: 1fr;
-    padding: 1rem;
+    padding: 16px;
   }
 
   .eu-evidence-img {
