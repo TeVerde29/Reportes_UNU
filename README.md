@@ -23,7 +23,7 @@
 </table>
 
 <p align="center">
-  <img src="./img/login-movil.png" alt="Inicio de sesión en móvil" width="200">
+  <img src="./img/pendientes-admin-movil.png" alt="Reportes pendientes del admin en móvil" width="200">
   <img src="./img/inicio-movil.png" alt="Feed del estudiante en móvil" width="200">
   <img src="./img/nuevo-reporte-movil.png" alt="Generando un reporte en móvil" width="200">
   <img src="./img/datos-movil.png" alt="Dashboard de reportes en móvil" width="200">
