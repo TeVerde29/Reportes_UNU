@@ -104,22 +104,22 @@
 
   /* Espejo móvil de styles.css con ::ng-deep (inline, inmune al link en print). */
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field {
-    --mat-form-field-container-height: 30px;
+    --mat-form-field-container-height: 44px;
   }
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--outlined {
-    height: 30px;
-    padding-left: 8px;
-    padding-right: 8px;
+    height: 44px;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-form-field-flex {
-    height: 30px;
+    height: 44px;
   }
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-form-field-infix {
     min-height: 0;
-    padding: 2px 0;
+    padding: 6px 0;
   }
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mdc-floating-label {
@@ -129,7 +129,7 @@
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field input.mat-mdc-input-element,
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-select-value {
-    font-size: 12px;
+    font-size: 16px;
   }
 
   .filter-bar ::ng-deep .filter-field.mat-mdc-form-field .mat-mdc-form-field-icon-prefix .mat-icon,
@@ -142,7 +142,7 @@
   /* Opciones en body: ::ng-deep sin ancestro. Solo móvil. */
   ::ng-deep .cdk-overlay-pane .mat-mdc-option {
     font-size: 12px;
-    min-height: 30px;
+    min-height: 44px;
   }
 
   ::ng-deep .cdk-overlay-pane .mat-mdc-option .mdc-list-item__primary-text {
