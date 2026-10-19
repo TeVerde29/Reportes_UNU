@@ -380,13 +380,18 @@ cargarReportesConMasLikes(sumar = false): void {
     this.error = '';
     this.reporteService.obtenerReportesPorIdEstudiante(this.filtrosActuales()).subscribe({
       next: (resp) => {
-        if (resp.success && Array.isArray(resp.data)) {
-          this.asentarPagina(resp, sumar);
+        // Datos ausentes (cuenta nueva sin reportes) no son error: es estado vacío.
+        const datos = Array.isArray(resp?.data) ? resp.data : [];
+        if (sumar) {
+          const vistos = new Set(this.reportes.map(r => r.id_reporte));
+          this.reportes = [...this.reportes, ...datos.filter(r => !vistos.has(r.id_reporte))];
         } else {
-          if (!sumar) this.reportes = [];
-          this.terminarCarga();
-          this.error = 'No se pudieron cargar los reportes';
+          this.reportes = datos;
         }
+        const total = Number(resp?.total);
+        this.totalReportes = Number.isFinite(total) ? total : this.reportes.length;
+        this.hayMas = this.reportes.length < this.totalReportes;
+        this.terminarCarga();
       },
       error: (er) => {
         console.error('Error al obtener los reportes:', er);
